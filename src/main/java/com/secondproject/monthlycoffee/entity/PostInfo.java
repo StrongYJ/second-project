@@ -10,7 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +28,9 @@ public class PostInfo extends BaseTime{
     @Lob
     private String content;
     
-    @JoinColumn(name = "pi_bi_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private BudgetInfo budget;
+    @JoinColumn(name = "pi_ei_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    private ExpenseInfo expense;
 
 
 }
