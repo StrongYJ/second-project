@@ -1,5 +1,7 @@
 package com.secondproject.monthlycoffee.entity;
 
+import com.secondproject.monthlycoffee.entity.shared.BaseTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class LikeHateInfo {
+public class LikeHateInfo extends BaseTime{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

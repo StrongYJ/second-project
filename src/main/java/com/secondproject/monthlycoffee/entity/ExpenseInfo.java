@@ -1,6 +1,9 @@
 package com.secondproject.monthlycoffee.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
+import com.secondproject.monthlycoffee.entity.shared.BaseTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ExpenseInfo {
+public class ExpenseInfo extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +34,6 @@ public class ExpenseInfo {
 
     @Column(name = "ei_price")
     private Integer price;
-
-    @Column(name = "ei_reg_dt")
-    private LocalDateTime regDt;
 
     @Column(name = "ei_memo")
     private String memo;
@@ -55,6 +55,9 @@ public class ExpenseInfo {
 
     @Column(name = "ei_payment")
     private Integer payment;
+
+    @Column(name = "ei_date")
+    private LocalDate date;
 
     @JoinColumn(name = "ei_mi_id")
     @ManyToOne(fetch = FetchType.LAZY)

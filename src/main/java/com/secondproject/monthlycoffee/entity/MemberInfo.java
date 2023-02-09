@@ -2,6 +2,8 @@ package com.secondproject.monthlycoffee.entity;
 
 import java.time.LocalDate;
 
+import com.secondproject.monthlycoffee.entity.shared.BaseTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class MemberInfo {
+public class MemberInfo extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,4 +35,10 @@ public class MemberInfo {
     @Column(name = "mi_gender", nullable = false)
     private Integer gender;
 
+    public MemberInfo(String uid, String nickname, LocalDate birth, Integer gender) {
+        this.uid = uid;
+        this.nickname = nickname;
+        this.birth = birth;
+        this.gender = gender;
+    }
 }
