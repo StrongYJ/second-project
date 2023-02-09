@@ -3,9 +3,15 @@ package com.secondproject.monthlycoffee.entity;
 import java.time.LocalDate;
 
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
+import com.secondproject.monthlycoffee.entity.type.CoffeeBean;
+import com.secondproject.monthlycoffee.entity.type.LikeHate;
+import com.secondproject.monthlycoffee.entity.type.Mood;
+import com.secondproject.monthlycoffee.entity.type.Taste;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,19 +45,23 @@ public class ExpenseInfo extends BaseTime{
     private String memo;
 
     @Column(name = "ei_tumbler")
-    private Integer tumbler;
+    private Boolean tumbler;
 
     @Column(name = "ei_taste")
-    private Integer taste;
+    @Enumerated(EnumType.STRING)
+    private Taste taste;
 
     @Column(name = "ei_mood")
-    private Integer mood;
+    @Enumerated(EnumType.STRING)
+    private Mood mood;
 
     @Column(name = "ei_bean")
-    private Integer bean;
+    @Enumerated(EnumType.STRING)
+    private CoffeeBean bean;
 
-    @Column(name = "ei_like")
-    private Integer likeHate;
+    @Column(name = "ei_likehate")
+    @Enumerated(EnumType.STRING)
+    private LikeHate likeHate;
 
     @Column(name = "ei_payment")
     private Integer payment;

@@ -3,9 +3,12 @@ package com.secondproject.monthlycoffee.entity;
 import java.time.LocalDate;
 
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
+import com.secondproject.monthlycoffee.entity.type.Gender;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,9 +36,10 @@ public class MemberInfo extends BaseTime {
     private LocalDate birth;
 
     @Column(name = "mi_gender", nullable = false)
-    private Integer gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-    public MemberInfo(String uid, String nickname, LocalDate birth, Integer gender) {
+    public MemberInfo(String uid, String nickname, LocalDate birth, Gender gender) {
         this.uid = uid;
         this.nickname = nickname;
         this.birth = birth;

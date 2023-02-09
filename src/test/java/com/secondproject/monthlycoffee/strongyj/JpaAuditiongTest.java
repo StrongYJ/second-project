@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.monthlycoffee.entity.BudgetInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
+import com.secondproject.monthlycoffee.entity.type.Gender;
 import com.secondproject.monthlycoffee.repository.BudgetInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 
@@ -20,8 +22,9 @@ public class JpaAuditiongTest {
     @Autowired private BudgetInfoRepository budgetRepo;
     
     @Test
+    @Rollback(false)
     void auditingTest() {
-        MemberInfo member = new MemberInfo("fsdjbfakjgbaskjb", "test", LocalDate.now(), 0);
+        MemberInfo member = new MemberInfo("fwrekfnwk", "test", LocalDate.of(199, 1, 1), Gender.valueOfCode("male"));
         BudgetInfo budgetInfo = new BudgetInfo(10000, member);
 
         memberRepo.save(member);
