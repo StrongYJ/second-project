@@ -1,5 +1,7 @@
 package com.secondproject.monthlycoffee.entity;
 
+import java.time.LocalDate;
+
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
 
 import jakarta.persistence.Column;
@@ -53,6 +55,9 @@ public class ExpenseInfo extends BaseTime{
 
     @Column(name = "ei_payment")
     private Integer payment;
+
+    @Column(name = "ei_date")
+    private LocalDate date;
 
     @JoinColumn(name = "ei_mi_id")
     @ManyToOne(fetch = FetchType.LAZY)

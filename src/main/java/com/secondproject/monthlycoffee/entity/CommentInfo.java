@@ -31,7 +31,7 @@ public class CommentInfo extends BaseTime{
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberInfo member;
     
-    @JoinColumn(name = "ci_bi_id")
+    @JoinColumn(name = "ci_pi_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private BudgetInfo budget;
+    private PostInfo post;
 }

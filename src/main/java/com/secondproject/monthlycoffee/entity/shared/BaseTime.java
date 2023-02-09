@@ -18,7 +18,7 @@ public abstract class BaseTime {
     
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime regDt;
+    private LocalDateTime createDt;
 
     @LastModifiedDate
     private LocalDateTime updateDt;

@@ -28,7 +28,10 @@ public class IncomeInfo extends BaseTime{
     
     @Column(name = "ii_note") 
     private String note;
-    
+
+	@Column(name = "ii_date")
+    private String date;
+
     @JoinColumn(name = "ii_mi_id", nullable = false) 
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberInfo member;
