@@ -1,6 +1,6 @@
 package com.secondproject.monthlycoffee.entity;
 
-import java.time.LocalDateTime;
+import com.secondproject.monthlycoffee.entity.shared.BaseTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class PostInfo {
+public class PostInfo extends BaseTime{
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pi_id")
@@ -28,13 +28,9 @@ public class PostInfo {
     @Lob
     private String content;
     
-    @Column(name = "pi_reg_dt", nullable = false)
-    private LocalDateTime regDt;
-    
-    @Column(name = "pi_update_dt")
-    private LocalDateTime updateDt;
-    
     @JoinColumn(name = "pi_bi_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private BudgetInfo budget;
+
+
 }
