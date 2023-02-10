@@ -22,18 +22,17 @@ public class BudgetInfo extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bi_id", nullable = false) 
     private Long id;
-  
+
     @Column(name = "bi_amount", nullable = false) 
     private Integer amount;
-  
+
     @JoinColumn(name = "bi_mi_id", nullable = false) 
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberInfo member;
 
     public BudgetInfo(Integer amount, MemberInfo member) {
-      	this.amount = amount;
-      	this.member = member;
+        this.amount = amount;
+        this.member = member;
     }
 
-  
 }
