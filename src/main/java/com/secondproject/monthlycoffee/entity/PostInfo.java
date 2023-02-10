@@ -28,9 +28,7 @@ public class PostInfo extends BaseTime{
     @Lob
     private String content;
     
-    @JoinColumn(name = "pi_ei_id", nullable = false)
+    @JoinColumn(name = "pi_ei_id")
     @OneToOne(fetch = FetchType.LAZY)
     private ExpenseInfo expense;
-
-
 }
