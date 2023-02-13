@@ -11,7 +11,7 @@ public record BudgetDto(
     @Schema (description = "예산 설정 금액")
     Integer amount,
     @Schema (description = "예산 설정 월")
-    String budgetMonth,
+    String yearMonth,
     @Schema (description = "회원 정보")
     MemberDto member
     ) {
@@ -19,7 +19,7 @@ public record BudgetDto(
         this(
             entity.getId(), 
             entity.getAmount(), 
-            entity.getCreateDt().getMonth().toString(),
+            entity.getYearMonth().toString(),
             new MemberDto(entity.getMember())
         );
     }

@@ -2,6 +2,8 @@ package com.secondproject.monthlycoffee.doyouee;
 
 import java.time.LocalDate;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,14 +23,32 @@ public class MyTest {
     @Autowired private MemberInfoRepository memberRepo;
     @Autowired private BudgetInfoRepository budgetRepo;
 
-    MemberInfo member = new MemberInfo("abcd12345efghi", "하이룽", LocalDate.of(1990, 05, 05), Gender.FEMALE);
-    BudgetInfo budget = new BudgetInfo(500000, member);
+    private MemberInfo member;
+    private BudgetInfo budget;
+    
     Pageable pageable = PageRequest.of(0, 10);
 
-    @Test
-    void getBudgetList() {
+    @BeforeEach
+    void init() {
+        member = new MemberInfo("abcd12345efghi", "하이룽", LocalDate.of(1990, 05, 05), Gender.FEMALE);
+        budget = new BudgetInfo(500000, member);
         memberRepo.save(member);
         budgetRepo.save(budget);
-        System.out.println(budgetRepo.findByMember(memberRepo.findById(1l).get(), pageable));
     }
+    
+    @Test
+    void getBudgetList() { // 예산 전체 조회
+        Assertions.assertThat(budgetRepo.findByMember(member, pageable).getContent().size()).isEqualTo(1);
+    }
+
+    @Test
+    void getBudgetDetail() { // 예산 상세 조회
+        Assertions.assertThat(budgetRepo.findById(budget.getId()).get().getAmount()).isEqualTo(500000);
+    }
+
+    @Test
+    void modifyBudget() { // 예산 수정
+        
+    }
+    
 }
