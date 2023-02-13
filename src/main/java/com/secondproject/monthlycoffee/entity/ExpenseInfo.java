@@ -78,4 +78,25 @@ public class ExpenseInfo extends BaseTime{
 
     @OneToMany(mappedBy = "expense")
     private List<ExpenseImageInfo> expenseImages = new ArrayList<>();
+
+    public ExpenseInfo(String category, String brand, Integer price, String memo, Boolean tumbler, Taste taste,
+            Mood mood, CoffeeBean bean, LikeHate likeHate, Integer payment, LocalDate date, MemberInfo member) {
+        this.category = category;
+        this.brand = brand;
+        this.price = price;
+        this.memo = memo;
+        this.tumbler = tumbler;
+        this.taste = taste;
+        this.mood = mood;
+        this.bean = bean;
+        this.likeHate = likeHate;
+        this.payment = payment;
+        this.date = date;
+        this.member = member;
+    }
+
+    public void deleteMember() {
+        this.member = null;
+    }
+    
 }

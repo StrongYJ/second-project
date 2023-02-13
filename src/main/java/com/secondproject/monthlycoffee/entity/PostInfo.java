@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
@@ -28,8 +27,7 @@ public class PostInfo extends BaseTime{
     @Column(name = "pi_id")
     private Long id;
     
-    @Column(name = "pi_content", nullable = false)
-    @Lob
+    @Column(name = "pi_content", nullable = false, columnDefinition = "text")
     private String content;
     
     @JoinColumn(name = "pi_ei_id")
@@ -41,4 +39,13 @@ public class PostInfo extends BaseTime{
 
     @OneToMany(mappedBy = "post")
     private List<LikeHateInfo> likes = new ArrayList<>();
+
+    public PostInfo(String content, ExpenseInfo expense) {
+        this.content = content;
+        this.expense = expense;
+    }
+
+    public void modifyContent(String content) {
+        this.content = content;
+    }
 }

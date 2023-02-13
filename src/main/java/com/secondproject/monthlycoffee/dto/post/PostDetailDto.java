@@ -13,13 +13,9 @@ import com.secondproject.monthlycoffee.entity.type.Mood;
 import com.secondproject.monthlycoffee.entity.type.Taste;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class PostDetailDto {
     @Schema(description = "게시글 식별 번호")
     private Long id;
@@ -41,6 +37,7 @@ public class PostDetailDto {
     public PostDetailDto(PostInfo entity) {
         ExpenseInfo expense = entity.getExpense();
         MemberInfo member = expense.getMember();
+
         this.id = entity.getId();
         this.nickname = ObjectUtils.isEmpty(member) ? null : member.getNickname();
         this.category = expense.getCategory();

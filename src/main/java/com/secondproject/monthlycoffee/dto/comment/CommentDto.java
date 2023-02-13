@@ -1,8 +1,10 @@
 package com.secondproject.monthlycoffee.dto.comment;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.secondproject.monthlycoffee.entity.CommentInfo;
+import com.secondproject.monthlycoffee.entity.MemberInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -19,7 +21,13 @@ public record CommentDto(
     LocalDateTime updateDt
 ) {
     public CommentDto(CommentInfo entity) {
-        this(entity.getId(), entity.getContent(), entity.getMember().getNickname(), entity.getCreateDt(), entity.getUpdateDt());
+        this(
+            entity.getId(), entity.getContent(), 
+            Optional.ofNullable(entity.getMember())
+                .map(MemberInfo::getNickname)
+                .orElse(null), 
+            entity.getCreateDt(), entity.getUpdateDt()
+        );
     }    
 
 }
