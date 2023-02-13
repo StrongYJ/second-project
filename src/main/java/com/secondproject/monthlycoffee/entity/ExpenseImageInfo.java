@@ -32,4 +32,11 @@ public class ExpenseImageInfo extends BaseTime{
 	@JoinColumn(name = "eii_ei_id", nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ExpenseInfo expense;
+
+	public ExpenseImageInfo(Long id, String filename, String uri, ExpenseInfo expense) {
+		this.id = id;
+		this.filename = filename;
+		this.uri = uri;
+		this.expense = expense;
+	}
 }
