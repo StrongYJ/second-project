@@ -1,5 +1,8 @@
 package com.secondproject.monthlycoffee.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
 
 import jakarta.persistence.Column;
@@ -9,7 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,11 +27,25 @@ public class PostInfo extends BaseTime{
     @Column(name = "pi_id")
     private Long id;
     
-    @Column(name = "pi_content", nullable = false)
-    @Lob
+    @Column(name = "pi_content", nullable = false, columnDefinition = "text")
     private String content;
     
     @JoinColumn(name = "pi_ei_id")
     @OneToOne(fetch = FetchType.LAZY)
     private ExpenseInfo expense;
+
+    @OneToMany(mappedBy = "post")
+    private List<CommentInfo> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<LikeHateInfo> likes = new ArrayList<>();
+
+    public PostInfo(String content, ExpenseInfo expense) {
+        this.content = content;
+        this.expense = expense;
+    }
+
+    public void modifyContent(String content) {
+        this.content = content;
+    }
 }
