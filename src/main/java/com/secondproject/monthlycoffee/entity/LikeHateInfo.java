@@ -39,4 +39,12 @@ public class LikeHateInfo extends BaseTime{
     @JoinColumn(name = "lhi_pi_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private PostInfo post;
+
+    public LikeHateInfo(Integer choice, MemberInfo member, PostInfo post) {
+        this.choice = choice;
+        this.member = member;
+        this.post = post;
+    }
+
+    
 }

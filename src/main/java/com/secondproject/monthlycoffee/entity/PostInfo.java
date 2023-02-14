@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,10 +35,10 @@ public class PostInfo extends BaseTime{
     @OneToOne(fetch = FetchType.LAZY)
     private ExpenseInfo expense;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<CommentInfo> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<LikeHateInfo> likes = new ArrayList<>();
 
     public PostInfo(String content, ExpenseInfo expense) {
