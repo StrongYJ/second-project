@@ -53,7 +53,7 @@ import jakarta.persistence.EntityManager;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class PostCrudTest {
+public class PostCudTest {
     
     @Autowired private MockMvc mockMvc;
     @Autowired private MemberInfoRepository memberRepo;
