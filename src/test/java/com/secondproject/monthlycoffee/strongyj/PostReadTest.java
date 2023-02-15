@@ -100,4 +100,9 @@ public class PostReadTest {
         Assertions.assertThat(allPost.getContent().get(new Random().nextInt(allPost.getContent().size())).images().size()).isEqualTo(0L);
         Assertions.assertThat(allPost.getContent().get(new Random().nextInt(allPost.getContent().size())).images()).isNotNull();
     }
+
+    @Test
+    void 댓글_좋아요_이미지_없는_게시글_상세_조회() {
+        postRepo.findAll();
+    }
 }
