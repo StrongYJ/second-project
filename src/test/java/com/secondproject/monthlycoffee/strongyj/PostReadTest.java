@@ -19,8 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.monthlycoffee.dto.post.PostBasicDto;
+import com.secondproject.monthlycoffee.dto.post.PostDetailDto;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.PostInfo;
@@ -99,5 +101,14 @@ public class PostReadTest {
         Assertions.assertThat(allPost.getContent().get(new Random().nextInt(allPost.getContent().size())).likeNumber()).isEqualTo(0L);
         Assertions.assertThat(allPost.getContent().get(new Random().nextInt(allPost.getContent().size())).images().size()).isEqualTo(0L);
         Assertions.assertThat(allPost.getContent().get(new Random().nextInt(allPost.getContent().size())).images()).isNotNull();
+    }
+
+    @Test
+    @Transactional
+    void 댓글_좋아요_이미지_없는_게시글_상세_조회() {
+        List<PostInfo> posts = postRepo.findAll();
+        PostInfo postInfo = posts.get(ThreadLocalRandom.current().nextInt(posts.size()));
+        PostDetailDto postDetail = postService.getPostDetail(postInfo.getId());
+        Assertions.assertThat(postDetail).isEqualTo(new PostDetailDto(postInfo));
     }
 }
