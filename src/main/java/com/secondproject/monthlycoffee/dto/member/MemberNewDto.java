@@ -7,9 +7,7 @@ import com.secondproject.monthlycoffee.entity.type.Gender;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record MemberDto(
-    @Schema(description = "회원 식별 번호")
-    Long id,
+public record MemberNewDto(
     @Schema(description = "회원 UID")
     String uid,
     @Schema(description = "닉네임")
@@ -17,15 +15,14 @@ public record MemberDto(
     @Schema(description = "생일")
     LocalDate birth,
     @Schema(description = "성별")
-    Gender gender
+    String gender
 ) {
-    public MemberDto(MemberInfo entity) {
+    public MemberNewDto(MemberInfo entity) {
         this(
-            entity.getId(), 
             entity.getUid(),
             entity.getNickname(),
             entity.getBirth(),
-            entity.getGender()
+            entity.getGender().getCode()
             );
     }    
 }

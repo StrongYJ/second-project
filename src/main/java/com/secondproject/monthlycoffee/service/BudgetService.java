@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
 import com.secondproject.monthlycoffee.entity.BudgetInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.repository.BudgetInfoRepository;
@@ -27,13 +28,16 @@ public class BudgetService {
     // 예산 전체 리스트 조회
     @Transactional(readOnly = true)
     public Page<BudgetDto> budgetList(Long id, Pageable pageable) {
-        // Page<GenreEntity> page = genreRepository.findByGenreNameContains(keyword, pageable);
         MemberInfo member = memberRepo.findById(id).orElseThrow();
+        if(member.getId()!=id) {
+            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
+        }
         return budgetRepo.findByMember(member, pageable).map(BudgetDto::new);
     }
-
-
+    
+    
     // 예산 상세 조회
+    @Transactional(readOnly = true)
     public BudgetDto budgetDetail(Long id) {
         BudgetInfo budget = budgetRepo.findById(id).orElseThrow();
         return new BudgetDto(budget);
@@ -46,6 +50,9 @@ public class BudgetService {
             throw new IllegalArgumentException("해당 월에 이미 존재하는 예산 정보가 있습니다.");
         }
         MemberInfo member = memberRepo.findById(id).orElseThrow();
+        if(member.getId()!=id) {
+            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
+        }
         BudgetInfo newBudget = new BudgetInfo(data.amount(), member);
         budgetRepo.save(newBudget);
         return new BudgetDto(newBudget);
@@ -53,8 +60,12 @@ public class BudgetService {
     
 
     // 예산 수정
-    public BudgetDto modifybudget(BudgetEditDto edit, Long id) {
+    public BudgetDto modifyBudget(BudgetEditDto edit, Long id) {
         BudgetInfo budget = budgetRepo.findById(id).orElseThrow();
+        MemberInfo member = memberRepo.findById(budget.getMember().getId()).orElseThrow();
+        if(member.getId()!=id) {
+            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
+        }
         if(!(budget.getYearMonth().equals(YearMonth.now().toString()))){
             throw new IllegalArgumentException("현재와 다른 달의 예산액은 수정할 수 없습니다."); 
         }
