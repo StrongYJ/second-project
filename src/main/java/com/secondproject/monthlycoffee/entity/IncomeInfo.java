@@ -1,7 +1,5 @@
 package com.secondproject.monthlycoffee.entity;
 
-import com.secondproject.monthlycoffee.entity.shared.BaseTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class IncomeInfo extends BaseTime{
+public class IncomeInfo {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ii_id", nullable = false) 
@@ -29,7 +27,7 @@ public class IncomeInfo extends BaseTime{
     @Column(name = "ii_note") 
     private String note;
 
-	@Column(name = "ii_date")
+	@Column(name = "ii_date", nullable = false)
     private String date;
 
     @JoinColumn(name = "ii_mi_id", nullable = false) 

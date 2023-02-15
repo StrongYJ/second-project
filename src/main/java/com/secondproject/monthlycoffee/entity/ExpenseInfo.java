@@ -41,13 +41,13 @@ public class ExpenseInfo extends BaseTime{
     @Column(name = "ei_brand")
     private String brand;
 
-    @Column(name = "ei_price")
+    @Column(name = "ei_price", nullable = false)
     private Integer price;
 
     @Column(name = "ei_memo")
     private String memo;
 
-    @Column(name = "ei_tumbler")
+    @Column(name = "ei_tumbler", nullable = false)
     private Boolean tumbler;
 
     @Column(name = "ei_taste")
@@ -66,10 +66,10 @@ public class ExpenseInfo extends BaseTime{
     @Enumerated(EnumType.STRING)
     private LikeHate likeHate;
 
-    @Column(name = "ei_payment")
+    @Column(name = "ei_payment", nullable = false)
     private Integer payment;
 
-    @Column(name = "ei_date")
+    @Column(name = "ei_date", nullable = false)
     private LocalDate date;
 
     @JoinColumn(name = "ei_mi_id")

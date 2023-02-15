@@ -24,14 +24,14 @@ public class CommentInfo extends BaseTime{
     @Column(name = "ci_id")
     private Long id;
 
-    @Column(name = "ci_content")
+    @Column(name = "ci_content", nullable = false)
     private String content;
 
-    @JoinColumn(name = "ci_mi_id")
+    @JoinColumn(name = "ci_mi_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberInfo member;
     
-    @JoinColumn(name = "ci_pi_id")
+    @JoinColumn(name = "ci_pi_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PostInfo post;
 
@@ -39,5 +39,9 @@ public class CommentInfo extends BaseTime{
         this.content = content;
         this.member = member;
         this.post = post;
+    }
+
+    public void modifyContent(String content) {
+        this.content = content;
     }
 }

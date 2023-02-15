@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 
 @Getter
 public enum LikeHate {
     LIKE("like", "좋아요"), SOSO("soso", "무난"), HATE("hate", "싫어요");
     
+    @JsonValue
     private final String code;
     private final String title;
 
