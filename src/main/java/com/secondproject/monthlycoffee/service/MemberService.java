@@ -28,7 +28,7 @@ public class MemberService {
         if(memberRepo.findByUid(data.uid()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
-        MemberInfo newMember = new MemberInfo(data.uid(), data.nickname(), data.birth(), Gender.valueOfCode(data.gender()));
+        MemberInfo newMember = new MemberInfo(data.uid(), data.nickname(), data.birth(), data.gender());
         memberRepo.save(newMember);
         return new MemberDto(newMember);
     }
@@ -41,8 +41,8 @@ public class MemberService {
     
     // 회원 상세 조회
     @Transactional(readOnly = true)
-    public MemberDto memberDetail(Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public MemberDto memberDetail(String id) {
+        MemberInfo member = memberRepo.findByUid(id).orElseThrow();
         return new MemberDto(member);
     }
 

@@ -24,7 +24,7 @@ public class JpaAuditiongTest {
     @Test
     @Rollback(false)
     void auditingTest() {
-        MemberInfo member = new MemberInfo("fwrekfnwk", "test", LocalDate.of(199, 1, 1), Gender.valueOfCode("male"));
+        MemberInfo member = new MemberInfo("fwrekfnwk", "test", LocalDate.of(199, 1, 1), Gender.valueOf("male"));
         BudgetInfo budgetInfo = new BudgetInfo(10000, member);
 
         memberRepo.save(member);
