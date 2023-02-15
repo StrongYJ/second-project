@@ -10,25 +10,17 @@ import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import com.secondproject.monthlycoffee.entity.type.Mood;
 import com.secondproject.monthlycoffee.entity.type.Taste;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ExpenseInfo extends BaseTime{
+@Setter
+public class ExpenseInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,7 +68,7 @@ public class ExpenseInfo extends BaseTime{
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberInfo member;
 
-    @OneToMany(mappedBy = "expense")
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
     private List<ExpenseImageInfo> expenseImages = new ArrayList<>();
 
     public ExpenseInfo(String category, String brand, Integer price, String memo, Boolean tumbler, Taste taste,
@@ -98,5 +90,5 @@ public class ExpenseInfo extends BaseTime{
     public void deleteMember() {
         this.member = null;
     }
-    
+
 }
