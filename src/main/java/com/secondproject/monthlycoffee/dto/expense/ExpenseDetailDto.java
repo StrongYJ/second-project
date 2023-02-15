@@ -25,10 +25,10 @@ public class ExpenseDetailDto {
     @Schema(description = "지출 가격", example = "4500") private Integer price;
     @Schema(description = "메모 내용", example = "맛있다") private String memo;
     @Schema(description = "텀블러 사용 유무 false:무, true:유", example = "false") private Boolean tumbler;
-    @Schema(description = "커피 맛(SWEET, SOUR, SAVORY, BITTER, ETC)", example = "SWEET") private Taste taste;
-    @Schema(description = "카페 분위기(WORK, TALK, SELFIE)", example = "WORK") private Mood mood;
-    @Schema(description = "커피 원두(BRAZIL, GUATEMALA, COLOMBIA, MEXICO, INDONESIA, VIETNAM, ETC)", example = "BRAZIL") private CoffeeBean bean;
-    @Schema(description = "좋아요/싫어요/무난해요(LIKE, HATE, SOSO)", example = "LIKE") private LikeHate likeHate;
+    @Schema(description = "커피 맛", example = "SWEET") private Taste taste;
+    @Schema(description = "카페 분위기", example = "WORK") private Mood mood;
+    @Schema(description = "커피 원두", example = "BRAZIL") private CoffeeBean bean;
+    @Schema(description = "좋아요/싫어요/무난해요", example = "LIKE") private LikeHate likeHate;
     @Schema(description = "결제 방법(0:현금/1:카드)", example = "0") private Integer payment;
     @Schema(description = "지출 날짜", example = "2023-02-15") private LocalDate date;
     @Schema(description = "이미지") private List<ExpenseImageDto> images;
