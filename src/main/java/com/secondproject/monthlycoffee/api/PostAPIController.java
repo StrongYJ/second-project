@@ -16,17 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.monthlycoffee.dto.post.CreatePost;
-import com.secondproject.monthlycoffee.dto.post.DeletePost;
-import com.secondproject.monthlycoffee.dto.post.ModifyPost;
 import com.secondproject.monthlycoffee.dto.post.PostBasicDto;
+import com.secondproject.monthlycoffee.dto.post.PostCreateDto;
+import com.secondproject.monthlycoffee.dto.post.PostDeleteDto;
 import com.secondproject.monthlycoffee.dto.post.PostDetailDto;
+import com.secondproject.monthlycoffee.dto.post.PostModifyDto;
 import com.secondproject.monthlycoffee.service.PostService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "게시글 API", description = "게시글 조회, 작성, 수정, 삭제")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
@@ -53,7 +55,7 @@ public class PostAPIController {
     @Operation(summary = "게시글 등록")
     @PostMapping("")
     public ResponseEntity<PostDetailDto> postCreatePost(
-        @RequestBody @Validated CreatePost createPost,
+        @RequestBody @Validated PostCreateDto createPost,
         @Parameter(description = "회원 식별 번호")
         @RequestParam("memberId") 
         Long memberId
@@ -62,26 +64,28 @@ public class PostAPIController {
         return new ResponseEntity<PostDetailDto>(createdPost, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "게시글 수정")
     @PutMapping("/{post-id}")
     public ResponseEntity<PostDetailDto> putModifyPost(
         @Parameter(description = "게시글 식별 번호")
         @PathVariable("post-id") Long id,
         @Parameter(description = "게시글을 작성한 회원 식별 번호")
         @RequestParam("memberId") Long memberId,
-        @RequestBody @Validated ModifyPost modifyPost
+        @RequestBody @Validated PostModifyDto modifyPost
     ) {
         PostDetailDto modifiedPost = postService.modify(id, memberId, modifyPost);
         return new ResponseEntity<>(modifiedPost, HttpStatus.OK);
     }
 
+    @Operation(summary = "게시글 삭제")
     @DeleteMapping("/{post-id}")
-    public ResponseEntity<DeletePost> deletePost(
+    public ResponseEntity<PostDeleteDto> deletePost(
         @Parameter(description = "게시글 식별 번호")
         @PathVariable("post-id") Long id,
         @Parameter(description = "게시글을 작성한 회원 식별 번호")
         @RequestParam("memberId") Long memberId
     ) {
-        DeletePost deletedPost = postService.delete(id, memberId);
+        PostDeleteDto deletedPost = postService.delete(id, memberId);
         return new ResponseEntity<>(deletedPost, HttpStatus.OK);
     }
 

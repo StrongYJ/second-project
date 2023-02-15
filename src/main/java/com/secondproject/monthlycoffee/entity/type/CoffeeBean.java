@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 
 @Getter
@@ -13,6 +15,7 @@ public enum CoffeeBean {
     MEXICO("mexico", "멕시코"), INDONESIA("indonesia", "인도네시아"), VIETNAM("vietnam", "베트남"),
     ETC("etc", "기타");
 
+    @JsonValue
     private final String code;
     private final String title;
 

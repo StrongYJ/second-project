@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 
 @Getter
@@ -11,6 +13,7 @@ public enum Mood {
     // work / talk / selfie / 기타
     WORK("work", "공부"), TALK("talk", "수다"), SELFIE("selfie", "사진");
 
+    @JsonValue
     private final String code;
     private final String title;
 

@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 
 @Getter
 public enum Taste {
     SWEET("sweet", "단맛"), SOUR("sour", "신맛"), SAVORY("savory", "고소한맛"), BIITER("bitter", "쓴맛"), ETC("etc", "기타");
 
+    @JsonValue
     private final String code;
     private final String title;
 

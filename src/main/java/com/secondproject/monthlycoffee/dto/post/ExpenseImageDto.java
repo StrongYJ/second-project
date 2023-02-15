@@ -11,6 +11,6 @@ public record ExpenseImageDto(
     String imageName
 ) {
     public ExpenseImageDto(ExpenseImageInfo entity) {
-        this(entity.getId(), entity.getUri());
+        this(entity.getId(), entity.getFilename());
     }
 }
