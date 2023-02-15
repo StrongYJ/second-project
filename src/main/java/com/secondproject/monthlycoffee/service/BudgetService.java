@@ -1,6 +1,7 @@
 package com.secondproject.monthlycoffee.service;
 
 import java.time.YearMonth;
+import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,9 @@ public class BudgetService {
         if(member.getId()!=id) {
             throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
         }
+        if(data.amount() <= 0){
+            throw new NoSuchElementException("예산은 0원 이상의 금액이어야 합니다."); 
+        }
         BudgetInfo newBudget = new BudgetInfo(data.amount(), member);
         budgetRepo.save(newBudget);
         return new BudgetDto(newBudget);
@@ -68,6 +72,9 @@ public class BudgetService {
         }
         if(!(budget.getYearMonth().equals(YearMonth.now().toString()))){
             throw new IllegalArgumentException("현재와 다른 달의 예산액은 수정할 수 없습니다."); 
+        }
+        if(edit.amount() <= 0){
+            throw new NoSuchElementException("예산은 0원 이상의 금액이어야 합니다."); 
         }
         budget.modifyAmount(edit.amount());
         return new BudgetDto(budget);
