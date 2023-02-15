@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/income")
+@RequestMapping("/api/incomes")
 @RequiredArgsConstructor
 @Tag(name = "수입 관리", description = "수입 정보 CRUD API")
 public class IncomeAPIController {
