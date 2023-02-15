@@ -31,7 +31,7 @@ public class PostInfo extends BaseTime{
     @Column(name = "pi_content", nullable = false, columnDefinition = "text")
     private String content;
     
-    @JoinColumn(name = "pi_ei_id")
+    @JoinColumn(name = "pi_ei_id", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private ExpenseInfo expense;
 
@@ -39,7 +39,7 @@ public class PostInfo extends BaseTime{
     private List<CommentInfo> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<LikeHateInfo> likes = new ArrayList<>();
+    private List<LovePostInfo> likes = new ArrayList<>();
 
     public PostInfo(String content, ExpenseInfo expense) {
         this.content = content;

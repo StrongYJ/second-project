@@ -45,4 +45,8 @@ public class MemberInfo extends BaseTime {
         this.birth = birth;
         this.gender = gender;
     }
+
+    public void modifyNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

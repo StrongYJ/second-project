@@ -22,29 +22,23 @@ import lombok.NoArgsConstructor;
 @Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = { "lhi_mi_id", "lhi_pi_id" })
 })
-public class LikeHateInfo extends BaseTime{
+public class LovePostInfo extends BaseTime{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lhi_id")
     private Long id;
 
-    @Column(name = "lhi_choice")
-    private Integer choice;
-
-    @JoinColumn(name = "lhi_mi_id")
+    @JoinColumn(name = "lhi_mi_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberInfo member;
     
-    @JoinColumn(name = "lhi_pi_id")
+    @JoinColumn(name = "lhi_pi_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PostInfo post;
 
-    public LikeHateInfo(Integer choice, MemberInfo member, PostInfo post) {
-        this.choice = choice;
+    public LovePostInfo(MemberInfo member, PostInfo post) {
         this.member = member;
         this.post = post;
     }
-
-    
 }

@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
 import com.secondproject.monthlycoffee.service.BudgetService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +44,7 @@ public class BudgetAPIController {
         @Parameter(description = "회원 식별 번호", example = "25") @RequestParam("memberId") Long memberId, 
         @Parameter(hidden = true) @PageableDefault(size=10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
             return new ResponseEntity<>(budgetService.budgetList(memberId, pageable), HttpStatus.OK);
-        }
+    }
         
         
     // 예산 상세 조회
@@ -59,7 +61,7 @@ public class BudgetAPIController {
     @Operation(summary = "예산 등록", description = "해당 회원의 예산을 등록합니다.")
     @PostMapping("")
     public ResponseEntity<BudgetDto> postBudget(
-        @Parameter(description = "등록 할 예산 정보") BudgetDto data,
+        @Parameter(description = "등록 할 예산 정보") @RequestBody BudgetNewDto data,
         @Parameter(description = "회원 식별 번호", example = "1") @RequestParam("memberId") Long memberId
         ) {
             return new ResponseEntity<>(budgetService.newBudget(data, memberId), HttpStatus.CREATED);
@@ -71,10 +73,10 @@ public class BudgetAPIController {
     @Operation(summary = "예산 수정", description = "등록된 예산 정보들 중 특정 예산을 수정합니다.")
     @PatchMapping("/{budget-id}")
     public ResponseEntity<BudgetDto> patchBudget(
-        @Parameter(description = "예산 수정 내용") BudgetEditDto edit,
+        @Parameter(description = "예산 수정 내용") @RequestBody BudgetEditDto edit,
         @Parameter(description = "예산 식별 번호", example = "1") @PathVariable("budget-id") Long budgetId
         ) {
-            return new ResponseEntity<>(budgetService.modifybudget(edit, budgetId), HttpStatus.OK);
+            return new ResponseEntity<>(budgetService.modifyBudget(edit, budgetId), HttpStatus.OK);
     }
 
 }

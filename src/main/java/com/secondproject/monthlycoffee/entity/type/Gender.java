@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 
 @Getter
 public enum Gender {
     NONE("none", "선택안함"), MALE("male", "남성"), FEMALE("female", "여성");
     
+    @JsonValue
     private final String code;
     private final String title;
 

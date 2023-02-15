@@ -51,4 +51,13 @@ public class MyTest {
         
     }
     
+    @Test
+    void getMemberList() { // 회원 전체 조회
+        Assertions.assertThat(memberRepo.findAll(pageable));
+    }
+    
+    @Test
+    void getMemberDetail() { // 회원 상세 조회
+        Assertions.assertThat(memberRepo.findById(member.getId()).get());
+    }
 }

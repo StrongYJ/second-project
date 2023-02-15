@@ -9,18 +9,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record PostBasicDto(
     @Schema(description = "게시글 식별 번호")
     Long id, 
+    @Schema(description = "이미지 정보")
+    List<ExpenseImageDto> images,
     @Schema(description = "게시글 좋아요 수")
-    Integer likeNumber, 
+    Long likeNumber, 
     @Schema(description = "게시글 댓글 수")
-    Integer commentNumber,
-    List<ExpenseImageDto> images
+    Long commentNumber
 ) {
-    public PostBasicDto(PostInfo entity) {
+    public PostBasicDto(PostInfo entity, Long likeNumber, Long commentNumber) {
         this(
             entity.getId(), 
-            entity.getLikes().stream().filter(l -> l.getChoice() == 1).toList().size(), 
-            entity.getComments().size(), 
-            entity.getExpense().getExpenseImages().stream().map(ExpenseImageDto::new).toList()
+            entity.getExpense().getExpenseImages().stream().map(ExpenseImageDto::new).toList(),
+            likeNumber, 
+            commentNumber
         );
     }
 }

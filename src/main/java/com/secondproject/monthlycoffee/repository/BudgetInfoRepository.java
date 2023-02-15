@@ -10,6 +10,6 @@ import com.secondproject.monthlycoffee.entity.MemberInfo;
 public interface BudgetInfoRepository extends JpaRepository<BudgetInfo, Long> {
 
     Page<BudgetInfo> findByMember(MemberInfo member, Pageable pageable);
-    boolean existsByYearMonth(String yearMonth);
+    Boolean existsByYearMonth(String yearMonth);
     
 }
