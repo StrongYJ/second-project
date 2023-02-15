@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
@@ -19,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class MemberInfo extends BaseTime {
-
+public class MemberInfo extends BaseTime implements Serializable {
+//    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mi_id")
