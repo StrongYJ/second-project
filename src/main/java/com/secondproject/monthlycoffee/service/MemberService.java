@@ -38,8 +38,8 @@ public class MemberService {
     
     // 회원 상세 조회
     @Transactional(readOnly = true)
-    public MemberDto memberDetail(Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public MemberDto memberDetail(String id) {
+        MemberInfo member = memberRepo.findByUid(id).orElseThrow();
         return new MemberDto(member);
     }
 
