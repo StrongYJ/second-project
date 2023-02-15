@@ -55,14 +55,16 @@ public class MemberAPIController {
             return new ResponseEntity<>(memberService.memberList(pageable), HttpStatus.OK);
     }
 
+
     // 회원 상세 조회
-    @Operation(summary = "회원 상세 조회", description = "등록된 회원 정보들 중 특정 회원을 조회합니다.")
-    @GetMapping("/{member-id}")
+    @Operation(summary = "회원 상세 조회", description = "등록된 회원 정보들 중 특정 회원의 UID를 받아 조회합니다.")
+    @GetMapping("/{member-uid}")
     public ResponseEntity<MemberDto> getMemberDetail(
-        @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId) {
-            return new ResponseEntity<>(memberService.memberDetail(memberId), HttpStatus.OK);
+        @Parameter(description = "회원 UID", example = "123@#!4SDFKC") @PathVariable("member-uid") String memberUid) {
+            return new ResponseEntity<>(memberService.memberDetail(memberUid), HttpStatus.OK);
     }
 
+    
     // 회원 수정
     @Operation(summary = "회원 수정", description = "등록된 회원 정보들 중 특정 회원을 수정합니다.")
     @PatchMapping("/{member-id}")

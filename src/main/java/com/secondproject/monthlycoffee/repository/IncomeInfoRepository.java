@@ -9,4 +9,5 @@ import com.secondproject.monthlycoffee.entity.MemberInfo;
 
 public interface IncomeInfoRepository extends JpaRepository<IncomeInfo, Long> {
     Page<IncomeInfo> findByMember(MemberInfo member, Pageable pageable);
+    
 }
