@@ -61,7 +61,7 @@ public class BudgetAPIController {
     @Operation(summary = "예산 등록", description = "해당 회원의 예산을 등록합니다.")
     @PostMapping("")
     public ResponseEntity<BudgetDto> postBudget(
-        @Parameter(description = "등록 할 예산 정보") @RequestBody BudgetDto data,
+        @Parameter(description = "등록 할 예산 정보") @RequestBody BudgetNewDto data,
         @Parameter(description = "회원 식별 번호", example = "1") @RequestParam("memberId") Long memberId
         ) {
             return new ResponseEntity<>(budgetService.newBudget(data, memberId), HttpStatus.CREATED);

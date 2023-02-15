@@ -46,7 +46,7 @@ public class BudgetService {
     
 
     // 예산 등록
-    public BudgetDto newBudget(BudgetDto data, Long id) {
+    public BudgetDto newBudget(BudgetNewDto data, Long id) {
         if(budgetRepo.existsByYearMonth(YearMonth.now().toString())) {
             throw new IllegalArgumentException("해당 월에 이미 존재하는 예산 정보가 있습니다.");
         }
