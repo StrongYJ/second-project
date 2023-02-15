@@ -26,17 +26,17 @@ public class ExpenseImageInfo extends BaseTime{
 	@Column(name = "eii_filename", nullable = false) 
 	private String filename;
 
-	@Column(name = "eii_uri", nullable = false) 
-	private String uri;
+	@Column(name = "eii_originalname", nullable = false) 
+	private String originalName;
 
 	@JoinColumn(name = "eii_ei_id", nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ExpenseInfo expense;
 
-	public ExpenseImageInfo(Long id, String filename, String uri, ExpenseInfo expense) {
+	public ExpenseImageInfo(Long id, String filename, String originalName, ExpenseInfo expense) {
 		this.id = id;
 		this.filename = filename;
-		this.uri = uri;
+		this.originalName = originalName;
 		this.expense = expense;
 	}
 }

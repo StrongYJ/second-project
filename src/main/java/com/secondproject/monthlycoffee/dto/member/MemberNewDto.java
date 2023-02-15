@@ -15,14 +15,14 @@ public record MemberNewDto(
     @Schema(description = "생일")
     LocalDate birth,
     @Schema(description = "성별")
-    String gender
+    Gender gender
 ) {
     public MemberNewDto(MemberInfo entity) {
         this(
             entity.getUid(),
             entity.getNickname(),
             entity.getBirth(),
-            entity.getGender().getCode()
+            entity.getGender()
             );
     }    
 }

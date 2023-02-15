@@ -8,7 +8,7 @@ public record ExpenseImageDto(
     @Schema(description = "이미지 식별 번호")
     Long id, 
     @Schema(description = "이미지 이름")
-    String imageName
+    String filename
 ) {
     public ExpenseImageDto(ExpenseImageInfo entity) {
         this(entity.getId(), entity.getFilename());
