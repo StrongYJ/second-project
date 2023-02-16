@@ -1,5 +1,8 @@
 package com.secondproject.monthlycoffee.api;
 
+import java.time.YearMonth;
+import java.util.List;
+
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.secondproject.monthlycoffee.dto.income.ImcomeSumDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
@@ -88,4 +92,13 @@ public class IncomeAPIController {
     }
     
 
+    // 수입 연월별 통계
+    @Operation(summary = "수입 연월별 통계", description = "등록된 수입 정보들 중 연월별 합계를 조회합니다.")
+    @GetMapping("/stats")
+    public ResponseEntity<List<ImcomeSumDto>> statsIncomeByYearMonth(
+        @Parameter(description = "조회하려는 연도", example = "2023-03") @RequestParam YearMonth date,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ){
+        return new ResponseEntity<List<ImcomeSumDto>>(incomeService.sumIncomeByYearMonth(date, id), HttpStatus.OK);
+    }
 }

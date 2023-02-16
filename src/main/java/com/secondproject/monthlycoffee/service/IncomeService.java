@@ -1,5 +1,8 @@
 package com.secondproject.monthlycoffee.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
@@ -7,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.secondproject.monthlycoffee.dto.income.ImcomeSumDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
@@ -83,6 +87,18 @@ public class IncomeService {
     }
 
 
-    // 수입 연월별 합계 통계
-    
+    // 수입 연월별 합계
+    // public IncomeDto sumIncomeByYearMonth(YearMonth date, Long id) {
+    //     MemberInfo member = memberRepo.findById(id).orElseThrow();
+    //     List<ImconeSumByYearMonthDto> income = incomeRepo.sumByYearMonth(member, date);
+    //     return null;
+    // }
+    public List<ImcomeSumDto> sumIncomeByYearMonth(YearMonth date, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        LocalDate firstDate = date.atDay(1); 
+        LocalDate endDate = date.atEndOfMonth();  
+        List<ImcomeSumDto> income = incomeRepo.sumByYearMonth(member, firstDate, endDate);
+        return income;
+    }
+
 }

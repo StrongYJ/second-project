@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.repository;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ public interface BudgetInfoRepository extends JpaRepository<BudgetInfo, Long> {
     Page<BudgetInfo> findByMember(MemberInfo member, Pageable pageable);
     Boolean existsByYearMonth(String yearMonth);
 
-    @Query(value = "SELECT e From BudgetInfo e WHERE e.yearMonth Like yearMonth")
-    public List<BudgetDto> statsBudgetByMonth(@Param("yearMonth") String yearMonth);
+    @Query(value = "SELECT e From BudgetInfo e WHERE e.yearMonth Like yearMonth", nativeQuery = true)
+    public List<BudgetDto> statsBudgetByYearMonth(@Param("yearMonth") YearMonth yearMonth);
     
 }

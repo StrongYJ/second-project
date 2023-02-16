@@ -79,4 +79,10 @@ public class BudgetAPIController {
             return new ResponseEntity<>(budgetService.modifyBudget(edit, budgetId), HttpStatus.OK);
     }
 
+
+
+    // 예산 연월별 합계
+    
+
+
 }
