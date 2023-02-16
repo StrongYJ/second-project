@@ -16,13 +16,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-<<<<<<< HEAD
-import com.secondproject.monthlycoffee.entity.IncomeInfo;
-
-import jakarta.validation.groups.ConvertGroup.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-=======
 import com.secondproject.monthlycoffee.doyouee.dto.YearMonthTestDto;
 import com.secondproject.monthlycoffee.entity.IncomeInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
@@ -31,7 +24,6 @@ import com.secondproject.monthlycoffee.repository.IncomeInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 
 import jakarta.persistence.EntityManager;
->>>>>>> master
 import lombok.extern.slf4j.Slf4j;
 
 @DataJpaTest
@@ -41,9 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class YearMonthTest {
     
-<<<<<<< HEAD
-    
-=======
     @Autowired private MemberInfoRepository memberRepo;
     @Autowired private IncomeInfoRepository incomeRepo;
     private Long memberId;
@@ -72,15 +61,12 @@ public class YearMonthTest {
     void clear() {
         em.clear();
     }
->>>>>>> master
     
     @Test
     void yearMonth() {
         log.info("year Month = {}", YearMonth.now());
     }
 
-<<<<<<< HEAD
-=======
     @Test
     void 연월별로수입합통계() {
         List<IncomeInfo> resultList = em.createQuery("select i from IncomeInfo i order by i.date", IncomeInfo.class).getResultList();
@@ -104,5 +90,4 @@ public class YearMonthTest {
         Assertions.assertThat(dtoList.get(2)).isEqualTo(new YearMonthTestDto(YearMonth.of(2022, 3), 1000));
     }
 
->>>>>>> master
 }
