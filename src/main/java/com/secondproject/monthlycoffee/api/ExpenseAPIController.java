@@ -33,18 +33,18 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/expenses")
-@Tag(name = "지출 관리", description = "지출 CRUD API")
+@Tag(name = "지출 API", description = "지출 CRUD API")
 @RequiredArgsConstructor
 public class ExpenseAPIController {
     private final ExpenseService eService;
 
     @Operation(summary = "지출 등록 API", description = "지출 내용 및 이미지를 등록합니다.")
     @PostMapping("")
-    public ResponseEntity<CreateExpenseDto> putExpense(@Parameter(description = "등록할 이미지") @RequestPart @Nullable MultipartFile[] file, @Parameter(description = "등록할 내용") ExpenseDto data, @Parameter(description = "회원 번호", example = "1") @RequestParam Long userNo) {
+    public ResponseEntity<CreateExpenseDto> putExpense(@Parameter(description = "등록할 이미지") @RequestPart(required = false) MultipartFile[] file, @Parameter(description = "등록할 내용") ExpenseDto data, @Parameter(description = "회원 번호", example = "1") @RequestParam Long userNo) {
         return new ResponseEntity<>(eService.putExpense(file, data, userNo), HttpStatus.OK);
     }
 
-    @Operation(summary = "이미지 다운로드 API", description = "이미지를 다운로드할 수 있는 URI 주소입니다.")
+    @Operation(summary = "이미지 다운로드 API", description = "이미지를 다운로드할 수 있는 주소입니다.")
     @GetMapping("/image/{filename}")
     public ResponseEntity<Resource> getImage (@Parameter(description = "이미지 이름") @PathVariable String filename, HttpServletRequest request) throws Exception {
         return eService.getImage(filename, request);

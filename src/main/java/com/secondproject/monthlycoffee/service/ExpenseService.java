@@ -101,27 +101,28 @@ public class ExpenseService {
         Path folderLocation = Paths.get(path);
         ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(userNo).orElseThrow());
         eRepo.save(entity1);
-        for (int a=0; a<file.length; a++) {
-            String originFileName = file[a].getOriginalFilename();
-            String[] split = originFileName.split("\\.");
-            String ext = split[split.length - 1];
-            String filename = "";
-            for (int i = 0; i < split.length - 1; i++) {
-                filename += split[i];
+        if(file != null) {
+            for (int a = 0; a < file.length; a++) {
+                String originFileName = file[a].getOriginalFilename();
+                String[] split = originFileName.split("\\.");
+                String ext = split[split.length - 1];
+                String filename = "";
+                for (int i = 0; i < split.length - 1; i++) {
+                    filename += split[i];
+                }
+                String saveFilename = "coffee" + "_";
+                Calendar c = Calendar.getInstance();
+                saveFilename += c.getTimeInMillis() + "." + ext;
+                Path targetFile = folderLocation.resolve(saveFilename);
+                try {
+                    Files.copy(file[a].getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ExpenseImageInfo entity2 = new ExpenseImageInfo(null, saveFilename, filename, entity1);
+                imageService.addImage(entity2);
             }
-            String saveFilename = "coffee" + "_";
-            Calendar c = Calendar.getInstance();
-            saveFilename += c.getTimeInMillis() + "." + ext;
-            Path targetFile = folderLocation.resolve(saveFilename);
-            try {
-                Files.copy(file[a].getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            ExpenseImageInfo entity2 = new ExpenseImageInfo(null, saveFilename, filename, entity1);
-            imageService.addImage(entity2);
         }
-
         return new CreateExpenseDto(entity1.getId(), "등록되었습니다.");
     }
 
