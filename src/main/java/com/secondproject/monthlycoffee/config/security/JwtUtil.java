@@ -21,10 +21,10 @@ public class JwtUtil {
         this.key = key;
     }
 
-    public String create(final long memberId) {
+    public String createAccess(final long memberId) {
         return JwtProperties.TOKEN_PREFIX + 
             JWT.create()
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_EXPIRATION_TIME))
                 .withClaim("memberId", memberId)
                 .sign(Algorithm.HMAC256(key));
     }
