@@ -1,18 +1,16 @@
 package com.secondproject.monthlycoffee.config.security;
 
+import java.util.Objects;
+
 import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class LoginMemberIdArgumentResolver implements HandlerMethodArgumentResolver {
-
-    private final JwtUtil jwtUtil;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -23,9 +21,11 @@ public class LoginMemberIdArgumentResolver implements HandlerMethodArgumentResol
     @Override
     public Long resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String notResolve = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        String token = jwtUtil.resolve(notResolve);
-        return jwtUtil.verifyAndExtractClaim(token);
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(Objects.isNull(authentication)) {
+            return null;
+        }
+        return (Long)authentication.getPrincipal();
     }
     
 }
