@@ -3,6 +3,8 @@ package com.secondproject.monthlycoffee.service;
 import com.secondproject.monthlycoffee.dto.expense.*;
 import com.secondproject.monthlycoffee.entity.ExpenseImageInfo;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
+import com.secondproject.monthlycoffee.entity.MemberInfo;
+import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import com.secondproject.monthlycoffee.repository.ExpenseImageInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
@@ -24,10 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Calendar;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,22 +62,27 @@ public class ExpenseService {
                 .body(r);
     }
 
-    public DeleteExpenseDto delete(Long id) {
+    public MessageExpenseDto delete(Long id) {
         ExpenseInfo expense = eRepo.findById(id).orElseThrow();
         eRepo.delete(expense);
-        return new DeleteExpenseDto(expense.getId(), "삭제되었습니다.");
+        return new MessageExpenseDto(expense.getId(), "삭제되었습니다.");
     }
 
     @Transactional(readOnly = true)
-    public List<ExpenseDetailDto> getExpense(Long memberId, Integer date) {
-        if(date == null) {
+    public List<ExpenseDetailDto> getExpense(Long memberId, LikeHate assessment, Integer date) {
+        if(date == null && assessment == null) {
             return eRepo.findByMember(memberRepo.findById(memberId).orElseThrow()).stream().map(ExpenseDetailDto::new).toList();
         }
-        return eRepo.findByDateAndMemberId(date, memberId).stream().map(ExpenseDetailDto::new).toList();
+        if(date == null) {
+            return eRepo.searchLikeHate(assessment, memberId).stream().map(ExpenseDetailDto::new).toList();
+        }
+        if(assessment == null) {
+            return eRepo.searchDate(date, memberId).stream().map(ExpenseDetailDto::new).toList();
+        }
+        return eRepo.searchtotalList(date, assessment, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
-    public UpdateExpenseDto update(Long expenseNo, ExpenseDto data) {
-        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+    public MessageExpenseDto update(Long expenseNo, ExpenseDto data) {
         ExpenseInfo entity = eRepo.findById(expenseNo).orElseThrow();
 
         if(data.getCategory() != null) entity.setCategory(data.getCategory());
@@ -94,10 +98,10 @@ public class ExpenseService {
         if(data.getDate() != null) entity.setDate(data.getDate());
         eRepo.save(entity);
 
-        return new UpdateExpenseDto(entity.getId(), "수정되었습니다.");
+        return new MessageExpenseDto(entity.getId(), "수정되었습니다.");
     }
 
-    public CreateExpenseDto putExpense(MultipartFile[] file, ExpenseDto data, @RequestParam Long userNo) {
+    public MessageExpenseDto putExpense(MultipartFile[] file, ExpenseDto data, @RequestParam Long userNo) {
         Path folderLocation = Paths.get(path);
         ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(userNo).orElseThrow());
         eRepo.save(entity1);
@@ -123,12 +127,29 @@ public class ExpenseService {
                 imageService.addImage(entity2);
             }
         }
-        return new CreateExpenseDto(entity1.getId(), "등록되었습니다.");
+        return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
     }
 
-    public DeleteExpenseDto deleteImage(Long id) {
+    public MessageExpenseDto deleteImage(Long id) {
         ExpenseImageInfo image = imageRepo.findById(id).orElseThrow();
         imageRepo.delete(image);
-        return new DeleteExpenseDto(image.getId(), "삭제되었습니다.");
+        return new MessageExpenseDto(image.getId(), "삭제되었습니다.");
+    }
+
+    @Transactional(readOnly = true)
+    public TotalExpenseDto getTotalExpense(Long memberId, Integer startDate, Integer endDate) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        if(startDate == null) {
+            startDate = 0;
+        }
+        if(endDate == null) {
+            endDate = 9999;
+        }
+        List<ExpenseDetailDto> entity = eRepo.searchTotalExpense(startDate, endDate, memberId).stream().map(ExpenseDetailDto::new).toList();
+        Integer totalPrice = 0;
+        for (ExpenseDetailDto expenseDetailDto : entity) {
+            totalPrice += expenseDetailDto.getPrice();
+        }
+        return new TotalExpenseDto(member.getNickname(), totalPrice, startDate, endDate);
     }
 }

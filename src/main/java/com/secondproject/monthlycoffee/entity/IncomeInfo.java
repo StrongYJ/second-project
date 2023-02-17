@@ -2,8 +2,6 @@ package com.secondproject.monthlycoffee.entity;
 
 import java.time.LocalDate;
 
-import com.secondproject.monthlycoffee.entity.shared.BaseTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class IncomeInfo {
-
+    
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ii_id", nullable = false) 
     private Long id;
