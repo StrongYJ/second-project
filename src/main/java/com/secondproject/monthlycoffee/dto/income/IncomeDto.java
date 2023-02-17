@@ -28,4 +28,5 @@ public record IncomeDto(
             new MemberDto(entity.getMember())
         );
     }
+    
 }

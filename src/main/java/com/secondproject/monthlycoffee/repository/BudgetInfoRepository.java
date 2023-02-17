@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.repository;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -20,4 +21,7 @@ public interface BudgetInfoRepository extends JpaRepository<BudgetInfo, Long> {
     @Query(value = "SELECT e From BudgetInfo e WHERE e.yearMonth Like yearMonth", nativeQuery = true)
     public List<BudgetDto> statsBudgetByYearMonth(@Param("yearMonth") YearMonth yearMonth);
     
+    // @Query("select e from BudgetInfo e where e.member = :member and e.date between :start and :end order by e.date")
+    // List<BudgetInfo> findByYearMonth(@Param("member") MemberInfo member, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
 }

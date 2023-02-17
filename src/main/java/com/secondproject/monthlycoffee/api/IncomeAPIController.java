@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.monthlycoffee.dto.income.ImcomeSumDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
 import com.secondproject.monthlycoffee.service.IncomeService;
 
@@ -93,12 +94,24 @@ public class IncomeAPIController {
     
 
     // 수입 연월별 통계
-    @Operation(summary = "수입 연월별 통계", description = "등록된 수입 정보들 중 연월별 합계를 조회합니다.")
+    @Operation(summary = "수입 연월별 합산 통계", description = "등록된 수입 정보들 중 연월별 합계를 조회합니다.")
     @GetMapping("/stats")
-    public ResponseEntity<List<ImcomeSumDto>> statsIncomeByYearMonth(
-        @Parameter(description = "조회하려는 연도", example = "2023-03") @RequestParam YearMonth date,
+    public ResponseEntity<IncomeSumDto> statsIncomeByYearMonth(
+        @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
         @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
     ){
-        return new ResponseEntity<List<ImcomeSumDto>>(incomeService.sumIncomeByYearMonth(date, id), HttpStatus.OK);
+        return new ResponseEntity<IncomeSumDto>(incomeService.sumIncomeByYearMonth(date, id), HttpStatus.OK);
     }
+
+
+    // 수입 + 지출 연월별 리스트
+    @Operation(summary = "수입+지출 연월별 리스트 조회", description = "등록된 수입과 지출 정보들 중 연월별 리스트를 조회합니다.")
+    @GetMapping("/list")
+    public ResponseEntity<List<IncomeExpenseListDto>> listIncomeByYearMonth(
+        @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ){
+        return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeByYearMonth(date, id), HttpStatus.OK);
+    }
+
 }
