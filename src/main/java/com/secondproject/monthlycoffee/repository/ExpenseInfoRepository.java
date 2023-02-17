@@ -24,4 +24,9 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     List<ExpenseInfo> searchLikeHate(@Param("keyword") LikeHate keyword, @Param("memberId") Long memberId);
     @Query(value = "select e from ExpenseInfo e join e.member m where date_format(e.date, '%y%m') = :date and m.id = :memberId")
     List<ExpenseInfo> searchDate(@Param("date") Integer date, @Param("memberId") Long memberId);
+    @Query(value = "select e from ExpenseInfo e join e.member m where date_format(e.date, '%y%m') = :date and e.category = :keyword and m.id = :memberId")
+    List<ExpenseInfo> searchCategory(@Param("date") Integer date, @Param("keyword") String keyword, @Param("memberId") Long memberId);
+
+    @Query(value = "select e from ExpenseInfo e join e.member m where date_format(e.date, '%y%m') = :date and e.brand = :keyword and m.id = :memberId")
+    List<ExpenseInfo> searchBrand(@Param("date") Integer date, @Param("keyword") String keyword, @Param("memberId") Long memberId);
 }
