@@ -36,3 +36,6 @@ springdoc:
     # '-'은 일반 properties 파일의 콤마 같은 느낌 어레이를 표현
     - /api/**
     # 문서로 만들 API 요청 경로 목록 (요청 경로가 /api/로 시작하면 모두 문서화)
+
+jwt:
+  key: ewjnvjksnvkjsnvkjn
