@@ -4,11 +4,12 @@ import com.secondproject.monthlycoffee.dto.expense.*;
 import com.secondproject.monthlycoffee.entity.ExpenseImageInfo;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
-import com.secondproject.monthlycoffee.entity.type.LikeHate;
+import com.secondproject.monthlycoffee.entity.type.*;
 import com.secondproject.monthlycoffee.repository.ExpenseImageInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jdk.jfr.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -26,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -82,7 +84,7 @@ public class ExpenseService {
         return eRepo.searchtotalList(date, assessment, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
-    public MessageExpenseDto update(Long expenseNo, ExpenseDto data) {
+    public MessageExpenseDto update(Long expenseNo, ExpenseDetailDto data) {
         ExpenseInfo entity = eRepo.findById(expenseNo).orElseThrow();
 
         if(data.getCategory() != null) entity.setCategory(data.getCategory());
@@ -101,7 +103,7 @@ public class ExpenseService {
         return new MessageExpenseDto(entity.getId(), "수정되었습니다.");
     }
 
-    public MessageExpenseDto putExpense(MultipartFile[] file, ExpenseDto data, @RequestParam Long userNo) {
+    public MessageExpenseDto putExpense(MultipartFile[] file, ExpenseDetailDto data, @RequestParam Long userNo) {
         Path folderLocation = Paths.get(path);
         ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(userNo).orElseThrow());
         eRepo.save(entity1);
@@ -138,18 +140,80 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public TotalExpenseDto getTotalExpense(Long memberId, Integer startDate, Integer endDate) {
-        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        if(startDate == null) {
+        if (startDate == null) {
             startDate = 0;
         }
-        if(endDate == null) {
+        if (endDate == null) {
             endDate = 9999;
         }
-        List<ExpenseDetailDto> entity = eRepo.searchTotalExpense(startDate, endDate, memberId).stream().map(ExpenseDetailDto::new).toList();
+        List<ExpenseInfo> entity = eRepo.searchTotalExpense(startDate, endDate, memberId).stream().toList();
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        String nickname = member.getNickname();
         Integer totalPrice = 0;
-        for (ExpenseDetailDto expenseDetailDto : entity) {
-            totalPrice += expenseDetailDto.getPrice();
+        for (ExpenseInfo expenseInfo : entity) {
+            totalPrice += expenseInfo.getPrice();
         }
-        return new TotalExpenseDto(member.getNickname(), totalPrice, startDate, endDate);
+        return new TotalExpenseDto(nickname, totalPrice, startDate, endDate);
     }
+
+    public MessageExpenseDto dummyData(Long userNo, Integer size) {
+        String[] category = {"아메리카노", "카페라떼", "바닐라라떼", "카라멜 마끼아또", "카푸치노"};
+        String[] brand = {"스타벅스", "투썸플레이스", "빽다방", "이디야커피", "할리스커피"};
+        Boolean[] tumbler = {true, false};
+        Taste[] taste = {Taste.valueOf("SWEET"), Taste.valueOf("SOUR"), Taste.valueOf("SAVORY"), Taste.valueOf("BITTER")};
+        Mood[] mood = {Mood.valueOf("WORK"), Mood.valueOf("TALK"), Mood.valueOf("SELFIE")};
+        CoffeeBean[] bean = {CoffeeBean.valueOf("BRAZIL"), CoffeeBean.valueOf("GUATEMALA"), CoffeeBean.valueOf("COLOMBIA"), CoffeeBean.valueOf("MEXICO"), CoffeeBean.valueOf("INDONESIA")};
+        LikeHate[] hate = {LikeHate.valueOf("LIKE"), LikeHate.valueOf("HATE"), LikeHate.valueOf("SOSO")};
+        for(int i=0; i<size; i++) {
+            int random1 = (int) ((Math.random())*10%2);
+            int random2 = (int) ((Math.random())*10%3);
+            int random3 = (int) ((Math.random())*10%4);
+            int random4 = (int) ((Math.random())*10%5);
+            int randomM = (int) ((Math.random())*100%12)+1;
+            int randomY = 0;
+            int price = (int) (Math.round((Math.random()*10000)/100)*100);
+            if(price < 1000) {
+                price += 1000;
+            }
+            try {
+                Thread.sleep(0);
+                if (randomM == 2) {
+                    randomY = (int) ((Math.random()) * 100 % 28)+1;
+                } else if (randomM == 4 || randomM == 6 || randomM == 9 || randomM == 11) {
+                    randomY = (int) ((Math.random()) * 100 % 30)+1;
+                } else {
+                    randomY = (int) ((Math.random()) * 100 % 31)+1;
+                }
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+                LocalDate date = LocalDate.of(2023, randomM, randomY);
+
+            ExpenseInfo entity1 = new ExpenseInfo(
+                    category[random4],
+                    brand[random4],
+                    price,
+                    "메모",
+                    tumbler[random1],
+                    taste[random3],
+                    mood[random2],
+                    bean[random4],
+                    hate[random2],
+                    random1,
+                    date,
+                    memberRepo.findById(userNo).orElseThrow());
+            eRepo.save(entity1);
+        }
+        return new MessageExpenseDto(1L, +size+"개의 더미데이터가 등록되었습니다");
+    }
+
+    public List<ExpenseDetailDto> getCategory(Integer date, String keyword, Long memberId) {
+        return eRepo.searchCategory(date, keyword, memberId).stream().map(ExpenseDetailDto::new).toList();
+    }
+
+    public List<ExpenseDetailDto> getBrand(Integer date, String keyword, Long memberId) {
+        return eRepo.searchBrand(date, keyword, memberId).stream().map(ExpenseDetailDto::new).toList();
+    }
+
 }

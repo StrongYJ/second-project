@@ -2,6 +2,8 @@ package com.secondproject.monthlycoffee.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -10,13 +12,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.secondproject.monthlycoffee.dto.income.ImcomeSumDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
+import com.secondproject.monthlycoffee.dto.post.ExpenseImageDto;
+import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeStringDateDto;
+import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.IncomeInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
+import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.IncomeInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 
@@ -28,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class IncomeService {
     private final IncomeInfoRepository incomeRepo;
     private final MemberInfoRepository memberRepo;
+    private final ExpenseInfoRepository expenseRepo;
 
     // 수입 등록
     public IncomeDto newIncome(IncomeNewDto data, Long memberId) {
@@ -88,17 +98,64 @@ public class IncomeService {
 
 
     // 수입 연월별 합계
-    // public IncomeDto sumIncomeByYearMonth(YearMonth date, Long id) {
-    //     MemberInfo member = memberRepo.findById(id).orElseThrow();
-    //     List<ImconeSumByYearMonthDto> income = incomeRepo.sumByYearMonth(member, date);
-    //     return null;
-    // }
-    public List<ImcomeSumDto> sumIncomeByYearMonth(YearMonth date, Long id) {
+    public IncomeSumDto sumIncomeByYearMonth(YearMonth date, Long id) {
         MemberInfo member = memberRepo.findById(id).orElseThrow();
         LocalDate firstDate = date.atDay(1); 
         LocalDate endDate = date.atEndOfMonth();  
-        List<ImcomeSumDto> income = incomeRepo.sumByYearMonth(member, firstDate, endDate);
+        IncomeSumDto income = incomeRepo.sumByYearMonth(member, firstDate, endDate);
         return income;
+    }
+
+
+    // 수입+지출 연월별 리스트
+    public List<IncomeExpenseListDto> searchIncomeByYearMonth(YearMonth date, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        LocalDate firstDate = date.atDay(1); 
+        LocalDate endDate = date.atEndOfMonth(); 
+        
+        List<IncomeInfo> incomeInfos = incomeRepo.findByYearMonth(member, firstDate, endDate);
+        List<ExpenseInfo> expenseInfos = expenseRepo.findByYearMonth(member, firstDate, endDate);
+        
+        List<IncomeExpenseListDto> incomeExpenseList = new ArrayList<IncomeExpenseListDto>();
+        List<IncomeListDetailDto> incomeList = new ArrayList<IncomeListDetailDto>();
+        List<ExpenseDetailDto> expenseList = new ArrayList<ExpenseDetailDto>();
+
+        IncomeExpenseListDto incomeExpense = new IncomeExpenseListDto();
+
+        for(IncomeInfo i : incomeInfos) {
+            incomeExpense.setYearMonth(date);
+            IncomeListDetailDto incomeListSet = new IncomeListDetailDto();
+
+            incomeListSet.setId(i.getId());
+            incomeListSet.setAmount(i.getAmount());
+            incomeListSet.setNote(i.getNote());
+            incomeListSet.setDate(i.getDate());
+
+            incomeList.add(incomeListSet);
+            incomeExpense.setIncome(incomeList);
+        }
+            
+        for(ExpenseInfo e : expenseInfos) {
+            ExpenseDetailDto expenseListSet = new ExpenseDetailDto();
+            expenseListSet.setId(e.getId());
+            expenseListSet.setCategory(e.getCategory());
+            expenseListSet.setBrand(e.getBrand());
+            expenseListSet.setPrice(e.getPrice());
+            expenseListSet.setMemo(e.getMemo());
+            expenseListSet.setTumbler(e.getTumbler());
+            expenseListSet.setTaste(e.getTaste());
+            expenseListSet.setMood(e.getMood());
+            expenseListSet.setBean(e.getBean());
+            expenseListSet.setLikeHate(e.getLikeHate());
+            expenseListSet.setPayment(e.getPayment());
+            expenseListSet.setDate(e.getDate());
+            expenseListSet.setImages(e.getExpenseImages().stream().map(ExpenseImageDto::new).toList());
+            expenseList.add(expenseListSet);
+        }
+        incomeExpense.setExpense(expenseList);
+        incomeExpenseList.add(incomeExpense);
+
+        return incomeExpenseList;
     }
 
 }
