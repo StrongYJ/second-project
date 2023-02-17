@@ -1,6 +1,8 @@
 package com.secondproject.monthlycoffee.service;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetListDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
 import com.secondproject.monthlycoffee.entity.BudgetInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
@@ -82,5 +85,24 @@ public class BudgetService {
     }
 
 
+    // 예산 연월별 리스트 조회
+    // public List<BudgetListDto> searchBudgetByYearMonth(YearMonth date, Long id) {
+    //     MemberInfo member = memberRepo.findById(id).orElseThrow();
+    //     LocalDate firstDate = date.atDay(1); 
+    //     LocalDate endDate = date.atEndOfMonth(); 
+
+    //     List<BudgetInfo> budgetInfos = budgetRepo.findByYearMonth(member, firstDate, endDate);
+    //     List<BudgetListDto> budget = new ArrayList<BudgetListDto>();
+    //     for(BudgetInfo b : budgetInfos) {
+    //         BudgetListDto budgetSet = new BudgetListDto();
+
+    //         budgetSet.setId(b.getId());
+    //         budgetSet.setAmount(b.getAmount());
+    //         budgetSet.setDate(YearMonth.parse(b.getYearMonth()));
+
+    //         budget.add(budgetSet);
+    //     }
+    //     return budget;
+    // }
     
 }

@@ -48,4 +48,9 @@ public class IncomeInfo {
         if(note != null) this.note = note;
         if(date != null) this.date = date;
     }
+
+    public String convertDate(LocalDate date) {
+        String dateConv = this.date.toString();
+        return dateConv;
+    }
 }

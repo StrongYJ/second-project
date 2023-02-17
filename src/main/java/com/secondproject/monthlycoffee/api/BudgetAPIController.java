@@ -1,5 +1,8 @@
 package com.secondproject.monthlycoffee.api;
 
+import java.time.YearMonth;
+import java.util.List;
+
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetListDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
 import com.secondproject.monthlycoffee.service.BudgetService;
 
@@ -79,7 +83,18 @@ public class BudgetAPIController {
 
 
 
-    // 예산 연월별 합계
+    // 예산 연월별 조회
+    // @Operation(summary = "예산 연월별 리스트 조회", description = "등록된 예산 정보들 중 연월별 리스트를 조회합니다.")
+    // @GetMapping("/list")
+    // public ResponseEntity<List<BudgetListDto>> listBudgetByYearMonth(
+    //     @Parameter(description = "조회하려는 연도", example = "2023-03") @RequestParam YearMonth date,
+    //     @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    // ){
+    //     return new ResponseEntity<List<BudgetListDto>>(budgetService.searchBudgetByYearMonth(date, id), HttpStatus.OK);
+    // }
+
+
+    // 예산 연도별 합계
     
 
 
