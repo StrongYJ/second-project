@@ -15,6 +15,8 @@ import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetListDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetRankDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetSumDto;
 import com.secondproject.monthlycoffee.entity.BudgetInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.repository.BudgetInfoRepository;
@@ -85,24 +87,38 @@ public class BudgetService {
     }
 
 
-    // 예산 연월별 리스트 조회
-    // public List<BudgetListDto> searchBudgetByYearMonth(YearMonth date, Long id) {
-    //     MemberInfo member = memberRepo.findById(id).orElseThrow();
-    //     LocalDate firstDate = date.atDay(1); 
-    //     LocalDate endDate = date.atEndOfMonth(); 
+    // 예산 연도별 리스트 조회
+    public List<BudgetListDto> searchBudgetByYear(String year, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        List<BudgetInfo> budgetInfos = budgetRepo.findByYear(member, year);
+        List<BudgetListDto> budget = new ArrayList<BudgetListDto>();
+        for(BudgetInfo b : budgetInfos) {
+            BudgetListDto budgetSet = new BudgetListDto();
 
-    //     List<BudgetInfo> budgetInfos = budgetRepo.findByYearMonth(member, firstDate, endDate);
-    //     List<BudgetListDto> budget = new ArrayList<BudgetListDto>();
-    //     for(BudgetInfo b : budgetInfos) {
-    //         BudgetListDto budgetSet = new BudgetListDto();
+            budgetSet.setId(b.getId());
+            budgetSet.setAmount(b.getAmount());
+            budgetSet.setDate(b.getYearMonth());
 
-    //         budgetSet.setId(b.getId());
-    //         budgetSet.setAmount(b.getAmount());
-    //         budgetSet.setDate(YearMonth.parse(b.getYearMonth()));
+            budget.add(budgetSet);
+        }
+        return budget;
+    }
 
-    //         budget.add(budgetSet);
-    //     }
-    //     return budget;
-    // }
-    
+
+
+    // 예산 연도별 합계 조회
+    public BudgetSumDto sumBudgetByYear(String year, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        BudgetSumDto budget = budgetRepo.sumByYear(member, year);
+        return budget;
+    }
+
+
+    // 예산 연도별 랭킹
+    public List<BudgetRankDto> rankBudgetByYear(String year, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        List<BudgetRankDto> income = budgetRepo.rankByYear(member, year);
+        return income;
+    }
+
 }
