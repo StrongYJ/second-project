@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.service;
 
+import com.secondproject.monthlycoffee.token.RefreshTokenRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,15 @@ public class MemberService {
     // 회원 등록
     public MemberDto login(MemberLoginDto data) {
         Optional<MemberInfo> member = memberRepo.findByAuthDomainAndUid(data.authDomain(), data.uid());
+        MemberDto memberDto;
         if(member.isPresent()) {
-            return new MemberDto(member.get());
+            memberDto = new MemberDto(member.get());
         } else {
             MemberInfo newMember = data.toEntity();
             memberRepo.save(newMember);
-            return new MemberDto(newMember);
+            memberDto = new MemberDto(newMember);
         }
+        return memberDto;
     }
 
     // 회원 전체 리스트 조회

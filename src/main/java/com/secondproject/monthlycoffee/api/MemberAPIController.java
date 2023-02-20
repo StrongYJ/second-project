@@ -2,6 +2,8 @@ package com.secondproject.monthlycoffee.api;
 
 import com.secondproject.monthlycoffee.config.security.JwtProperties;
 import com.secondproject.monthlycoffee.config.security.JwtUtil;
+import com.secondproject.monthlycoffee.token.TokenDto;
+import com.secondproject.monthlycoffee.token.TokenService;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "회원 관리", description = "회원 정보 CRUD API")
 public class MemberAPIController {
     private final MemberService memberService;
+    private final TokenService tokenService;
     private final JwtUtil jwtUtil;
 
 
@@ -46,9 +49,12 @@ public class MemberAPIController {
         @Parameter(description = "로그인(등록)할 회원 정보") @RequestBody MemberLoginDto data
         ) {
         MemberDto memberDto = memberService.login(data);
+        TokenDto tokenDto = tokenService.login(memberDto);
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(memberDto.id(), JwtProperties.ACCESS_EXPIRATION_TIME));
-        headers.add(JwtProperties.REFRESH_HEADER_NAME, jwtUtil.createRefresh(JwtProperties.REFRESH_EXPIRATION_TIME));
+        headers.add(HttpHeaders.AUTHORIZATION, tokenDto.access());
+        headers.add(JwtProperties.REFRESH_HEADER_NAME, tokenDto.refresh());
+
         return new ResponseEntity<>(memberDto, headers, HttpStatus.CREATED);
     }
 

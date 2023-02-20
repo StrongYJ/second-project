@@ -55,4 +55,8 @@ public class JwtUtil {
     public Authentication getAuthentication(final long memberId) {
         return new UsernamePasswordAuthenticationToken(memberId, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
+
+    public long getAccessExpiration(final String token) {
+        return JWT.decode(token).getExpiresAtAsInstant().toEpochMilli();
+    }
 }
