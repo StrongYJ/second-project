@@ -22,6 +22,8 @@ import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetListDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetRankDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetSumDto;
 import com.secondproject.monthlycoffee.service.BudgetService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,19 +85,36 @@ public class BudgetAPIController {
 
 
 
-    // 예산 연월별 조회
-    // @Operation(summary = "예산 연월별 리스트 조회", description = "등록된 예산 정보들 중 연월별 리스트를 조회합니다.")
-    // @GetMapping("/list")
-    // public ResponseEntity<List<BudgetListDto>> listBudgetByYearMonth(
-    //     @Parameter(description = "조회하려는 연도", example = "2023-03") @RequestParam YearMonth date,
-    //     @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
-    // ){
-    //     return new ResponseEntity<List<BudgetListDto>>(budgetService.searchBudgetByYearMonth(date, id), HttpStatus.OK);
-    // }
+    // 예산 연도별 조회
+    @Operation(summary = "예산 연도별 리스트 조회", description = "등록된 예산 정보들 중 연도별 리스트를 조회합니다.")
+    @GetMapping("/list")
+    public ResponseEntity<List<BudgetListDto>> listBudgetByYear(
+        @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ){
+        return new ResponseEntity<List<BudgetListDto>>(budgetService.searchBudgetByYear(year, id), HttpStatus.OK);
+    }
 
 
     // 예산 연도별 합계
-    
+    @Operation(summary = "예산 연도별 합산 통계 조회", description = "등록된 예산 정보들 중 연도별 합계를 조회합니다.")
+    @GetMapping("/sum")
+    public ResponseEntity<BudgetSumDto> sumBudgetByYear(
+        @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ){
+        return new ResponseEntity<BudgetSumDto>(budgetService.sumBudgetByYear(year, id), HttpStatus.OK);
+    }
 
+
+    // 예산 연도별 랭킹
+    @Operation(summary = "예산 연도별 조회시 월별 랭킹 조회", description = "등록된 예산 정보들을 연도별로 조회시 월별 랭킹을 조회합니다.")
+    @GetMapping("/rank")
+    public ResponseEntity<List<BudgetRankDto>> rankingByYear(
+        @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ) {
+        return new ResponseEntity<List<BudgetRankDto>>(budgetService.rankBudgetByYear(year, id), HttpStatus.OK);
+    }
 
 }

@@ -2,6 +2,7 @@ package com.secondproject.monthlycoffee.api;
 
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
@@ -20,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
 import com.secondproject.monthlycoffee.service.IncomeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,10 +96,10 @@ public class IncomeAPIController {
     }
     
 
-    // 수입 연월별 통계
-    @Operation(summary = "수입 연월별 합산 통계", description = "등록된 수입 정보들 중 연월별 합계를 조회합니다.")
-    @GetMapping("/stats")
-    public ResponseEntity<IncomeSumDto> statsIncomeByYearMonth(
+    // 수입 연월별 합계
+    @Operation(summary = "수입 연월별 합계 조회", description = "등록된 수입 정보들 중 연월별 합계를 조회합니다.")
+    @GetMapping("/stats/sum")
+    public ResponseEntity<IncomeSumDto> sumIncomeByYearMonth(
         @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
         @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
     ){
@@ -110,8 +113,31 @@ public class IncomeAPIController {
     public ResponseEntity<List<IncomeExpenseListDto>> listIncomeByYearMonth(
         @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
         @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
-    ){
+    ) {
         return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeByYearMonth(date, id), HttpStatus.OK);
+    }
+
+
+    // 수입 연월별 평균
+    @Operation(summary = "수입 연월별 평균 조회", description = "등록된 수입 정보들 중 연월별 평균을 조회합니다.")
+    @GetMapping("/stats/avg")
+    public ResponseEntity<IncomeAvgDto> avgIncomeByYearMonth(
+        @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ){
+        return new ResponseEntity<IncomeAvgDto>(incomeService.avgIncomeByYearMonth(date, id), HttpStatus.OK);
+    }
+
+
+
+    // 수입 연도별 랭킹
+    @Operation(summary = "수입 연도별 조회시 월별 랭킹 조회", description = "등록된 수입 정보들을 연도별로 조회시 월별 랭킹을 조회합니다.")
+    @GetMapping("/rank")
+    public ResponseEntity<List<IncomeRankDto>> rankingByYear(
+        @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
+        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+    ) {
+        return new ResponseEntity<List<IncomeRankDto>>(incomeService.rankIncomeByYear(year, id), HttpStatus.OK);
     }
 
 }

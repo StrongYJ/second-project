@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
 import com.secondproject.monthlycoffee.dto.post.ExpenseImageDto;
 import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeStringDateDto;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.IncomeInfo;
@@ -158,4 +161,22 @@ public class IncomeService {
         return incomeExpenseList;
     }
 
+
+    // 수입 연월별 평균
+    public IncomeAvgDto avgIncomeByYearMonth(YearMonth date, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        LocalDate firstDate = date.atDay(1); 
+        LocalDate endDate = date.atEndOfMonth();  
+        IncomeAvgDto income = incomeRepo.avgByYearMonth(member, firstDate, endDate);
+        return income;
+    }
+
+
+    // 수입 연도별 랭킹
+    public List<IncomeRankDto> rankIncomeByYear(String year, Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
+        List<IncomeRankDto> income = incomeRepo.rankByYear(member, year);
+
+        return income;
+    }
 }

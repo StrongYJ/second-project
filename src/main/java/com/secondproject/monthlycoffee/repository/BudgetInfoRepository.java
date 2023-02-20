@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetRankDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetSumDto;
 import com.secondproject.monthlycoffee.entity.BudgetInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 
@@ -21,7 +23,13 @@ public interface BudgetInfoRepository extends JpaRepository<BudgetInfo, Long> {
     @Query(value = "SELECT e From BudgetInfo e WHERE e.yearMonth Like yearMonth", nativeQuery = true)
     public List<BudgetDto> statsBudgetByYearMonth(@Param("yearMonth") YearMonth yearMonth);
     
-    // @Query("select e from BudgetInfo e where e.member = :member and e.date between :start and :end order by e.date")
-    // List<BudgetInfo> findByYearMonth(@Param("member") MemberInfo member, @Param("start") LocalDate start, @Param("end") LocalDate end);
+    @Query("select e from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year order by e.yearMonth")
+    List<BudgetInfo> findByYear(@Param("member") MemberInfo member, @Param("year") String year);
+    
+    @Query("select SUBSTRING(cast(e.yearMonth as text), 1,4) as year, sum(e.amount) as sum from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year order by e.yearMonth")
+    BudgetSumDto sumByYear(@Param("member") MemberInfo member, @Param("year") String year);
+
+    @Query("select sum(e.amount)as sum, SUBSTRING(cast(e.yearMonth as text), 1,7) as yearMonth, rank() over(order by e.amount desc) as rank from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year group by yearMonth")
+    List<BudgetRankDto> rankByYear(@Param("member") MemberInfo member, @Param("year") String year);
 
 }
