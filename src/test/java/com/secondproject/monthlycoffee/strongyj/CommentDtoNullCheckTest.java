@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 
+import com.secondproject.monthlycoffee.entity.type.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,11 +20,6 @@ import com.secondproject.monthlycoffee.entity.CommentInfo;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.PostInfo;
-import com.secondproject.monthlycoffee.entity.type.CoffeeBean;
-import com.secondproject.monthlycoffee.entity.type.Gender;
-import com.secondproject.monthlycoffee.entity.type.LikeHate;
-import com.secondproject.monthlycoffee.entity.type.Mood;
-import com.secondproject.monthlycoffee.entity.type.Taste;
 import com.secondproject.monthlycoffee.repository.CommentInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
@@ -48,7 +44,7 @@ public class CommentDtoNullCheckTest {
 
     @BeforeEach
     void init() {
-        member = new MemberInfo("sfksdnafka", "test", LocalDate.of(1999, 1, 1), Gender.MALE);
+        member = new MemberInfo(AuthDomain.KAKAO, "sfksdnafka", "test", LocalDate.of(1999, 1, 1), Gender.MALE);
         expense = new ExpenseInfo("Latte", "StarBucks", 7000, null, false, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 1, LocalDate.now(), member);
         post = new PostInfo("맛있다", expense);
         

@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.secondproject.monthlycoffee.entity.type.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,11 +27,6 @@ import com.secondproject.monthlycoffee.dto.post.PostDetailDto;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.PostInfo;
-import com.secondproject.monthlycoffee.entity.type.CoffeeBean;
-import com.secondproject.monthlycoffee.entity.type.Gender;
-import com.secondproject.monthlycoffee.entity.type.LikeHate;
-import com.secondproject.monthlycoffee.entity.type.Mood;
-import com.secondproject.monthlycoffee.entity.type.Taste;
 import com.secondproject.monthlycoffee.repository.ExpenseImageInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
@@ -70,6 +66,7 @@ public class PostReadTest {
         
         for(int i = 0; i < 20; i++) {
             MemberInfo member = new MemberInfo(
+                    AuthDomain.KAKAO,
                 UUID.randomUUID().toString(), UUID.randomUUID().toString(), 
                 LocalDate.ofEpochDay(randomDay), genders[random.nextInt(genders.length)]
             );

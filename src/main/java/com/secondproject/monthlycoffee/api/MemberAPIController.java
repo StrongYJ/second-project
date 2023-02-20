@@ -1,11 +1,13 @@
 package com.secondproject.monthlycoffee.api;
 
+import com.secondproject.monthlycoffee.config.security.JwtProperties;
+import com.secondproject.monthlycoffee.config.security.JwtUtil;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.secondproject.monthlycoffee.dto.member.MemberDeleteDto;
 import com.secondproject.monthlycoffee.dto.member.MemberDto;
 import com.secondproject.monthlycoffee.dto.member.MemberEditDto;
-import com.secondproject.monthlycoffee.dto.member.MemberNewDto;
+import com.secondproject.monthlycoffee.dto.member.MemberLoginDto;
 import com.secondproject.monthlycoffee.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,15 +36,20 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "회원 관리", description = "회원 정보 CRUD API")
 public class MemberAPIController {
     private final MemberService memberService;
+    private final JwtUtil jwtUtil;
 
 
     // 회원 등록
-    @Operation(summary = "회원 등록", description = "회원을 등록합니다.")
+    @Operation(summary = "회원 로그인", description = "미가입 회원은 자동으로 회원가입됩니다.")
     @PostMapping("")
     public ResponseEntity<MemberDto> postMember(
-        @Parameter(description = "등록 할 회원 정보") @RequestBody MemberNewDto data
+        @Parameter(description = "로그인(등록)할 회원 정보") @RequestBody MemberLoginDto data
         ) {
-            return new ResponseEntity<>(memberService.newMember(data), HttpStatus.CREATED);
+        MemberDto memberDto = memberService.login(data);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(memberDto.id(), JwtProperties.ACCESS_EXPIRATION_TIME));
+        headers.add(JwtProperties.REFRESH_HEADER_NAME, jwtUtil.createRefresh(JwtProperties.REFRESH_EXPIRATION_TIME));
+        return new ResponseEntity<>(memberDto, headers, HttpStatus.CREATED);
     }
 
 
@@ -57,11 +64,11 @@ public class MemberAPIController {
 
 
     // 회원 상세 조회
-    @Operation(summary = "회원 상세 조회", description = "등록된 회원 정보들 중 특정 회원의 UID를 받아 조회합니다.")
-    @GetMapping("/{member-uid}")
+    @Operation(summary = "회원 상세 조회", description = "등록된 회원 정보들 중 특정 회원의 id를 받아 조회합니다.")
+    @GetMapping("/{member-id}")
     public ResponseEntity<MemberDto> getMemberDetail(
-        @Parameter(description = "회원 UID", example = "123@#!4SDFKC") @PathVariable("member-uid") String memberUid) {
-            return new ResponseEntity<>(memberService.memberDetail(memberUid), HttpStatus.OK);
+        @Parameter(description = "회원 식별 번호") @PathVariable("member-id") Long id) {
+            return new ResponseEntity<>(memberService.memberDetail(id), HttpStatus.OK);
     }
 
     

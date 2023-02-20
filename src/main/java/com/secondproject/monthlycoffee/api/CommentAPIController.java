@@ -1,5 +1,7 @@
 package com.secondproject.monthlycoffee.api;
 
+import com.secondproject.monthlycoffee.config.security.AuthMember;
+import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,11 +35,10 @@ public class CommentAPIController {
     @Operation(summary = "댓글 작성")
     @PostMapping("")
     public ResponseEntity<CommentDto> postCreateComment(
-        @Parameter(description = "회원 식별 번호")
-        @RequestParam("memberId") Long memberId,
-        @RequestBody @Validated CommentCreateDto comment
+            @RequestBody @Validated CommentCreateDto comment,
+            @AuthMember AuthDto authDto
     ) {
-        CommentDto newComment = commentService.create(comment, memberId);
+        CommentDto newComment = commentService.create(comment, authDto.id());
         return new ResponseEntity<CommentDto>(newComment, HttpStatus.CREATED);
     }
 
@@ -47,11 +48,10 @@ public class CommentAPIController {
     public ResponseEntity<CommentDto> putModifyComment(
         @Parameter(description = "수정할 댓글 식별 번호")
         @PathVariable("comment-id") Long commentId,
-        @Parameter(description = "회원 식별 번호")
-        @RequestParam("memberId") Long memberId,
-        @RequestBody @Validated CommentModifyDto comment
+        @RequestBody @Validated CommentModifyDto comment,
+        @AuthMember AuthDto authDto
     ) {
-        CommentDto modifiedComment = commentService.modify(commentId, comment, memberId);
+        CommentDto modifiedComment = commentService.modify(commentId, comment, authDto.id());
         return new ResponseEntity<>(modifiedComment, HttpStatus.OK);
     }
     
@@ -60,10 +60,9 @@ public class CommentAPIController {
     public ResponseEntity<CommentDeleteDto> deleteComment(
         @Parameter(description = "삭제할 댓글 식별 번호")
         @PathVariable("comment-id") Long commentId,
-        @Parameter(description = "회원 식별 번호")
-        @RequestParam("memberId") Long memberId
+        @AuthMember AuthDto authDto
     ) {
-        CommentDeleteDto deletedComment = commentService.delete(commentId, memberId);
+        CommentDeleteDto deletedComment = commentService.delete(commentId, authDto.id());
         return new ResponseEntity<>(deletedComment, HttpStatus.OK);
     }
 }

@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.secondproject.monthlycoffee.entity.type.AuthDomain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ public class YearMonthTest {
     
     @BeforeAll
     void 더미데이터만들기() {
-        MemberInfo member = new MemberInfo("test", "testnick", LocalDate.of(1990, 1, 1), Gender.FEMALE);
+        MemberInfo member = new MemberInfo(AuthDomain.KAKAO, "test", "testnick", LocalDate.of(1990, 1, 1), Gender.FEMALE);
         memberRepo.save(member);
         memberId = member.getId();
 

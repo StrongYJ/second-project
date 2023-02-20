@@ -1,5 +1,7 @@
 package com.secondproject.monthlycoffee.api;
 
+import com.secondproject.monthlycoffee.config.security.AuthMember;
+import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,11 +29,10 @@ public class PostLikesAPIController {
     @Operation(summary = "게시글을 좋아요합니다.", description = "이미 좋아요한 상태라면 좋아요가 취소됩니다.")
     @PostMapping("/{post-id}")
     public ResponseEntity<PostLikeDto> postLikePost(
-        @Parameter(description = "좋아요(취소)할 게시물 식별번호")
-        @PathVariable("post-id") Long postId,
-        @Parameter(description = "로그인한 회원 식별 번호")
-        @RequestParam("memberId") Long memberId
+            @Parameter(description = "좋아요(취소)할 게시물 식별번호")
+            @PathVariable("post-id") Long postId,
+            @AuthMember AuthDto authDto
     ) {
-        return new ResponseEntity<>(likePostService.likePost(postId, memberId), HttpStatus.OK);
+        return new ResponseEntity<>(likePostService.likePost(postId, authDto.id()), HttpStatus.OK);
     }
 }

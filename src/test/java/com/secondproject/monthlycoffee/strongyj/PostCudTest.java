@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.secondproject.monthlycoffee.entity.type.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,6 @@ import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.LovePostInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.PostInfo;
-import com.secondproject.monthlycoffee.entity.type.CoffeeBean;
-import com.secondproject.monthlycoffee.entity.type.Gender;
-import com.secondproject.monthlycoffee.entity.type.LikeHate;
-import com.secondproject.monthlycoffee.entity.type.Mood;
-import com.secondproject.monthlycoffee.entity.type.Taste;
 import com.secondproject.monthlycoffee.repository.CommentInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.LovePostInfoRepository;
@@ -68,11 +64,11 @@ public class PostCudTest {
     @BeforeEach
     void createDummyMembers() {
         for(int i = 0; i < 20; i++) {
-            MemberInfo newMember = new MemberInfo(UUID.randomUUID().toString(), "test" + (i + 1), LocalDate.now(), Gender.NONE);
+            MemberInfo newMember = new MemberInfo(AuthDomain.KAKAO, UUID.randomUUID().toString(), "test" + (i + 1), LocalDate.now(), Gender.NONE);
             members.add(newMember);
             memberRepo.save(newMember);
         }
-        member = new MemberInfo("test", "test", LocalDate.now(), Gender.FEMALE);
+        member = new MemberInfo(AuthDomain.KAKAO, "test", "test", LocalDate.now(), Gender.FEMALE);
         memberRepo.save(member);
         expense = new ExpenseInfo("라떼", "스타벅스", 6000, null, false, Taste.SWEET, Mood.WORK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member);
         expenseRepo.save(expense);

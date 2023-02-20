@@ -1,5 +1,7 @@
 package com.secondproject.monthlycoffee.api;
 
+import com.secondproject.monthlycoffee.config.security.AuthMember;
+import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,12 +57,10 @@ public class PostAPIController {
     @Operation(summary = "게시글 등록")
     @PostMapping("")
     public ResponseEntity<PostDetailDto> postCreatePost(
-        @RequestBody @Validated PostCreateDto createPost,
-        @Parameter(description = "회원 식별 번호")
-        @RequestParam("memberId") 
-        Long memberId
-    ) {
-        PostDetailDto createdPost = postService.create(createPost, memberId);
+            @RequestBody @Validated PostCreateDto createPost,
+            @AuthMember AuthDto authDto
+            ) {
+        PostDetailDto createdPost = postService.create(createPost, authDto.id());
         return new ResponseEntity<PostDetailDto>(createdPost, HttpStatus.CREATED);
     }
 
@@ -69,11 +69,10 @@ public class PostAPIController {
     public ResponseEntity<PostDetailDto> putModifyPost(
         @Parameter(description = "게시글 식별 번호")
         @PathVariable("post-id") Long id,
-        @Parameter(description = "게시글을 작성한 회원 식별 번호")
-        @RequestParam("memberId") Long memberId,
-        @RequestBody @Validated PostModifyDto modifyPost
+        @RequestBody @Validated PostModifyDto modifyPost,
+        @AuthMember AuthDto authDto
     ) {
-        PostDetailDto modifiedPost = postService.modify(id, memberId, modifyPost);
+        PostDetailDto modifiedPost = postService.modify(id, authDto.id(), modifyPost);
         return new ResponseEntity<>(modifiedPost, HttpStatus.OK);
     }
 
@@ -82,10 +81,9 @@ public class PostAPIController {
     public ResponseEntity<PostDeleteDto> deletePost(
         @Parameter(description = "게시글 식별 번호")
         @PathVariable("post-id") Long id,
-        @Parameter(description = "게시글을 작성한 회원 식별 번호")
-        @RequestParam("memberId") Long memberId
+        @AuthMember AuthDto authDto
     ) {
-        PostDeleteDto deletedPost = postService.delete(id, memberId);
+        PostDeleteDto deletedPost = postService.delete(id, authDto.id());
         return new ResponseEntity<>(deletedPost, HttpStatus.OK);
     }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.secondproject.monthlycoffee.entity.type.AuthDomain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class MyTest {
 
     @BeforeEach
     void init() {
-        member = new MemberInfo("abcd12345efghi", "하이룽", LocalDate.of(1990, 05, 05), Gender.FEMALE);
+        member = new MemberInfo(AuthDomain.KAKAO, "abcd12345efghi", "하이룽", LocalDate.of(1990, 05, 05), Gender.FEMALE);
         budget = new BudgetInfo(500000, member);
         // log.info(member.toString());
 
