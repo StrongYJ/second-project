@@ -1,6 +1,5 @@
 package com.secondproject.monthlycoffee.entity;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
 
 import jakarta.persistence.Column;

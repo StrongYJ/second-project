@@ -1,7 +1,5 @@
 package com.secondproject.monthlycoffee.dto.budget;
 
-import java.time.YearMonth;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -12,5 +10,5 @@ public class BudgetListDto {
     @Schema (description = "예산 설정 금액")
     Integer amount;
     @Schema (description = "예산 설정 월")
-    YearMonth date;
+    String date;
 }
