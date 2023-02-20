@@ -49,7 +49,7 @@ import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 public class PostCudTest {
     
