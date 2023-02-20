@@ -10,6 +10,11 @@ spring:
       max-file-size: 100MB
       max-request-size: 110MB
 
+  jackson:
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_ENUMS: true
+
+
 file:
   dir: /second/images
 
