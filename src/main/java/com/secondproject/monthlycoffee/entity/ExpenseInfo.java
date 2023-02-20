@@ -28,10 +28,10 @@ public class ExpenseInfo implements Serializable {
     @Column(name = "ei_id")
     private Long id;
     
-    @Column(name = "ei_category")
+    @Column(name = "ei_category", nullable = false)
     private String category;
 
-    @Column(name = "ei_brand")
+    @Column(name = "ei_brand", nullable = false)
     private String brand;
 
     @Column(name = "ei_price", nullable = false)
@@ -40,7 +40,7 @@ public class ExpenseInfo implements Serializable {
     @Column(name = "ei_memo")
     private String memo;
 
-    @Column(name = "ei_tumbler", nullable = false)
+    @Column(name = "ei_tumbler")
     private Boolean tumbler;
 
     @Column(name = "ei_taste")
@@ -59,7 +59,7 @@ public class ExpenseInfo implements Serializable {
     @Enumerated(EnumType.STRING)
     private LikeHate likeHate;
 
-    @Column(name = "ei_payment", nullable = false)
+    @Column(name = "ei_payment")
     private Integer payment;
 
     @Column(name = "ei_date", nullable = false)

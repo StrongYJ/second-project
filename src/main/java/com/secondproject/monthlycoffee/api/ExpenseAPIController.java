@@ -79,9 +79,15 @@ public class ExpenseAPIController {
         return new ResponseEntity<>(eService.getCategory(date, keyword, memberId), HttpStatus.OK);
     }
 
-    @Operation(summary = "카테고리 조회", description = "회원의 브랜드를 검색합니다.")
+    @Operation(summary = "브랜드 조회", description = "회원의 브랜드를 검색합니다.")
     @GetMapping("/brand/{member-id}")
     public ResponseEntity<List<ExpenseDetailDto>> getBrand(@Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId, @Parameter(description = "조회연월", example = "2302") @RequestParam Integer date, @Parameter(description = "브랜드", example = "스타벅스") String keyword) {
         return new ResponseEntity<>(eService.getBrand(date, keyword, memberId), HttpStatus.OK);
     }
+
+//    @Operation(summary = "사용자의 취향 조회", description = "좋아요를 누른 내용을 토대로 회원의 취향을 추정합니다.")
+//    @GetMapping("/like/{member-id}")
+//    public ResponseEntity<MessageExpenseDto> getBrand(@Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId) {
+//        return new ResponseEntity<>(eService.LikeStyle(memberId), HttpStatus.OK);
+//    }
 }

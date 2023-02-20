@@ -9,6 +9,7 @@ import com.secondproject.monthlycoffee.repository.ExpenseImageInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Max;
 import jdk.jfr.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -132,6 +133,7 @@ public class ExpenseService {
         return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
     }
 
+
     public MessageExpenseDto deleteImage(Long id) {
         ExpenseImageInfo image = imageRepo.findById(id).orElseThrow();
         imageRepo.delete(image);
@@ -149,6 +151,9 @@ public class ExpenseService {
         List<ExpenseInfo> entity = eRepo.searchTotalExpense(startDate, endDate, memberId).stream().toList();
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         String nickname = member.getNickname();
+        if(nickname == null) {
+            nickname = "회원";
+        }
         Integer totalPrice = 0;
         for (ExpenseInfo expenseInfo : entity) {
             totalPrice += expenseInfo.getPrice();
@@ -165,11 +170,15 @@ public class ExpenseService {
         CoffeeBean[] bean = {CoffeeBean.valueOf("BRAZIL"), CoffeeBean.valueOf("GUATEMALA"), CoffeeBean.valueOf("COLOMBIA"), CoffeeBean.valueOf("MEXICO"), CoffeeBean.valueOf("INDONESIA")};
         LikeHate[] hate = {LikeHate.valueOf("LIKE"), LikeHate.valueOf("HATE"), LikeHate.valueOf("SOSO")};
         for(int i=0; i<size; i++) {
-            int random1 = (int) ((Math.random())*10%2);
-            int random2 = (int) ((Math.random())*10%3);
-            int random3 = (int) ((Math.random())*10%4);
-            int random4 = (int) ((Math.random())*10%5);
-            int randomM = (int) ((Math.random())*100%12)+1;
+            int randomTumbler = (int) ((Math.random())*10000%2);
+            int randomPayment = (int) ((Math.random())*10000%2);
+            int randomMood = (int) ((Math.random())*10000%3);
+            int randomHate = (int) ((Math.random())*10000%3);
+            int randomTaste = (int) ((Math.random())*10000%4);
+            int randomCategory = (int) ((Math.random())*10000%5);
+            int randomBrand = (int) ((Math.random())*10000%5);
+            int randomBean = (int) ((Math.random())*10000%5);
+            int randomM = (int) ((Math.random())*10000%12)+1;
             int randomY = 0;
             int price = (int) (Math.round((Math.random()*10000)/100)*100);
             if(price < 1000) {
@@ -178,11 +187,11 @@ public class ExpenseService {
             try {
                 Thread.sleep(0);
                 if (randomM == 2) {
-                    randomY = (int) ((Math.random()) * 100 % 28)+1;
+                    randomY = (int) ((Math.random())*10000%28)+1;
                 } else if (randomM == 4 || randomM == 6 || randomM == 9 || randomM == 11) {
-                    randomY = (int) ((Math.random()) * 100 % 30)+1;
+                    randomY = (int) ((Math.random())*10000%30)+1;
                 } else {
-                    randomY = (int) ((Math.random()) * 100 % 31)+1;
+                    randomY = (int) ((Math.random())*10000%31)+1;
                 }
             }
             catch (InterruptedException e) {
@@ -191,21 +200,21 @@ public class ExpenseService {
                 LocalDate date = LocalDate.of(2023, randomM, randomY);
 
             ExpenseInfo entity1 = new ExpenseInfo(
-                    category[random4],
-                    brand[random4],
+                    category[randomCategory],
+                    brand[randomBrand],
                     price,
                     "메모",
-                    tumbler[random1],
-                    taste[random3],
-                    mood[random2],
-                    bean[random4],
-                    hate[random2],
-                    random1,
+                    tumbler[randomTumbler],
+                    taste[randomTaste],
+                    mood[randomMood],
+                    bean[randomBean],
+                    hate[randomHate],
+                    randomPayment,
                     date,
                     memberRepo.findById(userNo).orElseThrow());
             eRepo.save(entity1);
         }
-        return new MessageExpenseDto(1L, +size+"개의 더미데이터가 등록되었습니다");
+        return new MessageExpenseDto(userNo, +size+"개의 더미데이터가 등록되었습니다");
     }
 
     public List<ExpenseDetailDto> getCategory(Integer date, String keyword, Long memberId) {
@@ -216,4 +225,29 @@ public class ExpenseService {
         return eRepo.searchBrand(date, keyword, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
+    public MessageExpenseDto LikeStyle(Long memberId) {
+        List<ExpenseInfo> entity = eRepo.findByMember(memberRepo.findById(memberId).orElseThrow()).stream().toList();
+        int countSweet = 0; int countSavory = 0; int countBitter = 0; int countSour = 0; String likeTaste = "";
+        for (int i=0; i<entity.size(); i++) {
+            if (entity.get(i).getLikeHate().equals(LikeHate.valueOf("LIKE"))) {
+                if(entity.get(i).getTaste().equals(Taste.SWEET)) {
+                    countSweet++;
+                }
+                else if(entity.get(i).getTaste().equals(Taste.SAVORY)) {
+                    countSavory++;
+                }
+                else if(entity.get(i).getTaste().equals(Taste.BITTER)) {
+                    countBitter++;
+                }
+                else if(entity.get(i).getTaste().equals(Taste.SOUR)) {
+                    countSour++;
+                }
+            }
+        }
+        int rankTaste = Math.max(Math.max(Math.max(countSweet, countSavory), countBitter), countSour);
+        if (rankTaste == countSweet) {
+            likeTaste = "단맛";
+        }
+        return new MessageExpenseDto(memberId, "좋아하실걸요");
+    }
 }

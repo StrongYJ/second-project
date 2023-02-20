@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import org.springframework.data.jpa.repository.JpaRepository;
