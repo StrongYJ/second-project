@@ -23,6 +23,7 @@ import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
 import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
@@ -40,7 +41,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/incomes")
 @RequiredArgsConstructor
-@Tag(name = "수입 관리", description = "수입 정보 CRUD API")
+@Tag(name = "수입 API", description = "수입 정보 CRUD API")
 public class IncomeAPIController {
     private final IncomeService incomeService;
 
@@ -143,5 +144,17 @@ public class IncomeAPIController {
     ) {
         return new ResponseEntity<List<IncomeRankDto>>(incomeService.rankIncomeByYear(year, authDto.id()), HttpStatus.OK);
     }
+
+
+    // 수입 키워드 검색
+    // @Operation(summary = "수입 키워드 검색 조회", description = "등록된 수입 정보들을 키워드로 검색 후 목록을 조회합니다.")
+    // @GetMapping("/search")
+    // public ResponseEntity<List<IncomeListDetailDto>> searchByKeyword(
+    //     @Parameter(description = "검색하려는 키워드", example = "용돈") @RequestParam String keyword,
+    //     @AuthMember AuthDto authDto
+    // ) {
+    //     return new ResponseEntity<List<IncomeListDetailDto>>(incomeService.searchIncomeByKeyword(keyword, authDto.id()), HttpStatus.OK);
+    // }
+
 
 }

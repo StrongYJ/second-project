@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/budgets")
 @RequiredArgsConstructor
-@Tag(name = "예산 관리", description = "예산 정보 CRUD API")
+@Tag(name = "예산 API", description = "예산 정보 CRUD API")
 public class BudgetAPIController {
     private final BudgetService budgetService;
 

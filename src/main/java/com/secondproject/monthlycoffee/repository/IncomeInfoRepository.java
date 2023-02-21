@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
 import com.secondproject.monthlycoffee.entity.IncomeInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 
@@ -30,5 +31,8 @@ public interface IncomeInfoRepository extends JpaRepository<IncomeInfo, Long> {
 
     @Query("select sum(i.amount)as sum, SUBSTRING(cast(i.date as text), 1,7) as yearMonth, rank() over(order by i.amount desc) as rank from IncomeInfo i where i.member = :member and SUBSTRING(cast(i.date as text), 1,4) = :year group by yearMonth")
     List<IncomeRankDto> rankByYear(@Param("member") MemberInfo member, @Param("year") String year);
+
+    // @Query("select i, SUBSTRING(cast(i.date as text), 1,7) as yearMonth from IncomeInfo i where i.member = :member and  i.note like '%:keyword%'")
+    // List<IncomeListDetailDto> searchByNote(@Param("keyword") String keyword, @Param("member") MemberInfo member);
 
 }
