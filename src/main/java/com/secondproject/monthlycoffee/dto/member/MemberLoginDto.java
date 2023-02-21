@@ -25,6 +25,9 @@ public record MemberLoginDto(
                 entity.getNickname()
             );
     }
+    public MemberLoginDto(AuthDomain authDomain, String uid) {
+        this(authDomain, uid, null);
+    }
 
     public MemberInfo toEntity() {
         return MemberInfo.builder()

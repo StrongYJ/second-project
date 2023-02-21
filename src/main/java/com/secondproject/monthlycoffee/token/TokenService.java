@@ -6,6 +6,7 @@ import com.secondproject.monthlycoffee.dto.member.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.NoSuchElementException;
 
@@ -25,6 +26,9 @@ public class TokenService {
     }
 
     public void logout(final String access, final String refresh) {
+        if(!StringUtils.hasText(refresh))
+            throw new IllegalArgumentException("리프레쉬토큰이 필요합니다.");
+
         String resolvedAccessToken = jwtUtil.resolve(access);
         long accessExpiration = jwtUtil.getAccessExpiration(resolvedAccessToken);
         accessTokenBlackListRepo.save(new AccessTokenBlackList(resolvedAccessToken, accessExpiration));

@@ -1,4 +1,4 @@
-package com.secondproject.monthlycoffee.strongyj;
+package com.secondproject.monthlycoffee.strongyj.security;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;

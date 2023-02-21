@@ -1,4 +1,4 @@
-package com.secondproject.monthlycoffee.strongyj;
+package com.secondproject.monthlycoffee.strongyj.token;
 
 import java.util.UUID;
 

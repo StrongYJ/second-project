@@ -1,4 +1,4 @@
-package com.secondproject.monthlycoffee.strongyj;
+package com.secondproject.monthlycoffee.strongyj.security;
 
 import java.time.Instant;
 import java.util.concurrent.ThreadLocalRandom;

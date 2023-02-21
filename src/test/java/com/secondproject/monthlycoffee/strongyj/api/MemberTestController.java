@@ -25,12 +25,11 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
-public class MemberApiControllerTest {
+public class MemberTestController {
 
     @LocalServerPort
     private int port;
@@ -52,10 +51,10 @@ public class MemberApiControllerTest {
                 .contentType(ContentType.JSON)
                 .body(memberLoginDto)
                 .when()
-                .post("/api/member")
+                    .post("/api/member")
                 .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract();
+                    .statusCode(HttpStatus.CREATED.value())
+                .   extract();
         Assertions.assertThat(response.header(HttpHeaders.AUTHORIZATION)).isNotBlank();
         Assertions.assertThat(response.header(JwtProperties.REFRESH_HEADER_NAME)).isNotBlank();
         MemberDto newMember = response.body().as(MemberDto.class);

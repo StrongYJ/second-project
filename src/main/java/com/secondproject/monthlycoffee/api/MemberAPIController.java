@@ -3,7 +3,9 @@ package com.secondproject.monthlycoffee.api;
 import com.secondproject.monthlycoffee.config.security.JwtProperties;
 import com.secondproject.monthlycoffee.config.security.JwtUtil;
 import com.secondproject.monthlycoffee.token.TokenDto;
+import com.secondproject.monthlycoffee.token.TokenResponseDto;
 import com.secondproject.monthlycoffee.token.TokenService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +58,13 @@ public class MemberAPIController {
         headers.add(JwtProperties.REFRESH_HEADER_NAME, tokenDto.refresh());
 
         return new ResponseEntity<>(memberDto, headers, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "회원 로그아웃", description = "토큰을 무효화합니다. 리프레쉬토큰도 있어야합니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<TokenResponseDto> postMember(HttpServletRequest request) {
+        tokenService.logout(request.getHeader(HttpHeaders.AUTHORIZATION), request.getHeader(JwtProperties.REFRESH_HEADER_NAME));
+        return new ResponseEntity<>(new TokenResponseDto("로그아웃되었습니다.", true), HttpStatus.CREATED);
     }
 
 
