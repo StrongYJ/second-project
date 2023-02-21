@@ -167,7 +167,7 @@ public class ExpenseService {
         Boolean[] tumbler = {true, false};
         Taste[] taste = {Taste.valueOf("SWEET"), Taste.valueOf("SOUR"), Taste.valueOf("SAVORY"), Taste.valueOf("BITTER")};
         Mood[] mood = {Mood.valueOf("WORK"), Mood.valueOf("TALK"), Mood.valueOf("SELFIE")};
-        CoffeeBean[] bean = {CoffeeBean.valueOf("BRAZIL"), CoffeeBean.valueOf("GUATEMALA"), CoffeeBean.valueOf("COLOMBIA"), CoffeeBean.valueOf("MEXICO"), CoffeeBean.valueOf("INDONESIA")};
+        CoffeeBean[] bean = {CoffeeBean.valueOf("BRAZIL"), CoffeeBean.valueOf("GUATEMALA"), CoffeeBean.valueOf("COLOMBIA"), CoffeeBean.valueOf("MEXICO"), CoffeeBean.valueOf("INDONESIA"), CoffeeBean.VIETNAM};
         LikeHate[] hate = {LikeHate.valueOf("LIKE"), LikeHate.valueOf("HATE"), LikeHate.valueOf("SOSO")};
         for(int i=0; i<size; i++) {
             int randomTumbler = (int) ((Math.random())*10000%2);
@@ -177,7 +177,7 @@ public class ExpenseService {
             int randomTaste = (int) ((Math.random())*10000%4);
             int randomCategory = (int) ((Math.random())*10000%5);
             int randomBrand = (int) ((Math.random())*10000%5);
-            int randomBean = (int) ((Math.random())*10000%5);
+            int randomBean = (int) ((Math.random())*10000%6);
             int randomM = (int) ((Math.random())*10000%12)+1;
             int randomY = 0;
             int price = (int) (Math.round((Math.random()*10000)/100)*100);
@@ -225,29 +225,65 @@ public class ExpenseService {
         return eRepo.searchBrand(date, keyword, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
-    public MessageExpenseDto LikeStyle(Long memberId) {
+    public MessageExpenseDto likeStyle(Long memberId) {
         List<ExpenseInfo> entity = eRepo.findByMember(memberRepo.findById(memberId).orElseThrow()).stream().toList();
+        String nickname = memberRepo.findById(memberId).orElseThrow().getNickname();
+        if (entity.size() < 10) {
+            return new MessageExpenseDto(memberId, "지출 내역이 부족합니다. 조금 더 이용해주세요~");
+        }
+
+        int countWork = 0; int countTalk = 0; int countSelfie = 0; String likeMood = "";
+
+        int countBrazil = 0; int countGuatemala = 0; int countColombia = 0;
+        int countMexico = 0; int countIndonesia = 0; int countVietnam = 0; String likeBean = "";
+
         int countSweet = 0; int countSavory = 0; int countBitter = 0; int countSour = 0; String likeTaste = "";
+
         for (int i=0; i<entity.size(); i++) {
             if (entity.get(i).getLikeHate().equals(LikeHate.valueOf("LIKE"))) {
-                if(entity.get(i).getTaste().equals(Taste.SWEET)) {
-                    countSweet++;
+                {
+                    if (entity.get(i).getMood().equals(Mood.WORK)) countWork++;
+                    else if (entity.get(i).getMood().equals(Mood.TALK)) countTalk++;
+                    else if (entity.get(i).getMood().equals(Mood.SELFIE)) countSelfie++;
                 }
-                else if(entity.get(i).getTaste().equals(Taste.SAVORY)) {
-                    countSavory++;
+                {
+                    if (entity.get(i).getBean().equals(CoffeeBean.BRAZIL)) countBrazil++;
+                    else if (entity.get(i).getBean().equals(CoffeeBean.GUATEMALA)) countGuatemala++;
+                    else if (entity.get(i).getBean().equals(CoffeeBean.COLOMBIA)) countColombia++;
+                    else if (entity.get(i).getBean().equals(CoffeeBean.MEXICO)) countMexico++;
+                    else if (entity.get(i).getBean().equals(CoffeeBean.INDONESIA)) countIndonesia++;
+                    else if (entity.get(i).getBean().equals(CoffeeBean.VIETNAM)) countVietnam++;
                 }
-                else if(entity.get(i).getTaste().equals(Taste.BITTER)) {
-                    countBitter++;
-                }
-                else if(entity.get(i).getTaste().equals(Taste.SOUR)) {
-                    countSour++;
+                {
+                    if (entity.get(i).getTaste().equals(Taste.SWEET)) countSweet++;
+                    else if (entity.get(i).getTaste().equals(Taste.SAVORY)) countSavory++;
+                    else if (entity.get(i).getTaste().equals(Taste.BITTER)) countBitter++;
+                    else if (entity.get(i).getTaste().equals(Taste.SOUR)) countSour++;
                 }
             }
         }
+
+        int rankMood = Math.max(Math.max(countWork, countTalk), countSelfie);
+        if(rankMood == countWork) likeMood = "공부하기 좋은";
+        else if(rankMood == countTalk) likeMood = "수다떨기 좋은";
+        else likeMood = "사진찍기 좋은";
+
+        int rankBean = Math.max(Math.max(Math.max(Math.max(Math.max(countBrazil, countGuatemala), countColombia), countMexico), countIndonesia), countVietnam);
+        if(rankBean == countBrazil) likeBean = "브라질산";
+        else if(rankBean == countGuatemala) likeBean = "과테말라산";
+        else if(rankBean == countColombia) likeBean = "콜롬비아산";
+        else if(rankBean == countMexico) likeBean = "멕시코산";
+        else if(rankBean == countIndonesia) likeBean = "인도네시아산";
+        else likeBean = "베트남산";
+
         int rankTaste = Math.max(Math.max(Math.max(countSweet, countSavory), countBitter), countSour);
-        if (rankTaste == countSweet) {
-            likeTaste = "단맛";
-        }
-        return new MessageExpenseDto(memberId, "좋아하실걸요");
+        if(rankTaste == countSweet) likeTaste = "단맛이 나는";
+        else if(rankTaste == countSavory) likeTaste = "고소한맛이 나는";
+        else if(rankTaste == countBitter) likeTaste = "쓴맛이 나는";
+        else likeTaste = "신맛이 나는";
+
+        return new MessageExpenseDto(memberId, nickname+"님은 "+likeMood+" 분위기의 카페에서 "+likeBean+"의 "+likeTaste+" 커피를 좋아하세요.");
     }
+
+
 }
