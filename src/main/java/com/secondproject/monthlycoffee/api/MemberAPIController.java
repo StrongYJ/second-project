@@ -47,7 +47,11 @@ public class MemberAPIController {
 
 
     // 회원 등록
-    @Operation(summary = "회원 로그인", description = "미가입 회원은 자동으로 회원가입됩니다.")
+    @Operation(
+            summary = "회원 로그인",
+            description = "미가입 회원은 자동으로 회원가입됩니다.<br>액세스토큰 헤더이름: " + HttpHeaders.AUTHORIZATION +
+                    " 리프레시토큰 헤더이름: " + JwtProperties.REFRESH_HEADER_NAME
+    )
     @PostMapping("")
     public ResponseEntity<MemberDto> postMember(
         @Parameter(description = "로그인(등록)할 회원 정보") @RequestBody MemberLoginDto data
