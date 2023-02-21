@@ -29,7 +29,7 @@ public class JwtUtil {
     public String createAccess(final long memberId, final long expirationTime) {
         return JwtProperties.ACCESS_TOKEN_PREFIX + 
             JWT.create()
-                .withExpiresAt(Instant.ofEpochMilli(Instant.now().getEpochSecond() + expirationTime))
+                .withExpiresAt(Instant.ofEpochMilli(Instant.now().toEpochMilli() + expirationTime))
                 .withClaim("memberId", memberId)
                 .sign(Algorithm.HMAC256(accessKey));
     }

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if(accessTokenBlackListRepository.existsById(token)) {
                 response.setStatus(403);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 Map<String, Object> errorJson = new LinkedHashMap<>();
                 errorJson.put("status", HttpStatus.valueOf(403).toString());
                 errorJson.put("message", "This token is blacked");
