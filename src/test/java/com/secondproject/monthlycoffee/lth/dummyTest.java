@@ -32,7 +32,7 @@ public class dummyTest {
     @Test
     @Transactional
     void dummyData() {
-        MemberInfo dummyMember = new MemberInfo("test123", "test", LocalDate.now(), Gender.MALE);
+        MemberInfo dummyMember = new MemberInfo(AuthDomain.KAKAO, "test123", "test", LocalDate.now(), Gender.MALE);
         String[] category = {"아메리카노", "카페라떼", "바닐라라떼", "카라멜 마끼아또", "카푸치노"};
         String[] brand = {"스타벅스", "투썸플레이스", "빽다방", "이디야커피", "할리스커피"};
         Boolean[] tumbler = {true, false};

@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.service;
 
+import com.secondproject.monthlycoffee.token.RefreshTokenRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -8,11 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.secondproject.monthlycoffee.dto.member.MemberDeleteDto;
 import com.secondproject.monthlycoffee.dto.member.MemberDto;
 import com.secondproject.monthlycoffee.dto.member.MemberEditDto;
-import com.secondproject.monthlycoffee.dto.member.MemberNewDto;
+import com.secondproject.monthlycoffee.dto.member.MemberLoginDto;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +24,17 @@ public class MemberService {
     private final MemberInfoRepository memberRepo;
 
     // 회원 등록
-    public MemberDto newMember(MemberNewDto data) {
-        if(memberRepo.findByUid(data.uid()).isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+    public MemberDto login(MemberLoginDto data) {
+        Optional<MemberInfo> member = memberRepo.findByAuthDomainAndUid(data.authDomain(), data.uid());
+        MemberDto memberDto;
+        if(member.isPresent()) {
+            memberDto = new MemberDto(member.get());
+        } else {
+            MemberInfo newMember = data.toEntity();
+            memberRepo.save(newMember);
+            memberDto = new MemberDto(newMember);
         }
-        MemberInfo newMember = new MemberInfo(data.uid(), data.nickname(), data.birth(), data.gender());
-        memberRepo.save(newMember);
-        return new MemberDto(newMember);
+        return memberDto;
     }
 
     // 회원 전체 리스트 조회
@@ -38,8 +45,8 @@ public class MemberService {
     
     // 회원 상세 조회
     @Transactional(readOnly = true)
-    public MemberDto memberDetail(String id) {
-        MemberInfo member = memberRepo.findByUid(id).orElseThrow();
+    public MemberDto memberDetail(final Long id) {
+        MemberInfo member = memberRepo.findById(id).orElseThrow();
         return new MemberDto(member);
     }
 

@@ -2,6 +2,7 @@ package com.secondproject.monthlycoffee.strongyj;
 
 import java.time.LocalDate;
 
+import com.secondproject.monthlycoffee.entity.type.AuthDomain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,7 @@ public class JpaAuditiongTest {
     @Test
     @Rollback(false)
     void auditingTest() {
-        MemberInfo member = new MemberInfo("fwrekfnwk", "test", LocalDate.of(199, 1, 1), Gender.MALE);
+        MemberInfo member = new MemberInfo(AuthDomain.KAKAO, "fwrekfnwk", "test", LocalDate.of(199, 1, 1), Gender.MALE);
         BudgetInfo budgetInfo = new BudgetInfo(10000, member);
 
         memberRepo.save(member);
