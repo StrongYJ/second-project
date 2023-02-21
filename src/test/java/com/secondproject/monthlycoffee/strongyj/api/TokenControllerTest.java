@@ -49,7 +49,7 @@ public class TokenControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new MemberLoginDto(AuthDomain.KAKAO, UUID.randomUUID().toString()))
                 .when()
-                    .post("/api/member")
+                    .post("/api/members")
                 .then()
                     .extract();
         String access = loginResponse.header(HttpHeaders.AUTHORIZATION);
@@ -72,7 +72,7 @@ public class TokenControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new MemberLoginDto(AuthDomain.KAKAO, UUID.randomUUID().toString()))
                 .when()
-                .post("/api/member")
+                .post("/api/members")
                 .then()
                 .extract();
         String access = loginResponse.header(HttpHeaders.AUTHORIZATION);
@@ -82,7 +82,7 @@ public class TokenControllerTest {
         given()
                 .header(HttpHeaders.AUTHORIZATION, access).header(JwtProperties.REFRESH_HEADER_NAME, refresh)
         .when()
-                .post("/api/member/logout")
+                .post("/api/members/logout")
         .then()
                 .assertThat().body("status", equalTo(true));
 

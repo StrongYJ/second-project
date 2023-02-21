@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
+import com.secondproject.monthlycoffee.config.security.JwtProperties;
+import com.secondproject.monthlycoffee.config.security.JwtUtil;
 import com.secondproject.monthlycoffee.entity.type.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,7 +49,7 @@ import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class PostCudTest {
     
@@ -56,18 +60,23 @@ public class PostCudTest {
     @Autowired private CommentInfoRepository commentRepo;
     @Autowired private LovePostInfoRepository LikeRepo;
     @Autowired private EntityManager em;
+    @Autowired private JwtUtil jwtUtil;
 
     private MemberInfo member;
     private List<MemberInfo> members = new ArrayList<>();
+    private MemberInfo randomMember;
     private ExpenseInfo expense;
 
     @BeforeEach
     void createDummyMembers() {
+        List<MemberInfo> randMembers = new ArrayList<>();
         for(int i = 0; i < 20; i++) {
             MemberInfo newMember = new MemberInfo(AuthDomain.KAKAO, UUID.randomUUID().toString(), "test" + (i + 1), LocalDate.now(), Gender.NONE);
-            members.add(newMember);
+            randMembers.add(newMember);
             memberRepo.save(newMember);
         }
+        members = randMembers;
+        randomMember = randMembers.get(ThreadLocalRandom.current().nextInt(randMembers.size()));
         member = new MemberInfo(AuthDomain.KAKAO, "test", "test", LocalDate.now(), Gender.FEMALE);
         memberRepo.save(member);
         expense = new ExpenseInfo("라떼", "스타벅스", 6000, null, false, Taste.SWEET, Mood.WORK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member);
@@ -80,9 +89,10 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         mockMvc.perform(
-            post("/api/posts").param("memberId", member.getId().toString())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(createPost)
+            post("/api/posts")
+                .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createPost)
         ).andExpect(status().isCreated())
         .andDo(print());
     }
@@ -92,9 +102,10 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         mockMvc.perform(
-            post("/api/posts").param("memberId", members.get(5).getId().toString())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(createPost)
+            post("/api/posts")
+                    .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(randomMember.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createPost)
         ).andExpect(status().isNotFound())
         .andExpect(content().string(containsString("NoSuchElementException")))
         .andDo(print());
@@ -105,14 +116,16 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         mockMvc.perform(
-                post("/api/posts").param("memberId", member.getId().toString())
+                post("/api/posts")
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createPost))
                 .andExpect(status().isCreated())
                 .andDo(print());
 
         mockMvc.perform(
-                post("/api/posts").param("memberId", member.getId().toString())
+                post("/api/posts")
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createPost))
                 .andExpect(status().isBadRequest())
@@ -125,16 +138,18 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         MvcResult mockReturn = mockMvc.perform(
-            post("/api/posts").param("memberId", member.getId().toString())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(createPost)
+            post("/api/posts")
+                    .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createPost)
         ).andExpect(status().isCreated())
         .andReturn();
 
         Map<String, String> createdPost = objectMapper.readValue(mockReturn.getResponse().getContentAsString(), Map.class);
         long postId = Long.parseLong(String.valueOf(createdPost.get("id")));
         mockMvc.perform(
-                put("/api/posts/" + postId).param("memberId", member.getId().toString())
+                put("/api/posts/" + postId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new PostModifyDto("맛없다.")))
                 ).andExpect(status().isOk());
@@ -148,16 +163,18 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         MvcResult mockReturn = mockMvc.perform(
-            post("/api/posts").param("memberId", member.getId().toString())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(createPost)
+            post("/api/posts")
+                    .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createPost)
         ).andExpect(status().isCreated())
         .andReturn();
 
         Map<String, String> createdPost = objectMapper.readValue(mockReturn.getResponse().getContentAsString(), Map.class);
         long postId = Long.parseLong(String.valueOf(createdPost.get("id")));
         mockMvc.perform(
-                put("/api/posts/" + postId).param("memberId", members.get(3).getId().toString())
+                put("/api/posts/" + postId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(randomMember.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new PostModifyDto("맛없다.")))
                 ).andExpect(status().isBadRequest())
@@ -170,7 +187,8 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         MvcResult mockReturn = mockMvc.perform(
-                post("/api/posts").param("memberId", member.getId().toString())
+                post("/api/posts")
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createPost))
                 .andExpect(status().isCreated())
@@ -179,9 +197,10 @@ public class PostCudTest {
         Map<String, String> createdPost = objectMapper.readValue(mockReturn.getResponse().getContentAsString(), Map.class);
         long postId = Long.parseLong(String.valueOf(createdPost.get("id")));
 
-        mockMvc.perform(delete("/api/posts/" + postId).param("memberId", member.getId().toString()))
-            .andExpect(status().isOk())
-            .andDo(print());
+        mockMvc.perform(delete("/api/posts/" + postId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME)))
+                .andExpect(status().isOk())
+                .andDo(print());
         
         Assertions.assertFalse(postRepo.existsById(postId));
     }
@@ -193,7 +212,8 @@ public class PostCudTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String createPost = objectMapper.writeValueAsString(new PostCreateDto(expense.getId(), "맛있다."));
         MvcResult mockReturn = mockMvc.perform(
-                post("/api/posts").param("memberId", member.getId().toString())
+                post("/api/posts")
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createPost))
                 .andExpect(status().isCreated())
@@ -213,7 +233,8 @@ public class PostCudTest {
         long LovePostInfoNumber =  em.createQuery("select count(l) from LovePostInfo l where l.post = :post", Long.class).setParameter("post", post).getSingleResult();
 
 
-        mockMvc.perform(delete("/api/posts/" + postId).param("memberId", member.getId().toString()))
+        mockMvc.perform(delete("/api/posts/" + postId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtUtil.createAccess(member.getId(), JwtProperties.ACCESS_EXPIRATION_TIME)))
             .andExpect(status().isOk())
             .andDo(print());
 

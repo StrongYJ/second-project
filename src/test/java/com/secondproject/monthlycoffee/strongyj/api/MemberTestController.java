@@ -51,7 +51,7 @@ public class MemberTestController {
                 .contentType(ContentType.JSON)
                 .body(memberLoginDto)
                 .when()
-                    .post("/api/member")
+                    .post("/api/members")
                 .then().log().all()
                     .statusCode(HttpStatus.CREATED.value())
                 .   extract();
@@ -70,7 +70,7 @@ public class MemberTestController {
                 .contentType(ContentType.JSON)
                 .body(memberLoginDto)
                 .when()
-                .post("/api/member")
+                .post("/api/members")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
@@ -90,7 +90,7 @@ public class MemberTestController {
                 .contentType(ContentType.JSON)
                 .body(memberLoginDto)
                 .when()
-                .post("/api/member")
+                .post("/api/members")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
@@ -112,7 +112,7 @@ public class MemberTestController {
                 .contentType(ContentType.JSON)
                 .body(memberLoginDto)
                 .when()
-                .post("/api/member")
+                .post("/api/members")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
