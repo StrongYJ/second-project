@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.secondproject.monthlycoffee.config.security.AuthMember;
+import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetListDto;
@@ -45,9 +47,9 @@ public class BudgetAPIController {
     @GetMapping("")
     @PageableAsQueryParam
     public ResponseEntity<Page<BudgetDto>> getBudgetList(
-        @Parameter(description = "회원 식별 번호", example = "25") @RequestParam("memberId") Long memberId, 
+        @AuthMember AuthDto authDto, 
         @Parameter(hidden = true) @PageableDefault(size=10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
-            return new ResponseEntity<>(budgetService.budgetList(memberId, pageable), HttpStatus.OK);
+            return new ResponseEntity<>(budgetService.budgetList(authDto.id(), pageable), HttpStatus.OK);
     }
         
         
@@ -55,8 +57,9 @@ public class BudgetAPIController {
     @Operation(summary = "예산 상세 조회", description = "등록된 예산 정보들 중 특정 예산을 조회합니다.")
     @GetMapping("/{budget-id}")
     public ResponseEntity<BudgetDto> getBudgetDetail(
+        @AuthMember AuthDto authDto,
         @Parameter(description = "예산 식별 번호", example = "1") @PathVariable("budget-id") Long budgetId) {
-            return new ResponseEntity<>(budgetService.budgetDetail(budgetId), HttpStatus.OK);
+            return new ResponseEntity<>(budgetService.budgetDetail(authDto.id(),budgetId), HttpStatus.OK);
     }
     
     
@@ -66,9 +69,9 @@ public class BudgetAPIController {
     @PostMapping("")
     public ResponseEntity<BudgetDto> postBudget(
         @Parameter(description = "등록 할 예산 정보") @RequestBody BudgetNewDto data,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam("memberId") Long memberId
+        @AuthMember AuthDto authDto
         ) {
-            return new ResponseEntity<>(budgetService.newBudget(data, memberId), HttpStatus.CREATED);
+            return new ResponseEntity<>(budgetService.newBudget(data, authDto.id()), HttpStatus.CREATED);
     }
     
 
@@ -78,9 +81,10 @@ public class BudgetAPIController {
     @PatchMapping("/{budget-id}")
     public ResponseEntity<BudgetDto> patchBudget(
         @Parameter(description = "예산 수정 내용") @RequestBody BudgetEditDto edit,
-        @Parameter(description = "예산 식별 번호", example = "1") @PathVariable("budget-id") Long budgetId
+        @Parameter(description = "예산 식별 번호", example = "1") @PathVariable("budget-id") Long budgetId,
+        @AuthMember AuthDto authDto
         ) {
-            return new ResponseEntity<>(budgetService.modifyBudget(edit, budgetId), HttpStatus.OK);
+            return new ResponseEntity<>(budgetService.modifyBudget(edit, budgetId, authDto.id()), HttpStatus.OK);
     }
 
 
@@ -90,9 +94,9 @@ public class BudgetAPIController {
     @GetMapping("/list")
     public ResponseEntity<List<BudgetListDto>> listBudgetByYear(
         @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ){
-        return new ResponseEntity<List<BudgetListDto>>(budgetService.searchBudgetByYear(year, id), HttpStatus.OK);
+        return new ResponseEntity<List<BudgetListDto>>(budgetService.searchBudgetByYear(year, authDto.id()), HttpStatus.OK);
     }
 
 
@@ -101,9 +105,9 @@ public class BudgetAPIController {
     @GetMapping("/sum")
     public ResponseEntity<BudgetSumDto> sumBudgetByYear(
         @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ){
-        return new ResponseEntity<BudgetSumDto>(budgetService.sumBudgetByYear(year, id), HttpStatus.OK);
+        return new ResponseEntity<BudgetSumDto>(budgetService.sumBudgetByYear(year, authDto.id()), HttpStatus.OK);
     }
 
 
@@ -112,9 +116,9 @@ public class BudgetAPIController {
     @GetMapping("/rank")
     public ResponseEntity<List<BudgetRankDto>> rankingByYear(
         @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ) {
-        return new ResponseEntity<List<BudgetRankDto>>(budgetService.rankBudgetByYear(year, id), HttpStatus.OK);
+        return new ResponseEntity<List<BudgetRankDto>>(budgetService.rankBudgetByYear(year, authDto.id()), HttpStatus.OK);
     }
 
 }
