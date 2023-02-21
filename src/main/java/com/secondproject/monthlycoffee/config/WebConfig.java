@@ -2,8 +2,10 @@ package com.secondproject.monthlycoffee.config;
 
 import java.util.List;
 
+import com.secondproject.monthlycoffee.config.security.JwtProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -19,6 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
+                .allowedHeaders("*")
+                .exposedHeaders(HttpHeaders.AUTHORIZATION, JwtProperties.REFRESH_HEADER_NAME)
                 .allowedOrigins("*")
                 .allowedMethods("*"); // 화이트리스트 설정
     }

@@ -55,8 +55,8 @@ class JwtReissueTest {
         .when()
             .post("/test")
         .then().log().all()
-        .statusCode(401)
-        .body("message", containsString("expired"));
+                .statusCode(401)
+                .assertThat().body("message", equalTo("The access token expired"));
     }
 
     @Test
