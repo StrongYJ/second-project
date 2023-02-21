@@ -34,9 +34,9 @@ public class BudgetService {
 
     // 예산 전체 리스트 조회
     @Transactional(readOnly = true)
-    public Page<BudgetDto> budgetList(Long id, Pageable pageable) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
-        if(member.getId()!=id) {
+    public Page<BudgetDto> budgetList(Long memberId, Pageable pageable) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        if(member.getId() != memberId) {
             throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
         }
         return budgetRepo.findByMember(member, pageable).map(BudgetDto::new);
@@ -45,19 +45,23 @@ public class BudgetService {
     
     // 예산 상세 조회
     @Transactional(readOnly = true)
-    public BudgetDto budgetDetail(Long id) {
-        BudgetInfo budget = budgetRepo.findById(id).orElseThrow();
+    public BudgetDto budgetDetail(Long memberId, Long budgetId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        if(member.getId() != memberId) {
+            throw new IllegalArgumentException("본인만 조회가 가능합니다."); 
+        }
+        BudgetInfo budget = budgetRepo.findById(budgetId).orElseThrow();
         return new BudgetDto(budget);
     }
     
 
     // 예산 등록
-    public BudgetDto newBudget(BudgetNewDto data, Long id) {
+    public BudgetDto newBudget(BudgetNewDto data, Long memberId) {
         if(budgetRepo.existsByYearMonth(YearMonth.now().toString())) {
             throw new IllegalArgumentException("해당 월에 이미 존재하는 예산 정보가 있습니다.");
         }
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
-        if(member.getId()!=id) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        if(member.getId() != memberId) {
             throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
         }
         if(data.amount() <= 0){
@@ -70,10 +74,10 @@ public class BudgetService {
     
 
     // 예산 수정
-    public BudgetDto modifyBudget(BudgetEditDto edit, Long id) {
-        BudgetInfo budget = budgetRepo.findById(id).orElseThrow();
+    public BudgetDto modifyBudget(BudgetEditDto edit, Long budgetId, Long memberId) {
+        BudgetInfo budget = budgetRepo.findById(budgetId).orElseThrow();
         MemberInfo member = memberRepo.findById(budget.getMember().getId()).orElseThrow();
-        if(member.getId()!=id) {
+        if(member.getId() != memberId) {
             throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
         }
         if(!(budget.getYearMonth().equals(YearMonth.now().toString()))){
@@ -88,8 +92,8 @@ public class BudgetService {
 
 
     // 예산 연도별 리스트 조회
-    public List<BudgetListDto> searchBudgetByYear(String year, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public List<BudgetListDto> searchBudgetByYear(String year, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         List<BudgetInfo> budgetInfos = budgetRepo.findByYear(member, year);
         List<BudgetListDto> budget = new ArrayList<BudgetListDto>();
         for(BudgetInfo b : budgetInfos) {
@@ -107,16 +111,16 @@ public class BudgetService {
 
 
     // 예산 연도별 합계 조회
-    public BudgetSumDto sumBudgetByYear(String year, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public BudgetSumDto sumBudgetByYear(String year, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         BudgetSumDto budget = budgetRepo.sumByYear(member, year);
         return budget;
     }
 
 
     // 예산 연도별 랭킹
-    public List<BudgetRankDto> rankBudgetByYear(String year, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public List<BudgetRankDto> rankBudgetByYear(String year, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         List<BudgetRankDto> income = budgetRepo.rankByYear(member, year);
         return income;
     }

@@ -2,7 +2,6 @@ package com.secondproject.monthlycoffee.api;
 
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
+import com.secondproject.monthlycoffee.config.security.AuthMember;
+import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
@@ -49,9 +50,9 @@ public class IncomeAPIController {
     @PostMapping("")
     public ResponseEntity<IncomeDto> postIncome(
         @Parameter(description = "등록 할 수입 정보") @RequestBody IncomeNewDto data,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam("memberId") Long memberId
+        @AuthMember AuthDto authDto
         ) {
-            return new ResponseEntity<>(incomeService.newIncome(data, memberId), HttpStatus.CREATED);
+            return new ResponseEntity<>(incomeService.newIncome(data, authDto.id()), HttpStatus.CREATED);
     }
 
 
@@ -60,9 +61,9 @@ public class IncomeAPIController {
     @GetMapping("")
     @PageableAsQueryParam
     public ResponseEntity<Page<IncomeDto>> getIncomeList(
-        @Parameter(description = "회원 식별 번호", example = "25") @RequestParam("memberId") Long memberId, 
+        @AuthMember AuthDto authDto,
         @Parameter(hidden = true) @PageableDefault(size=10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
-            return new ResponseEntity<>(incomeService.incomeList(memberId, pageable), HttpStatus.OK);
+            return new ResponseEntity<>(incomeService.incomeList(authDto.id(), pageable), HttpStatus.OK);
     }
 
 
@@ -70,8 +71,9 @@ public class IncomeAPIController {
     @Operation(summary = "수입 상세 조회", description = "등록된 수입 정보들 중 특정 수입을 조회합니다.")
     @GetMapping("/{income-id}")
     public ResponseEntity<IncomeDto> getIncomeDetail(
+        @AuthMember AuthDto authDto,
         @Parameter(description = "수입 식별 번호", example = "1") @PathVariable("income-id") Long incomeId) {
-            return new ResponseEntity<>(incomeService.incomeDetail(incomeId), HttpStatus.OK);
+            return new ResponseEntity<>(incomeService.incomeDetail(authDto.id(), incomeId), HttpStatus.OK);
     }
 
 
@@ -79,20 +81,22 @@ public class IncomeAPIController {
     @Operation(summary = "수입 수정", description = "등록된 수입 정보들 중 특정 수입을 수정합니다.")
     @PatchMapping("/{income-id}")
     public ResponseEntity<IncomeDto> patchIncome(
+        @AuthMember AuthDto authDto,
         @Parameter(description = "수입 수정 내용") @RequestBody IncomeEditDto edit,
         @Parameter(description = "수입 식별 번호", example = "1") @PathVariable("income-id") Long incomeId
         ) {
-            return new ResponseEntity<>(incomeService.modifyIncome(edit, incomeId), HttpStatus.OK);
+            return new ResponseEntity<>(incomeService.modifyIncome(authDto.id(), edit, incomeId), HttpStatus.OK);
     }
 
 
-    // 수입 삭제
+    // 수입 삭제 @
     @Operation(summary = "수입 삭제", description = "등록된 수입 정보들 중 특정 수입을 삭제합니다.")
     @DeleteMapping("/{income-id}")
     public ResponseEntity<IncomeDeleteDto> deleteIncome(
+        @AuthMember AuthDto authDto,
         @Parameter(description = "수입 식별 번호", example = "1") @PathVariable("income-id") Long incomeId
         ) {
-            return new ResponseEntity<>(incomeService.deleteIncome(incomeId), HttpStatus.OK);
+            return new ResponseEntity<>(incomeService.deleteIncome(authDto.id(), incomeId), HttpStatus.OK);
     }
     
 
@@ -101,9 +105,9 @@ public class IncomeAPIController {
     @GetMapping("/stats/sum")
     public ResponseEntity<IncomeSumDto> sumIncomeByYearMonth(
         @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ){
-        return new ResponseEntity<IncomeSumDto>(incomeService.sumIncomeByYearMonth(date, id), HttpStatus.OK);
+        return new ResponseEntity<IncomeSumDto>(incomeService.sumIncomeByYearMonth(date, authDto.id()), HttpStatus.OK);
     }
 
 
@@ -112,9 +116,9 @@ public class IncomeAPIController {
     @GetMapping("/list")
     public ResponseEntity<List<IncomeExpenseListDto>> listIncomeByYearMonth(
         @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ) {
-        return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeByYearMonth(date, id), HttpStatus.OK);
+        return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeByYearMonth(date, authDto.id()), HttpStatus.OK);
     }
 
 
@@ -123,9 +127,9 @@ public class IncomeAPIController {
     @GetMapping("/stats/avg")
     public ResponseEntity<IncomeAvgDto> avgIncomeByYearMonth(
         @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ){
-        return new ResponseEntity<IncomeAvgDto>(incomeService.avgIncomeByYearMonth(date, id), HttpStatus.OK);
+        return new ResponseEntity<IncomeAvgDto>(incomeService.avgIncomeByYearMonth(date, authDto.id()), HttpStatus.OK);
     }
 
 
@@ -135,9 +139,9 @@ public class IncomeAPIController {
     @GetMapping("/rank")
     public ResponseEntity<List<IncomeRankDto>> rankingByYear(
         @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
-        @Parameter(description = "회원 식별 번호", example = "1") @RequestParam Long id
+        @AuthMember AuthDto authDto
     ) {
-        return new ResponseEntity<List<IncomeRankDto>>(incomeService.rankIncomeByYear(year, id), HttpStatus.OK);
+        return new ResponseEntity<List<IncomeRankDto>>(incomeService.rankIncomeByYear(year, authDto.id()), HttpStatus.OK);
     }
 
 }

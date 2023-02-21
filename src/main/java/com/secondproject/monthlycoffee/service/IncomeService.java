@@ -59,26 +59,30 @@ public class IncomeService {
 
     // 수입 전체 조회
     @Transactional(readOnly = true)
-    public Page<IncomeDto> incomeList(Long id, Pageable pageable) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public Page<IncomeDto> incomeList(Long memberId, Pageable pageable) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         return incomeRepo.findByMember(member, pageable).map(IncomeDto::new);
     }
 
 
     // 수입 상세 조회
     @Transactional(readOnly = true)
-    public IncomeDto incomeDetail(Long id) {
-        IncomeInfo income = incomeRepo.findById(id).orElseThrow();
+    public IncomeDto incomeDetail(Long memberId, Long incomeId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        IncomeInfo income = incomeRepo.findById(incomeId).orElseThrow();
+        if(member.getId() != income.getMember().getId()) {
+            throw new IllegalArgumentException("본인이 아니면 조회가 불가능합니다."); 
+        }
         return new IncomeDto(income);
     }
 
 
     // 수입 수정
-    public IncomeDto modifyIncome(IncomeEditDto edit, Long id) {
-        IncomeInfo income = incomeRepo.findById(id).orElseThrow();
-        MemberInfo member = memberRepo.findById(income.getMember().getId()).orElseThrow();
-        if(member.getId()!=id) {
-            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
+    public IncomeDto modifyIncome(Long memberId, IncomeEditDto edit, Long incomeId) {
+        IncomeInfo income = incomeRepo.findById(incomeId).orElseThrow();
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        if(member.getId() != income.getMember().getId()) {
+            throw new IllegalArgumentException("본인이 아니면 수정이 불가능합니다."); 
         }
         if(edit.amount() <= 0){
             throw new NoSuchElementException("수입은 0원 이상의 금액이어야 합니다."); 
@@ -89,20 +93,20 @@ public class IncomeService {
 
 
     // 수입 삭제
-    public IncomeDeleteDto deleteIncome(Long id) {
-        IncomeInfo income = incomeRepo.findById(id).orElseThrow();
+    public IncomeDeleteDto deleteIncome(Long memberId, Long incomeId) {
+        IncomeInfo income = incomeRepo.findById(incomeId).orElseThrow();
         MemberInfo member = memberRepo.findById(income.getMember().getId()).orElseThrow();
-        if(member.getId()!=id) {
-            throw new IllegalArgumentException("본인만 삭제 가능합니다."); 
+        if(member.getId() != income.getMember().getId()) {
+            throw new IllegalArgumentException("본인이 아니면 삭제가 불가능합니다."); 
         }
         incomeRepo.delete(income);
-        return new IncomeDeleteDto(id, "수입이 삭제되었습니다.");
+        return new IncomeDeleteDto(memberId, "수입이 삭제되었습니다.");
     }
 
 
     // 수입 연월별 합계
-    public IncomeSumDto sumIncomeByYearMonth(YearMonth date, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public IncomeSumDto sumIncomeByYearMonth(YearMonth date, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         LocalDate firstDate = date.atDay(1); 
         LocalDate endDate = date.atEndOfMonth();  
         IncomeSumDto income = incomeRepo.sumByYearMonth(member, firstDate, endDate);
@@ -111,8 +115,8 @@ public class IncomeService {
 
 
     // 수입+지출 연월별 리스트
-    public List<IncomeExpenseListDto> searchIncomeByYearMonth(YearMonth date, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public List<IncomeExpenseListDto> searchIncomeByYearMonth(YearMonth date, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         LocalDate firstDate = date.atDay(1); 
         LocalDate endDate = date.atEndOfMonth(); 
         
@@ -163,8 +167,8 @@ public class IncomeService {
 
 
     // 수입 연월별 평균
-    public IncomeAvgDto avgIncomeByYearMonth(YearMonth date, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public IncomeAvgDto avgIncomeByYearMonth(YearMonth date, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         LocalDate firstDate = date.atDay(1); 
         LocalDate endDate = date.atEndOfMonth();  
         IncomeAvgDto income = incomeRepo.avgByYearMonth(member, firstDate, endDate);
@@ -173,8 +177,8 @@ public class IncomeService {
 
 
     // 수입 연도별 랭킹
-    public List<IncomeRankDto> rankIncomeByYear(String year, Long id) {
-        MemberInfo member = memberRepo.findById(id).orElseThrow();
+    public List<IncomeRankDto> rankIncomeByYear(String year, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         List<IncomeRankDto> income = incomeRepo.rankByYear(member, year);
 
         return income;
