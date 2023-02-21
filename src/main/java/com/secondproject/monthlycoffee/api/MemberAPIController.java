@@ -1,7 +1,9 @@
 package com.secondproject.monthlycoffee.api;
 
+import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.JwtProperties;
 import com.secondproject.monthlycoffee.config.security.JwtUtil;
+import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.token.TokenDto;
 import com.secondproject.monthlycoffee.token.TokenResponseDto;
 import com.secondproject.monthlycoffee.token.TokenService;
@@ -82,19 +84,25 @@ public class MemberAPIController {
     @Operation(summary = "회원 상세 조회", description = "등록된 회원 정보들 중 특정 회원의 id를 받아 조회합니다.")
     @GetMapping("/{member-id}")
     public ResponseEntity<MemberDto> getMemberDetail(
-        @Parameter(description = "회원 식별 번호") @PathVariable("member-id") Long id) {
-            return new ResponseEntity<>(memberService.memberDetail(id), HttpStatus.OK);
+            @Parameter(description = "회원 식별 번호") @PathVariable("member-id") Long id,
+            @AuthMember AuthDto authDto
+    ) {
+        checkVaildMemberId(id, authDto, "본인 정보만 조회가능합니다.");
+        return new ResponseEntity<>(memberService.memberDetail(id), HttpStatus.OK);
     }
 
-    
+
+
     // 회원 수정
     @Operation(summary = "회원 수정", description = "등록된 회원 정보들 중 특정 회원을 수정합니다.")
     @PatchMapping("/{member-id}")
     public ResponseEntity<MemberDto> patchMember(
         @Parameter(description = "회원 수정 내용") MemberEditDto edit,
-        @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId
+        @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId,
+        @AuthMember AuthDto authDto
         ) {
-            return new ResponseEntity<>(memberService.modifyMember(edit, memberId), HttpStatus.OK);
+        checkVaildMemberId(memberId, authDto, "본인 계정만 수정가능합니다.");
+        return new ResponseEntity<>(memberService.modifyMember(edit, memberId), HttpStatus.OK);
     }
 
 
@@ -102,9 +110,15 @@ public class MemberAPIController {
     @Operation(summary = "회원 삭제", description = "등록된 회원 정보들 중 특정 회원을 삭제합니다.")
     @DeleteMapping("/{member-id}")
     public ResponseEntity<MemberDeleteDto> deleteMember(
-        @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId
+        @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId,
+        @AuthMember AuthDto authDto
         ) {
-            return new ResponseEntity<>(memberService.deleteMember(memberId), HttpStatus.OK);
+        checkVaildMemberId(memberId, authDto, "본인 계정만 삭제가능합니다.");
+        return new ResponseEntity<>(memberService.deleteMember(memberId), HttpStatus.OK);
     }
-    
+    private static void checkVaildMemberId(Long id, AuthDto authDto, String message) {
+        if (id != authDto.id()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 }
