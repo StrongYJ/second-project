@@ -104,35 +104,36 @@ public class ExpenseService {
         return new MessageExpenseDto(entity.getId(), "수정되었습니다.");
     }
 
-    public MessageExpenseDto putExpense(MultipartFile[] file, ExpenseDetailDto data, @RequestParam Long userNo) {
-        Path folderLocation = Paths.get(path);
-        ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(userNo).orElseThrow());
-        eRepo.save(entity1);
-        if(file != null) {
-            for (int a = 0; a < file.length; a++) {
-                String originFileName = file[a].getOriginalFilename();
-                String[] split = originFileName.split("\\.");
-                String ext = split[split.length - 1];
-                String filename = "";
-                for (int i = 0; i < split.length - 1; i++) {
-                    filename += split[i];
-                }
-                String saveFilename = "coffee" + "_";
-                Calendar c = Calendar.getInstance();
-                saveFilename += c.getTimeInMillis() + "." + ext;
-                Path targetFile = folderLocation.resolve(saveFilename);
-                try {
-                    Files.copy(file[a].getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                ExpenseImageInfo entity2 = new ExpenseImageInfo(null, saveFilename, filename, entity1);
-                imageService.addImage(entity2);
-            }
-        }
-        return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
-    }
-
+//    내용 및 이미지 동시에 입력 구현
+//    프론트에서 구현 불가능으로 주석처리
+//    public MessageExpenseDto putExpense(MultipartFile[] file, ExpenseDetailDto data, Long userNo) {
+//        Path folderLocation = Paths.get(path);
+//        ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(userNo).orElseThrow());
+//        eRepo.save(entity1);
+//        if(file != null) {
+//            for (int a = 0; a < file.length; a++) {
+//                String originFileName = file[a].getOriginalFilename();
+//                String[] split = originFileName.split("\\.");
+//                String ext = split[split.length - 1];
+//                String filename = "";
+//                for (int i = 0; i < split.length - 1; i++) {
+//                    filename += split[i];
+//                }
+//                String saveFilename = "coffee" + "_";
+//                Calendar c = Calendar.getInstance();
+//                saveFilename += c.getTimeInMillis() + "." + ext;
+//                Path targetFile = folderLocation.resolve(saveFilename);
+//                try {
+//                    Files.copy(file[a].getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                ExpenseImageInfo entity2 = new ExpenseImageInfo(null, saveFilename, filename, entity1);
+//                imageService.addImage(entity2);
+//            }
+//        }
+//        return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
+//    }
 
     public MessageExpenseDto deleteImage(Long id) {
         ExpenseImageInfo image = imageRepo.findById(id).orElseThrow();
@@ -228,9 +229,8 @@ public class ExpenseService {
     public MessageExpenseDto likeStyle(Long memberId) {
         List<ExpenseInfo> entity = eRepo.findByMember(memberRepo.findById(memberId).orElseThrow()).stream().toList();
         String nickname = memberRepo.findById(memberId).orElseThrow().getNickname();
-        if (entity.size() < 10) {
-            return new MessageExpenseDto(memberId, "지출 내역이 부족합니다. 조금 더 이용해주세요~");
-        }
+
+        int likeCount = 0;
 
         int countWork = 0; int countTalk = 0; int countSelfie = 0; String likeMood = "";
 
@@ -241,6 +241,7 @@ public class ExpenseService {
 
         for (int i=0; i<entity.size(); i++) {
             if (entity.get(i).getLikeHate().equals(LikeHate.valueOf("LIKE"))) {
+                likeCount ++;
                 {
                     if (entity.get(i).getMood().equals(Mood.WORK)) countWork++;
                     else if (entity.get(i).getMood().equals(Mood.TALK)) countTalk++;
@@ -261,6 +262,10 @@ public class ExpenseService {
                     else if (entity.get(i).getTaste().equals(Taste.SOUR)) countSour++;
                 }
             }
+        }
+
+        if(likeCount < 10) {
+            return new MessageExpenseDto(memberId, nickname+"님의 정보가 부족합니다. 조금만 더 이용해 주세요~");
         }
 
         int rankMood = Math.max(Math.max(countWork, countTalk), countSelfie);
@@ -285,5 +290,39 @@ public class ExpenseService {
         return new MessageExpenseDto(memberId, nickname+"님은 "+likeMood+" 분위기의 카페에서 "+likeBean+"의 "+likeTaste+" 커피를 좋아하세요.");
     }
 
+    public MessageExpenseDto putExpense(ExpenseCreateDto data, Long memberId) {
+        ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(memberId).orElseThrow());
+        if(data.getCategory() == null || data.getBrand() == null || data.getPrice() == null || data.getDate() == null) {
+            return new MessageExpenseDto(entity1.getId(), "필수 정보 누락입니다.");
+        }
+        eRepo.save(entity1);
+        return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
+    }
 
+    public MessageExpenseDto putExpenseImage(MultipartFile[] file, Long expenseId) {
+        Path folderLocation = Paths.get(path);
+        if(file != null) {
+            for (int a = 0; a < file.length; a++) {
+                String originFileName = file[a].getOriginalFilename();
+                String[] split = originFileName.split("\\.");
+                String ext = split[split.length - 1];
+                String filename = "";
+                for (int i = 0; i < split.length - 1; i++) {
+                    filename += split[i];
+                }
+                String saveFilename = "coffee" + "_";
+                Calendar c = Calendar.getInstance();
+                saveFilename += c.getTimeInMillis() + "." + ext;
+                Path targetFile = folderLocation.resolve(saveFilename);
+                try {
+                    Files.copy(file[a].getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ExpenseImageInfo entity2 = new ExpenseImageInfo(null, saveFilename, filename, eRepo.findById(expenseId).orElseThrow());
+                imageService.addImage(entity2);
+            }
+        }
+        return new MessageExpenseDto(expenseId, "등록되었습니다.");
+    }
 }

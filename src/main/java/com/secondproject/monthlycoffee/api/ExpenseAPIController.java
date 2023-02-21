@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,10 +26,24 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ExpenseAPIController {
     private final ExpenseService eService;
 
-    @Operation(summary = "지출 등록", description = "지출 내용 및 이미지를 등록합니다.")
+//    내용 및 이미지 동시에 입력 구현
+//    프론트에서 구현 불가능으로 주석처리
+//    @Operation(summary = "지출 등록", description = "지출 내용 및 이미지를 등록합니다.")
+//    @PostMapping("")
+//    public ResponseEntity<MessageExpenseDto> putExpense(@Parameter(description = "등록할 이미지") @RequestPart(required = false) MultipartFile[] file, @Parameter(description = "등록할 내용") ExpenseDetailDto data, @Parameter(description = "회원 번호", example = "1") @RequestParam Long userNo) {
+//        return new ResponseEntity<>(eService.putExpense(file, data, userNo), HttpStatus.OK);
+//    }
+
+    @Operation(summary = "지출 등록", description = "지출 내용을 등록합니다.")
     @PostMapping("")
-    public ResponseEntity<MessageExpenseDto> putExpense(@Parameter(description = "등록할 이미지") @RequestPart(required = false) MultipartFile[] file, @Parameter(description = "등록할 내용") ExpenseDetailDto data, @Parameter(description = "회원 번호", example = "1") @RequestParam Long userNo) {
-        return new ResponseEntity<>(eService.putExpense(file, data, userNo), HttpStatus.OK);
+    public ResponseEntity<MessageExpenseDto> putExpense(@Parameter(description = "등록할 내용") @RequestBody ExpenseCreateDto data, @Parameter(description = "회원 번호", example = "1") @RequestParam Long memberId) {
+        return new ResponseEntity<>(eService.putExpense(data ,memberId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "이미지 등록", description = "이미지를 등록합니다.")
+    @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageExpenseDto> putExpense(@Parameter(description = "등록할 이미지") @RequestPart MultipartFile[] file, @Parameter(description = "게시글 번호", example = "1") @RequestParam Long expenseId) {
+        return new ResponseEntity<>(eService.putExpenseImage(file, expenseId), HttpStatus.OK);
     }
 
     @Operation(summary = "회원 지출 조회", description = "회원 식별 번호만 입력시 그 회원의 전체 지출 내역이 조회됩니다. 평가(assessment)값 조회연월값(date)을 같이 넣으면 두조건 모두에 해당하는 지출 내역만 조회합니다. 각각 검색도 가능합니다.")
