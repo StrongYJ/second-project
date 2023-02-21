@@ -180,7 +180,14 @@ public class IncomeService {
     public List<IncomeRankDto> rankIncomeByYear(String year, Long memberId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         List<IncomeRankDto> income = incomeRepo.rankByYear(member, year);
-
         return income;
     }
+
+
+    // 수입 키워드 검색
+    // public List<IncomeListDetailDto> searchIncomeByKeyword(String keyword, Long memberId) {
+    //     MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+    //     List<IncomeListDetailDto> income = incomeRepo.searchByNote(keyword, member);
+    //     return income;
+    // }
 }
