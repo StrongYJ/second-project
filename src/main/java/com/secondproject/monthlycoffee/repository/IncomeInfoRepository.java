@@ -32,7 +32,6 @@ public interface IncomeInfoRepository extends JpaRepository<IncomeInfo, Long> {
     @Query("select sum(i.amount)as sum, SUBSTRING(cast(i.date as text), 1,7) as yearMonth, rank() over(order by i.amount desc) as rank from IncomeInfo i where i.member = :member and SUBSTRING(cast(i.date as text), 1,4) = :year group by yearMonth")
     List<IncomeRankDto> rankByYear(@Param("member") MemberInfo member, @Param("year") String year);
 
-    // @Query("select i, SUBSTRING(cast(i.date as text), 1,7) as yearMonth from IncomeInfo i where i.member = :member and  i.note like '%:keyword%'")
-    // List<IncomeListDetailDto> searchByNote(@Param("keyword") String keyword, @Param("member") MemberInfo member);
+    List<IncomeInfo> findByNoteContainingAndMember(@Param("keyword") String keyword, @Param("member") MemberInfo member);
 
 }

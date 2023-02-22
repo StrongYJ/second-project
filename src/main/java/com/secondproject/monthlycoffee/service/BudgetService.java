@@ -37,7 +37,7 @@ public class BudgetService {
     public Page<BudgetDto> budgetList(Long memberId, Pageable pageable) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         if(member.getId() != memberId) {
-            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
+            throw new IllegalArgumentException("본인만 조회가 가능합니다."); 
         }
         return budgetRepo.findByMember(member, pageable).map(BudgetDto::new);
     }
@@ -47,10 +47,10 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public BudgetDto budgetDetail(Long memberId, Long budgetId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        if(member.getId() != memberId) {
+        BudgetInfo budget = budgetRepo.findById(budgetId).orElseThrow();
+        if(member.getId() != budget.getMember().getId()) {
             throw new IllegalArgumentException("본인만 조회가 가능합니다."); 
         }
-        BudgetInfo budget = budgetRepo.findById(budgetId).orElseThrow();
         return new BudgetDto(budget);
     }
     
@@ -61,15 +61,15 @@ public class BudgetService {
             throw new IllegalArgumentException("해당 월에 이미 존재하는 예산 정보가 있습니다.");
         }
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        if(member.getId() != memberId) {
-            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
+        BudgetInfo budget = new BudgetInfo(data.amount(), member);
+        if(member.getId() != budget.getMember().getId()) {
+            throw new IllegalArgumentException("본인만 등록이 가능합니다."); 
         }
         if(data.amount() <= 0){
             throw new NoSuchElementException("예산은 0원 이상의 금액이어야 합니다."); 
         }
-        BudgetInfo newBudget = new BudgetInfo(data.amount(), member);
-        budgetRepo.save(newBudget);
-        return new BudgetDto(newBudget);
+        budgetRepo.save(budget);
+        return new BudgetDto(budget);
     }
     
 
@@ -77,7 +77,7 @@ public class BudgetService {
     public BudgetDto modifyBudget(BudgetEditDto edit, Long budgetId, Long memberId) {
         BudgetInfo budget = budgetRepo.findById(budgetId).orElseThrow();
         MemberInfo member = memberRepo.findById(budget.getMember().getId()).orElseThrow();
-        if(member.getId() != memberId) {
+        if(member.getId() != budget.getMember().getId()) {
             throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
         }
         if(!(budget.getYearMonth().equals(YearMonth.now().toString()))){
@@ -97,12 +97,13 @@ public class BudgetService {
         List<BudgetInfo> budgetInfos = budgetRepo.findByYear(member, year);
         List<BudgetListDto> budget = new ArrayList<BudgetListDto>();
         for(BudgetInfo b : budgetInfos) {
+            if(member.getId() != b.getMember().getId()) {
+                throw new IllegalArgumentException("본인만 조회가 가능합니다."); 
+            }
             BudgetListDto budgetSet = new BudgetListDto();
-
             budgetSet.setId(b.getId());
             budgetSet.setAmount(b.getAmount());
             budgetSet.setDate(b.getYearMonth());
-
             budget.add(budgetSet);
         }
         return budget;

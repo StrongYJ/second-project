@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
+import com.secondproject.monthlycoffee.entity.IncomeInfo;
 import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
@@ -90,7 +91,7 @@ public class IncomeAPIController {
     }
 
 
-    // 수입 삭제 @
+    // 수입 삭제
     @Operation(summary = "수입 삭제", description = "등록된 수입 정보들 중 특정 수입을 삭제합니다.")
     @DeleteMapping("/{income-id}")
     public ResponseEntity<IncomeDeleteDto> deleteIncome(
@@ -147,14 +148,14 @@ public class IncomeAPIController {
 
 
     // 수입 키워드 검색
-    // @Operation(summary = "수입 키워드 검색 조회", description = "등록된 수입 정보들을 키워드로 검색 후 목록을 조회합니다.")
-    // @GetMapping("/search")
-    // public ResponseEntity<List<IncomeListDetailDto>> searchByKeyword(
-    //     @Parameter(description = "검색하려는 키워드", example = "용돈") @RequestParam String keyword,
-    //     @AuthMember AuthDto authDto
-    // ) {
-    //     return new ResponseEntity<List<IncomeListDetailDto>>(incomeService.searchIncomeByKeyword(keyword, authDto.id()), HttpStatus.OK);
-    // }
+    @Operation(summary = "수입 키워드 검색 조회", description = "등록된 수입 정보들을 키워드로 검색 후 목록을 조회합니다.")
+    @GetMapping("/search")
+    public ResponseEntity<List<IncomeInfo>> searchByKeyword(
+        @Parameter(description = "검색하려는 키워드", example = "용돈") @RequestParam String keyword,
+        @AuthMember AuthDto authDto
+    ) {
+        return new ResponseEntity<List<IncomeInfo>>(incomeService.searchIncomeByKeyword(keyword, authDto.id()), HttpStatus.OK);
+    }
 
 
 }

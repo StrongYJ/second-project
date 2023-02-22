@@ -185,9 +185,13 @@ public class IncomeService {
 
 
     // 수입 키워드 검색
-    // public List<IncomeListDetailDto> searchIncomeByKeyword(String keyword, Long memberId) {
-    //     MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-    //     List<IncomeListDetailDto> income = incomeRepo.searchByNote(keyword, member);
-    //     return income;
-    // }
+    public List<IncomeInfo> searchIncomeByKeyword(String keyword, Long memberId) {
+        MemberInfo member = memberRepo.findById(memberId).orElseThrow();
+        List<IncomeInfo> income = incomeRepo.findByNoteContainingAndMember(keyword, member);
+        System.out.println(income);
+        return income;
+    }
+
+
+
 }
