@@ -103,7 +103,8 @@ public class ExpenseAPIController {
     @Operation(summary = "더미 제작", description = "원하는 회원의 더미를 size 개 생성합니다.")
     @PostMapping("/dummy")
     public ResponseEntity<MessageExpenseDto> putDummy(
-            @RequestParam Long userNo, Integer size) {
+            @RequestParam Long userNo,
+            Integer size) {
         return new ResponseEntity<>(eService.dummyData(userNo, size), HttpStatus.OK);
     }
 
