@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,4 +35,7 @@ public interface IncomeInfoRepository extends JpaRepository<IncomeInfo, Long> {
 
     List<IncomeInfo> findByNoteContainingAndMember(@Param("keyword") String keyword, @Param("member") MemberInfo member);
 
+    @Modifying(clearAutomatically = true)
+    @Query("delete from IncomeInfo i where i.member = :member")
+    void deleteByMember(@Param("member") MemberInfo member);
 }

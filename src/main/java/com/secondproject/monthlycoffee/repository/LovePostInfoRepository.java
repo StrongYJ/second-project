@@ -16,6 +16,10 @@ public interface LovePostInfoRepository extends JpaRepository<LovePostInfo, Long
     @Query("delete from LovePostInfo l where l.post = :post")
     void deleteAllByPostInBatch(@Param("post") PostInfo post);
 
+    @Modifying(clearAutomatically = true)
+    @Query("delete from LovePostInfo l where l.member = :member")
+    void deleteByMember(@Param("member") MemberInfo member);
+
     Optional<LovePostInfo> findByPostAndMember(PostInfo post, MemberInfo member);
 
     long countByPost(PostInfo post);

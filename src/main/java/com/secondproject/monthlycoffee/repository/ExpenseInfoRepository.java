@@ -8,6 +8,7 @@ import com.secondproject.monthlycoffee.dto.expense.TumblerRank;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -31,6 +32,11 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     List<ExpenseInfo> searchBrand(@Param("date") Integer date, @Param("keyword") String keyword, @Param("memberId") Long memberId);
     @Query("select e from ExpenseInfo e where e.member = :member and e.date between :start and :end order by e.date")
     List<ExpenseInfo> findByYearMonth(@Param("member") MemberInfo member, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
 //    @Query(value = "select m.id as id, m.nickname as nickname, count(e.tumbler) as useTumbler from ExpenseInfo e join e.member m where e.tumbler = true group by m.id order by useTumbler desc")
 //    List<TumblerRank> rankByTumbler();
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ExpenseInfo e set e.member = null where e.member = :member")
+    void updateMemberNullByMember(@Param("member") MemberInfo memberInfo);
 }
