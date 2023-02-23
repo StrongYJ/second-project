@@ -41,7 +41,6 @@ import lombok.RequiredArgsConstructor;
 public class BudgetAPIController {
     private final BudgetService budgetService;
 
-
     // 예산 전체 리스트 조회
     @Operation(summary = "예산 전체 리스트 조회", description = "등록된 예산 정보들을 10개 단위로 보여줍니다.")
     @GetMapping("")
@@ -63,7 +62,6 @@ public class BudgetAPIController {
     }
     
     
-
     // 예산 등록
     @Operation(summary = "예산 등록", description = "해당 회원의 예산을 등록합니다.")
     @PostMapping("")
@@ -75,7 +73,6 @@ public class BudgetAPIController {
     }
     
 
-
     // 예산 수정
     @Operation(summary = "예산 수정", description = "등록된 예산 정보들 중 특정 예산을 수정합니다.")
     @PatchMapping("/{budget-id}")
@@ -86,7 +83,6 @@ public class BudgetAPIController {
         ) {
             return new ResponseEntity<>(budgetService.modifyBudget(edit, budgetId, authDto.id()), HttpStatus.OK);
     }
-
 
 
     // 예산 연도별 조회

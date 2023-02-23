@@ -10,15 +10,12 @@ public record BudgetNewDto(
     @Schema (description = "예산 설정 금액")
     Integer amount,
     @Schema (description = "예산 설정 월")
-    String yearMonth,
-    @Schema (description = "회원 정보")
-    MemberDto member
+    String yearMonth
     ) {
         public BudgetNewDto(BudgetInfo entity) {
             this(
                     entity.getAmount(), 
-                    entity.getYearMonth().toString(),
-                    new MemberDto(entity.getMember())
+                    entity.getYearMonth().toString()
                 );
         }
 }

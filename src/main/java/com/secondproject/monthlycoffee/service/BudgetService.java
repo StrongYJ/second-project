@@ -31,7 +31,7 @@ public class BudgetService {
     private final BudgetInfoRepository budgetRepo;
     private final MemberInfoRepository memberRepo;
 
-
+    
     // 예산 전체 리스트 조회
     @Transactional(readOnly = true)
     public Page<BudgetDto> budgetList(Long memberId, Pageable pageable) {
@@ -108,7 +108,6 @@ public class BudgetService {
         }
         return budget;
     }
-
 
 
     // 예산 연도별 합계 조회
