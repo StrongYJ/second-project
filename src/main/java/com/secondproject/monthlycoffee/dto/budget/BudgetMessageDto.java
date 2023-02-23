@@ -1,12 +1,11 @@
-package com.secondproject.monthlycoffee.dto.income;
+package com.secondproject.monthlycoffee.dto.budget;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record IncomeMessageDto(
+public record BudgetMessageDto(
     @Schema (description = "회원 식별 번호")
     Long id,
     @Schema (description = "메시지")
     String message
     ) {
-        
 }

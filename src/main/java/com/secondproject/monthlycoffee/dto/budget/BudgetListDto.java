@@ -10,5 +10,5 @@ public class BudgetListDto {
     @Schema (description = "예산 설정 금액")
     Integer amount;
     @Schema (description = "예산 설정 월")
-    String date;
+    String month;
 }

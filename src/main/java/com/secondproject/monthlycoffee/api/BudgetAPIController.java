@@ -23,6 +23,7 @@ import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetEditDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetListDto;
+import com.secondproject.monthlycoffee.dto.budget.BudgetMessageDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetNewDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetRankDto;
 import com.secondproject.monthlycoffee.dto.budget.BudgetSumDto;

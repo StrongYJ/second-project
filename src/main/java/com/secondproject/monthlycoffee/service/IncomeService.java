@@ -97,7 +97,7 @@ public class IncomeService {
             throw new IllegalArgumentException("본인이 아니면 삭제가 불가능합니다."); 
         }
         incomeRepo.delete(income);
-        return new IncomeMessageDto(memberId, "수입이 삭제되었습니다.");
+        return new IncomeMessageDto(incomeId, "수입이 삭제되었습니다.");
     }
 
 
