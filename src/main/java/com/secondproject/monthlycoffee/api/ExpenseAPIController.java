@@ -131,4 +131,9 @@ public class ExpenseAPIController {
     public ResponseEntity<MessageExpenseDto> getBrand(@AuthMember AuthDto authDto) {
         return new ResponseEntity<>(eService.likeStyle(authDto.id()), HttpStatus.OK);
     }
+
+//    @GetMapping("/test")
+//    public ResponseEntity<List<TumblerRank>> rankTumbler () {
+//        return new ResponseEntity<>(eService.rankTumbler(), HttpStatus.OK);
+//    }
 }

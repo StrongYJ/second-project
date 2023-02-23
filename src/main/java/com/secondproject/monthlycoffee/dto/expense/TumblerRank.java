@@ -13,4 +13,12 @@ public class TumblerRank {
     private Integer useTumbler;
     private Integer rank;
     private String grade;
+
+    public TumblerRank(Long id, String nickname, Integer useTumbler) {
+        this.id = id;
+        this.nickname = nickname;
+        this.useTumbler = useTumbler;
+        rank = null;
+        grade = null;
+    }
 }
