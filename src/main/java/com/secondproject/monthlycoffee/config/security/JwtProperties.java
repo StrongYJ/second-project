@@ -8,5 +8,5 @@ public interface JwtProperties {
     // refresh
     long REFRESH_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7;
     String REISSUE_TOKEN_URI = "/api/reissue-token";
-    String REFRESH_HEADER_NAME = "Refresh-Token";
+    String REFRESH_HEADER_NAME = "RefreshToken";
 }

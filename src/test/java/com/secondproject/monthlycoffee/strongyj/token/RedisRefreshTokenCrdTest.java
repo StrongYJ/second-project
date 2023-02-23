@@ -1,29 +1,32 @@
 package com.secondproject.monthlycoffee.strongyj.token;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.secondproject.monthlycoffee.token.RefreshToken;
+import com.secondproject.monthlycoffee.token.RefreshTokenRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
-import org.springframework.test.context.ActiveProfiles;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.secondproject.monthlycoffee.token.RefreshToken;
-import com.secondproject.monthlycoffee.token.RefreshTokenRepository;
-
-@DataRedisTest
+@SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class RedisRefreshTokenCrdTest {
 
     @Autowired private RefreshTokenRepository refreshRepo;
     private final long REFRESH_EXPIRATION_TIME = 1000L;
+    private static final String initId = UUID.randomUUID().toString();
 
     @Test
     void create() {
-        refreshRepo.save(new RefreshToken(UUID.randomUUID().toString(), 1L, REFRESH_EXPIRATION_TIME));
+        refreshRepo.save(new RefreshToken(initId, 1L, REFRESH_EXPIRATION_TIME));
     }
 
     @Test
@@ -48,6 +51,18 @@ public class RedisRefreshTokenCrdTest {
         waiter.await(REFRESH_EXPIRATION_TIME + 1l, TimeUnit.MILLISECONDS);
     
         assertThat(refreshRepo.findById(refreshToken.getToken()).isPresent()).isFalse();
+    }
+
+    @Test
+    void deleteByMemberId() {
+        refreshRepo.save(new RefreshToken(initId, 1L, 100000000L));
+
+        assertThat(refreshRepo.existsById(initId)).isTrue();
+
+        refreshRepo.findAll().stream().filter(r -> Objects.nonNull(r) && r.getMemberId() == 1L ).forEach(refreshRepo::delete);
+
+        assertThat(refreshRepo.existsById(initId)).isFalse();
+
     }
     
 }

@@ -66,10 +66,10 @@ public class MemberAPIController {
         return new ResponseEntity<>(memberDto, headers, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "회원 로그아웃", description = "토큰을 무효화합니다. 리프레쉬토큰도 있어야합니다.")
+    @Operation(summary = "회원 로그아웃", description = "토큰을 무효화합니다.")
     @PostMapping("/logout")
-    public ResponseEntity<TokenResponseDto> postMember(HttpServletRequest request) {
-        tokenService.logout(request.getHeader(HttpHeaders.AUTHORIZATION), request.getHeader(JwtProperties.REFRESH_HEADER_NAME));
+    public ResponseEntity<TokenResponseDto> postMember(@AuthMember AuthDto authDto, HttpServletRequest request) {
+        tokenService.logout(authDto.id(), request.getHeader(HttpHeaders.AUTHORIZATION));
         return new ResponseEntity<>(new TokenResponseDto("로그아웃되었습니다.", true), HttpStatus.CREATED);
     }
 
@@ -115,10 +115,12 @@ public class MemberAPIController {
     @DeleteMapping("/{member-id}")
     public ResponseEntity<MemberDeleteDto> deleteMember(
         @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId,
-        @AuthMember AuthDto authDto
+        @AuthMember AuthDto authDto, HttpServletRequest request
         ) {
         checkVaildMemberId(memberId, authDto, "본인 계정만 삭제가능합니다.");
-        return new ResponseEntity<>(memberService.deleteMember(memberId), HttpStatus.OK);
+        MemberDeleteDto memberDeleteDto = memberService.deleteMember(memberId);
+        tokenService.logout(memberId, request.getHeader(HttpHeaders.AUTHORIZATION));
+        return new ResponseEntity<>(memberDeleteDto, HttpStatus.OK);
     }
     private static void checkVaildMemberId(Long id, AuthDto authDto, String message) {
         if (id != authDto.id()) {

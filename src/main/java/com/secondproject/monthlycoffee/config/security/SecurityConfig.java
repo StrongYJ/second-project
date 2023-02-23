@@ -39,7 +39,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/swagger", "/swagger-ui/**", "/v3/api-docs/**",
-                    "/api/expenses/image/**").permitAll()
+                    "/api/expenses/image/**", "/api/expenses/dummy").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/members/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/members").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
