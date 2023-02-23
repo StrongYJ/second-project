@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
-import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeMessageDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
@@ -90,14 +90,14 @@ public class IncomeService {
 
 
     // 수입 삭제
-    public IncomeDeleteDto deleteIncome(Long memberId, Long incomeId) {
+    public IncomeMessageDto deleteIncome(Long memberId, Long incomeId) {
         IncomeInfo income = incomeRepo.findById(incomeId).orElseThrow();
         MemberInfo member = memberRepo.findById(income.getMember().getId()).orElseThrow();
         if(member.getId() != income.getMember().getId()) {
             throw new IllegalArgumentException("본인이 아니면 삭제가 불가능합니다."); 
         }
         incomeRepo.delete(income);
-        return new IncomeDeleteDto(memberId, "수입이 삭제되었습니다.");
+        return new IncomeMessageDto(memberId, "수입이 삭제되었습니다.");
     }
 
 

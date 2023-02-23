@@ -2,7 +2,6 @@ package com.secondproject.monthlycoffee.dto.income;
 
 import java.time.LocalDate;
 
-import com.secondproject.monthlycoffee.dto.member.MemberDto;
 import com.secondproject.monthlycoffee.entity.IncomeInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;

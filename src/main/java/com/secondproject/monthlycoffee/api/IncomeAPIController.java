@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
-import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeMessageDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
@@ -92,7 +92,7 @@ public class IncomeAPIController {
     // 수입 삭제
     @Operation(summary = "수입 삭제", description = "등록된 수입 정보들 중 특정 수입을 삭제합니다.")
     @DeleteMapping("/{income-id}")
-    public ResponseEntity<IncomeDeleteDto> deleteIncome(
+    public ResponseEntity<IncomeMessageDto> deleteIncome(
         @AuthMember AuthDto authDto,
         @Parameter(description = "수입 식별 번호", example = "1") @PathVariable("income-id") Long incomeId
         ) {
