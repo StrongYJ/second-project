@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.service;
 
+import com.secondproject.monthlycoffee.repository.*;
 import com.secondproject.monthlycoffee.token.RefreshTokenRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,6 @@ import com.secondproject.monthlycoffee.dto.member.MemberDto;
 import com.secondproject.monthlycoffee.dto.member.MemberEditDto;
 import com.secondproject.monthlycoffee.dto.member.MemberLoginDto;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
-import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +22,11 @@ import java.util.Optional;
 @Transactional
 public class MemberService {
     private final MemberInfoRepository memberRepo;
+    private final BudgetInfoRepository budgetRepo;
+    private final CommentInfoRepository commentRepo;
+    private final ExpenseInfoRepository expenseRepo;
+    private final IncomeInfoRepository incomeRepo;
+    private final LovePostInfoRepository lovePostRepo;
 
     // 회원 등록
     public MemberDto login(MemberLoginDto data) {
@@ -69,6 +74,11 @@ public class MemberService {
         if(member.getId()!=id) {
             throw new IllegalArgumentException("본인만 삭제 가능합니다."); 
         }
+        budgetRepo.deleteByMember(member);
+        incomeRepo.deleteByMember(member);
+        lovePostRepo.deleteByMember(member);
+        commentRepo.deleteByMember(member);
+        expenseRepo.updateMemberNullByMember(member);
         memberRepo.delete(member);
         return new MemberDeleteDto(id, "회원이 탈퇴되었습니다.");
     }

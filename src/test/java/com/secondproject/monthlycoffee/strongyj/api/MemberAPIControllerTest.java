@@ -29,7 +29,7 @@ import static io.restassured.RestAssured.given;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
-public class MemberTestController {
+public class MemberAPIControllerTest {
 
     @LocalServerPort
     private int port;
