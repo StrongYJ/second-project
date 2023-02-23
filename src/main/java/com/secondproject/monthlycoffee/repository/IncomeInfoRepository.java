@@ -38,4 +38,6 @@ public interface IncomeInfoRepository extends JpaRepository<IncomeInfo, Long> {
     @Modifying(clearAutomatically = true)
     @Query("delete from IncomeInfo i where i.member = :member")
     void deleteByMember(@Param("member") MemberInfo member);
+
+    boolean existsByMember(MemberInfo member);
 }

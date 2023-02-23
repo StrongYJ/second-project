@@ -39,4 +39,6 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     @Modifying(clearAutomatically = true)
     @Query("update ExpenseInfo e set e.member = null where e.member = :member")
     void updateMemberNullByMember(@Param("member") MemberInfo memberInfo);
+
+    boolean existsByMember(MemberInfo member);
 }

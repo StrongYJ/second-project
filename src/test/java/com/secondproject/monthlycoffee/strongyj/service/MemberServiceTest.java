@@ -77,12 +77,22 @@ class MemberServiceTest {
             lovePostInfoRepository.save(new LovePostInfo(m, postInfoRepository.save(new PostInfo("test", dummyExpense.get(i)))));
             commentInfoRepository.save(new CommentInfo(UUID.randomUUID().toString(), m, dummyPosts.get(i)));
         }
+        assertThat(budgetInfoRepository.existsByMember(m)).isTrue();
+        assertThat(incomeInfoRepository.existsByMember(m)).isTrue();
+        assertThat(expenseInfoRepository.existsByMember(m)).isTrue();
+        assertThat(lovePostInfoRepository.existsByMember(m)).isTrue();
+        assertThat(commentInfoRepository.existsByMember(m)).isTrue();
 
         // when
         memberService.deleteMember(memberId);
 
         // then
         assertThat(memberRepo.existsById(memberId)).isFalse();
+        assertThat(budgetInfoRepository.existsByMember(m)).isFalse();
+        assertThat(incomeInfoRepository.existsByMember(m)).isFalse();
+        assertThat(expenseInfoRepository.existsByMember(m)).isFalse();
+        assertThat(lovePostInfoRepository.existsByMember(m)).isFalse();
+        assertThat(commentInfoRepository.existsByMember(m)).isFalse();
 
     }
 }

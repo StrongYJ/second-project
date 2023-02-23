@@ -36,4 +36,6 @@ public interface BudgetInfoRepository extends JpaRepository<BudgetInfo, Long> {
     @Modifying(clearAutomatically = true)
     @Query("delete from BudgetInfo b where b.member = :member")
     void deleteByMember(@Param("member") MemberInfo member);
+
+    boolean existsByMember(MemberInfo member);
 }
