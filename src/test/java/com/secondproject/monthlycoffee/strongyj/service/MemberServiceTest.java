@@ -4,10 +4,15 @@ import com.secondproject.monthlycoffee.entity.*;
 import com.secondproject.monthlycoffee.entity.type.*;
 import com.secondproject.monthlycoffee.repository.*;
 import com.secondproject.monthlycoffee.service.MemberService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -16,6 +21,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest
 @AutoConfigureTestDatabase
 @ActiveProfiles("test")
 class MemberServiceTest {
@@ -28,6 +36,8 @@ class MemberServiceTest {
     @Autowired private LovePostInfoRepository lovePostInfoRepository;
     @Autowired private CommentInfoRepository commentInfoRepository;
     @Autowired private PostInfoRepository postInfoRepository;
+    @PersistenceContext
+    private EntityManager em;
     private List<MemberInfo> dummyMembers = new ArrayList<>();
     private List<ExpenseInfo> dummyExpense = new ArrayList<>();
     private List<PostInfo> dummyPosts = new ArrayList<>();
@@ -67,5 +77,12 @@ class MemberServiceTest {
             lovePostInfoRepository.save(new LovePostInfo(m, postInfoRepository.save(new PostInfo("test", dummyExpense.get(i)))));
             commentInfoRepository.save(new CommentInfo(UUID.randomUUID().toString(), m, dummyPosts.get(i)));
         }
+
+        // when
+        memberService.deleteMember(memberId);
+
+        // then
+        assertThat(memberRepo.existsById(memberId)).isFalse();
+
     }
 }

@@ -59,7 +59,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT"));
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
         configuration.addExposedHeader(JwtProperties.REFRESH_HEADER_NAME);
