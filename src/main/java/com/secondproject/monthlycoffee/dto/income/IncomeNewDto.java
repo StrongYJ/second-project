@@ -10,19 +10,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record IncomeNewDto(
     @Schema (description = "수입 금액")
     Integer amount,
-    @Schema (description = "수입에 대한 메모")
+    @Schema (description = "수입에 대한 메모", nullable = true)
     String note,
     @Schema (description = "수입 날짜")
-    LocalDate date,
-    @Schema (description = "회원 정보")
-    MemberDto member
+    LocalDate date
+    
     ) {
         public IncomeNewDto(IncomeInfo entity) {
             this(
                 entity.getAmount(),
                 entity.getNote(),
-                entity.getDate(),
-                new MemberDto(entity.getMember()) 
+                entity.getDate()
                 );
         }
 }
