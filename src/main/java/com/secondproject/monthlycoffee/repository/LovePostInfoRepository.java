@@ -23,4 +23,6 @@ public interface LovePostInfoRepository extends JpaRepository<LovePostInfo, Long
     Optional<LovePostInfo> findByPostAndMember(PostInfo post, MemberInfo member);
 
     long countByPost(PostInfo post);
+
+    boolean existsByMember(MemberInfo member);
 }

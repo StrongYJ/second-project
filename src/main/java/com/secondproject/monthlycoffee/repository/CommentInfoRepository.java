@@ -27,4 +27,6 @@ public interface CommentInfoRepository extends JpaRepository<CommentInfo, Long> 
     void deleteByIdAndMemberId(@Param("id") Long id, @Param("memberId") Long memberId);
 
     long countByPost(PostInfo post);
+
+    boolean existsByMember(MemberInfo member);
 }
