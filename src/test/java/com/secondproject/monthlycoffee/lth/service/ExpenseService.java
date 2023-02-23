@@ -1,6 +1,8 @@
-package com.secondproject.monthlycoffee.lth;
+package com.secondproject.monthlycoffee.lth.service;
 
-import com.secondproject.monthlycoffee.dto.expense.MessageExpenseDto;
+import com.secondproject.monthlycoffee.dto.expense.ExpenseCreateDto;
+import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
+import com.secondproject.monthlycoffee.dto.expense.TumblerRank;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.type.*;
@@ -8,8 +10,6 @@ import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
 import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,18 +18,22 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @Slf4j
 @ActiveProfiles("test")
-public class dummyTest {
+public class ExpenseService {
     @Autowired MemberInfoRepository mRepo;
     @Autowired ExpenseInfoRepository eRepo;
+    @Autowired
+    com.secondproject.monthlycoffee.service.ExpenseService eService;
     
-    @Test
+    @org.junit.jupiter.api.Test
     @Transactional
     void dummyData() {
         MemberInfo dummyMember = new MemberInfo(AuthDomain.KAKAO, "test123", "test", LocalDate.now(), Gender.MALE);
@@ -80,5 +84,23 @@ public class dummyTest {
                     dummyMember);
             eRepo.save(entity1);
         }
+    }
+    @org.junit.jupiter.api.Test
+    void rankTest() {
+        MemberInfo member1 = new MemberInfo(AuthDomain.KAKAO, "asd", "닉네임", LocalDate.now(), Gender.MALE);
+        ExpenseInfo expense1 = new ExpenseInfo("아메리카노", "스타벅스", 4500, "메모", true, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member1);
+        ExpenseInfo expense2 = new ExpenseInfo("바닐라라떼", "스타벅스", 5000, "메모", false, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member1);
+        ExpenseInfo expense3 = new ExpenseInfo("카푸치노", "스타벅스", 5500, "메모", true, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member1);
+        MemberInfo member2 = new MemberInfo(AuthDomain.KAKAO, "asd", "닉네임", LocalDate.now(), Gender.MALE);
+        ExpenseInfo expense4 = new ExpenseInfo("아메리카노", "스타벅스", 4500, "메모", true, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member2);
+        ExpenseInfo expense5 = new ExpenseInfo("바닐라라떼", "스타벅스", 5000, "메모", false, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member2);
+        ExpenseInfo expense6 = new ExpenseInfo("카푸치노", "스타벅스", 5500, "메모", true, Taste.SWEET, Mood.TALK, CoffeeBean.COLOMBIA, LikeHate.LIKE, 0, LocalDate.now(), member2);
+        eRepo.save(expense1);
+//        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+//        List<ExpenseDetailDto> expense = eRepo.findAll().stream().map(ExpenseDetailDto::new).toList();
+////        List<TumblerRank> entity = eRepo.rankByTumbler();
+//        resultMap.put("list", expense);
+//
+//        System.out.println(resultMap);
     }
 }

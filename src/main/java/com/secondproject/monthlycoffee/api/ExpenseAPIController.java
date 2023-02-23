@@ -74,7 +74,7 @@ public class ExpenseAPIController {
     @PatchMapping("/{expense-id}")
     public ResponseEntity<MessageExpenseDto> updateExpense(
             @Parameter(description = "지출 식별 번호", example = "1") @PathVariable("expense-id") Long expenseNo,
-            @Parameter(description = "수정을 원하는 데이터") @RequestBody ExpenseDetailDto data) {
+            @Parameter(description = "수정을 원하는 데이터") @RequestBody ExpenseCreateDto data) {
         return new ResponseEntity<>(eService.update(expenseNo, data), HttpStatus.OK);
     }
 

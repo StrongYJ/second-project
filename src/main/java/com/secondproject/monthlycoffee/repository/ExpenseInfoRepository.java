@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.secondproject.monthlycoffee.dto.expense.TumblerRank;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,7 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     @Query(value = "select e from ExpenseInfo e join e.member m where date_format(e.date, '%y%m') between :startDate and :endDate and m.id = :memberId")
     List<ExpenseInfo> searchTotalExpense(@Param("startDate") Integer startDate, @Param("endDate") Integer endDate, @Param("memberId") Long memberId);
     @Query(value = "select e from ExpenseInfo e join e.member m where date_format(e.date, '%y%m') = :date and e.likeHate = :keyword and m.id = :memberId")
-    List<ExpenseInfo> searchtotalList(@Param("date") Integer date, @Param("keyword") LikeHate keyword, @Param("memberId") Long memberId);
+    List<ExpenseInfo> searchTotalList(@Param("date") Integer date, @Param("keyword") LikeHate keyword, @Param("memberId") Long memberId);
     @Query(value = "select e from ExpenseInfo e join e.member m where e.likeHate = :keyword and m.id = :memberId")
     List<ExpenseInfo> searchLikeHate(@Param("keyword") LikeHate keyword, @Param("memberId") Long memberId);
     @Query(value = "select e from ExpenseInfo e join e.member m where date_format(e.date, '%y%m') = :date and m.id = :memberId")
@@ -30,4 +31,6 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     List<ExpenseInfo> searchBrand(@Param("date") Integer date, @Param("keyword") String keyword, @Param("memberId") Long memberId);
     @Query("select e from ExpenseInfo e where e.member = :member and e.date between :start and :end order by e.date")
     List<ExpenseInfo> findByYearMonth(@Param("member") MemberInfo member, @Param("start") LocalDate start, @Param("end") LocalDate end);
+//    @Query(value = "select m.id as id, m.nickname as nickname, count(e.tumbler) as useTumbler from ExpenseInfo e join e.member m where e.tumbler = true group by m.id order by useTumbler desc")
+//    List<TumblerRank> rankByTumbler();
 }
