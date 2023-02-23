@@ -1,20 +1,19 @@
 package com.secondproject.monthlycoffee.token;
 
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
+
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@RedisHash("refreshToken")
+@RedisHash("RefreshToken")
 public class RefreshToken {
     
     @Id

@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Transactional
@@ -25,14 +27,13 @@ public class TokenService {
         return new TokenDto(access, refresh);
     }
 
-    public void logout(final String access, final String refresh) {
-        if(!StringUtils.hasText(refresh))
-            throw new IllegalArgumentException("리프레쉬토큰이 필요합니다.");
-
+    public void logout(final long memberId, final String access) {
         String resolvedAccessToken = jwtUtil.resolve(access);
         long accessExpiration = jwtUtil.getAccessExpiration(resolvedAccessToken);
         accessTokenBlackListRepo.save(new AccessTokenBlackList(resolvedAccessToken, accessExpiration));
-        refreshTokenRepo.deleteById(refresh);
+        refreshTokenRepo.findAll().stream()
+                .filter(r -> Objects.nonNull(r) && r.getMemberId() == memberId)
+                .forEach(refreshTokenRepo::delete);
     }
 
     public String reissue(final String refresh) {
