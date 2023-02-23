@@ -82,10 +82,10 @@ public class ExpenseService {
         if(assessment == null) {
             return eRepo.searchDate(date, memberId).stream().map(ExpenseDetailDto::new).toList();
         }
-        return eRepo.searchtotalList(date, assessment, memberId).stream().map(ExpenseDetailDto::new).toList();
+        return eRepo.searchTotalList(date, assessment, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
-    public MessageExpenseDto update(Long expenseNo, ExpenseDetailDto data) {
+    public MessageExpenseDto update(Long expenseNo, ExpenseCreateDto data) {
         ExpenseInfo entity = eRepo.findById(expenseNo).orElseThrow();
 
         if(data.getCategory() != null) entity.setCategory(data.getCategory());
