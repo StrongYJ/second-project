@@ -15,17 +15,14 @@ public record IncomeDto(
     @Schema (description = "수입 메모")
     String note,
     @Schema (description = "수입 날짜")
-    LocalDate date,
-    @Schema (description = "회원 정보")
-    MemberDto member
+    LocalDate date
     ) {
     public IncomeDto(IncomeInfo entity) {
         this(
             entity.getId(), 
             entity.getAmount(), 
             entity.getNote(),
-            entity.getDate(),
-            new MemberDto(entity.getMember())
+            entity.getDate()
         );
     }
     

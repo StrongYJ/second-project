@@ -2,29 +2,26 @@ package com.secondproject.monthlycoffee.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
-import com.secondproject.monthlycoffee.dto.post.ExpenseImageDto;
 import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
-import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
-import com.secondproject.monthlycoffee.dto.income.IncomeStringDateDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
+import com.secondproject.monthlycoffee.dto.post.ExpenseImageDto;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.IncomeInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
@@ -185,9 +182,9 @@ public class IncomeService {
 
 
     // 수입 키워드 검색
-    public List<IncomeInfo> searchIncomeByKeyword(String keyword, Long memberId) {
+    public List<IncomeDto> searchIncomeByKeyword(String keyword, Long memberId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        List<IncomeInfo> income = incomeRepo.findByNoteContainingAndMember(keyword, member);
+        List<IncomeDto> income = incomeRepo.findByNoteContainingAndMember(keyword, member).stream().map(IncomeDto::new).toList();
         System.out.println(income);
         return income;
     }

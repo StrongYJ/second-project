@@ -19,18 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
-import com.secondproject.monthlycoffee.entity.IncomeInfo;
 import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeAvgDto;
-import com.secondproject.monthlycoffee.dto.income.IncomeListDetailDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDeleteDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeEditDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeExpenseListDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeNewDto;
 import com.secondproject.monthlycoffee.dto.income.IncomeRankDto;
+import com.secondproject.monthlycoffee.dto.income.IncomeSumDto;
 import com.secondproject.monthlycoffee.service.IncomeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -150,11 +148,11 @@ public class IncomeAPIController {
     // 수입 키워드 검색
     @Operation(summary = "수입 키워드 검색 조회", description = "등록된 수입 정보들을 키워드로 검색 후 목록을 조회합니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<IncomeInfo>> searchByKeyword(
+    public ResponseEntity<List<IncomeDto>> searchByKeyword(
         @Parameter(description = "검색하려는 키워드", example = "용돈") @RequestParam String keyword,
         @AuthMember AuthDto authDto
     ) {
-        return new ResponseEntity<List<IncomeInfo>>(incomeService.searchIncomeByKeyword(keyword, authDto.id()), HttpStatus.OK);
+        return new ResponseEntity<>(incomeService.searchIncomeByKeyword(keyword, authDto.id()), HttpStatus.OK);
     }
 
 
