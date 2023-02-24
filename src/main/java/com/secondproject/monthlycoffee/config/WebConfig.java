@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.secondproject.monthlycoffee.config.security.AuthenticationArgumentResolver;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {    
 
     private final AuthenticationArgumentResolver authenticationArgumentResolver;
