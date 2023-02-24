@@ -21,7 +21,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
+            AuthenticationException authException) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(401);
         Map<String, Object> errorJson = new LinkedHashMap<>();
@@ -33,5 +33,4 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         writer.flush();
         writer.close();
     }
-    
 }

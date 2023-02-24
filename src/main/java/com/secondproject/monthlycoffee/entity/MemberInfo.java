@@ -2,6 +2,7 @@ package com.secondproject.monthlycoffee.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.secondproject.monthlycoffee.entity.shared.BaseTime;
@@ -59,8 +60,10 @@ public class MemberInfo extends BaseTime implements Serializable {
         }
     }
 
-    public void modifyNickname(String nickname) {
-        this.nickname = nickname;
+    public void modifyOptionalInfo(String nickname, LocalDate birth, Gender gender) {
+        if(StringUtils.hasText(nickname)) this.nickname = nickname;
+        if(Objects.nonNull(birth)) this.birth = birth;
+        if(Objects.nonNull(gender)) this.gender = gender;
     }
 
 }

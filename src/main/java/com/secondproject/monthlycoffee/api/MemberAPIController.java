@@ -101,7 +101,7 @@ public class MemberAPIController {
     @Operation(summary = "회원 수정", description = "등록된 회원 정보들 중 특정 회원을 수정합니다.")
     @PatchMapping("/{member-id}")
     public ResponseEntity<MemberDto> patchMember(
-        @Parameter(description = "회원 수정 내용") MemberEditDto edit,
+        @Parameter(description = "회원 수정 내용") @RequestBody MemberEditDto edit,
         @Parameter(description = "회원 식별 번호", example = "1") @PathVariable("member-id") Long memberId,
         @AuthMember AuthDto authDto
         ) {
