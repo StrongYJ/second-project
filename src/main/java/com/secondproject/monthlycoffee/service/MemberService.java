@@ -1,7 +1,6 @@
 package com.secondproject.monthlycoffee.service;
 
 import com.secondproject.monthlycoffee.repository.*;
-import com.secondproject.monthlycoffee.token.RefreshTokenRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,13 +57,7 @@ public class MemberService {
     // 회원 수정
     public MemberDto modifyMember(MemberEditDto edit, Long id) {
         MemberInfo member = memberRepo.findById(id).orElseThrow();
-        if(member.getId()!=id) {
-            throw new IllegalArgumentException("본인만 수정이 가능합니다."); 
-        }
-        if(memberRepo.existsByNickname(edit.nickname())){
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다."); 
-        }
-        member.modifyNickname(edit.nickname());
+        member.modifyOptionalInfo(edit.nickname(), edit.birth(), edit.gender());
         return new MemberDto(member);
     }
     
