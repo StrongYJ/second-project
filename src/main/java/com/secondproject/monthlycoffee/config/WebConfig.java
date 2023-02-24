@@ -15,8 +15,7 @@ import com.secondproject.monthlycoffee.config.security.AuthenticationArgumentRes
 
 @RequiredArgsConstructor
 @Configuration
-@EnableWebMvc
-public class WebConfig implements WebMvcConfigurer {    
+public class WebConfig implements WebMvcConfigurer {
 
     private final AuthenticationArgumentResolver authenticationArgumentResolver;
 
