@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.secondproject.monthlycoffee.dto.expense.TumblerRank;
+import com.secondproject.monthlycoffee.dto.expense.TumblerRankCreate;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,10 +33,10 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     List<ExpenseInfo> searchBrand(@Param("date") Integer date, @Param("keyword") String keyword, @Param("memberId") Long memberId);
     @Query("select e from ExpenseInfo e where e.member = :member and e.date between :start and :end order by e.date")
     List<ExpenseInfo> findByYearMonth(@Param("member") MemberInfo member, @Param("start") LocalDate start, @Param("end") LocalDate end);
-
     @Modifying(clearAutomatically = true)
     @Query("update ExpenseInfo e set e.member = null where e.member = :member")
     void updateMemberNullByMember(@Param("member") MemberInfo memberInfo);
-
     boolean existsByMember(MemberInfo member);
+    @Query(value = "select m.id as id, m.nickname as nickname, count(e.tumbler) as countUse from ExpenseInfo e join e.member m where e.tumbler = true and date_format(e.date, '%y%m') between :startDate and :endDate group by m.id order by countUse desc limit 10")
+    List<TumblerRankCreate> rankByTumbler(@Param("startDate") Integer startDate, @Param("endDate") Integer endDate);
 }

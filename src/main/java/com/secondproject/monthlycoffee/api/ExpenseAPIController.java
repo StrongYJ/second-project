@@ -6,6 +6,9 @@ import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.dto.expense.*;
 
+import com.secondproject.monthlycoffee.entity.ExpenseInfo;
+import com.secondproject.monthlycoffee.entity.MemberInfo;
+import com.secondproject.monthlycoffee.entity.PostInfo;
 import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import com.secondproject.monthlycoffee.service.ExpenseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,18 +41,19 @@ public class ExpenseAPIController {
 
     @Operation(summary = "지출 등록", description = "지출 내용을 등록합니다.")
     @PostMapping("")
-    public ResponseEntity<MessageExpenseDto> putExpense(
+    public ResponseEntity<MessageExpenseDto> postExpense(
             @Parameter(description = "등록할 내용") @RequestBody ExpenseCreateDto data,
             @AuthMember AuthDto authDto) {
-        return new ResponseEntity<>(eService.putExpense(data, authDto.id()), HttpStatus.OK);
+        return new ResponseEntity<>(eService.postExpense(data, authDto.id()), HttpStatus.OK);
     }
 
     @Operation(summary = "이미지 등록", description = "이미지를 등록합니다.")
     @PostMapping(value = "/{expense-id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessageExpenseDto> putExpense(
+    public ResponseEntity<MessageExpenseDto> postExpenseImage(
             @Parameter(description = "등록할 이미지") @RequestPart MultipartFile[] file,
-            @Parameter(description = "게시글 번호", example = "1") @PathVariable("expense-id") Long expenseId) {
-        return new ResponseEntity<>(eService.putExpenseImage(file, expenseId), HttpStatus.OK);
+            @Parameter(description = "게시글 번호", example = "1") @PathVariable("expense-id") Long expenseId,
+            @AuthMember AuthDto authDto) {
+        return new ResponseEntity<>(eService.postExpenseImage(file, expenseId, authDto.id()), HttpStatus.OK);
     }
 
     @Operation(summary = "회원 지출 조회", description = "회원 식별 번호만 입력시 그 회원의 전체 지출 내역이 조회됩니다. 평가(assessment)값 조회연월값(date)을 같이 넣으면 두조건 모두에 해당하는 지출 내역만 조회합니다. 각각 검색도 가능합니다.")
@@ -74,15 +78,17 @@ public class ExpenseAPIController {
     @PatchMapping("/{expense-id}")
     public ResponseEntity<MessageExpenseDto> updateExpense(
             @Parameter(description = "지출 식별 번호", example = "1") @PathVariable("expense-id") Long expenseNo,
-            @Parameter(description = "수정을 원하는 데이터") @RequestBody ExpenseCreateDto data) {
-        return new ResponseEntity<>(eService.update(expenseNo, data), HttpStatus.OK);
+            @Parameter(description = "수정을 원하는 데이터") @RequestBody ExpenseCreateDto data,
+            @AuthMember AuthDto authDto) {
+        return new ResponseEntity<>(eService.updateExpense(expenseNo, data, authDto.id()), HttpStatus.OK);
     }
 
     @Operation(summary = "지출 삭제", description = "지출 식별 번호를 통해 등록된 지출을 삭제합니다. 삭제시 연결되어있는 이미지가 같이 삭제됩니다.")
     @DeleteMapping("/{expense-id}")
     public ResponseEntity<MessageExpenseDto> deleteExpense(
-            @Parameter(description = "지출 식별 번호", example = "1") @PathVariable("expense-id") Long id) {
-        return new ResponseEntity<>(eService.delete(id), HttpStatus.OK);
+            @Parameter(description = "지출 식별 번호", example = "1") @PathVariable("expense-id") Long id,
+            @AuthMember AuthDto authDto) {
+        return new ResponseEntity<>(eService.deleteExpense(id, authDto.id()), HttpStatus.OK);
     }
 
     @Operation(summary = "이미지 다운로드", description = "이미지를 다운로드할 수 있는 주소입니다.")
@@ -94,15 +100,15 @@ public class ExpenseAPIController {
     }
 
     @Operation(summary = "이미지 삭제", description = "이미지 식별 번호를 통해 등록된 이미지를 삭제합니다.")
-    @DeleteMapping("/image/{image-id}")
+    @DeleteMapping("/image/{filename}")
     public ResponseEntity<MessageExpenseDto> deleteImage(
-            @Parameter(description = "이미지 식별 번호", example = "1") @PathVariable("image-id") Long id) {
-        return new ResponseEntity<>(eService.deleteImage(id), HttpStatus.OK);
+            @Parameter(description = "이미지 식별 번호", example = "1") @PathVariable("filename") String filename) {
+        return new ResponseEntity<>(eService.deleteImage(filename), HttpStatus.OK);
     }
 
     @Operation(summary = "더미 제작", description = "원하는 회원의 더미를 size 개 생성합니다.")
     @PostMapping("/dummy")
-    public ResponseEntity<MessageExpenseDto> putDummy(
+    public ResponseEntity<MessageExpenseDto> postDummy(
             @RequestParam Long userNo,
             Integer size) {
         return new ResponseEntity<>(eService.dummyData(userNo, size), HttpStatus.OK);
@@ -130,5 +136,11 @@ public class ExpenseAPIController {
     @GetMapping("/preference")
     public ResponseEntity<MessageExpenseDto> getBrand(@AuthMember AuthDto authDto) {
         return new ResponseEntity<>(eService.likeStyle(authDto.id()), HttpStatus.OK);
+    }
+
+    @Operation(summary = "텀블러 사용 횟수 랭킹", description = "텀블러 사용 횟수를 토대로 랭킹을 냅니다. 분기마다 초기화됩니다.")
+    @GetMapping("/rank")
+    public ResponseEntity<List<TumblerRank>> rankTumbler() {
+        return new ResponseEntity<>(eService.rankTumbler(), HttpStatus.OK);
     }
 }
