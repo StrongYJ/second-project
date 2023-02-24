@@ -100,7 +100,7 @@ public class MyTest {
 
     @Test
     void 수입연월별리스트(){
-        List<IncomeInfo> list = incomeRepo.findByYearMonth(member, LocalDate.of(2023, 01, 01), LocalDate.of(2023, 01, 31));
+        List<IncomeInfo> list = incomeRepo.findByYearMonth(member, 2301);
         log.info(member.toString());
         System.out.println(list.size());
         for(IncomeInfo a : list){

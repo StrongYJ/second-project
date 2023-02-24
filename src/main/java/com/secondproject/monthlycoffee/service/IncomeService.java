@@ -112,20 +112,16 @@ public class IncomeService {
 
 
     // 수입+지출 연월별 리스트
-    public List<IncomeExpenseListDto> searchIncomeByYearMonth(YearMonth date, Long memberId) {
+    public List<IncomeExpenseListDto> searchIncomeByYearMonth(Integer date, Long memberId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        LocalDate firstDate = date.atDay(1); 
-        LocalDate endDate = date.atEndOfMonth(); 
-        
-        List<IncomeInfo> incomeInfos = incomeRepo.findByYearMonth(member, firstDate, endDate);
-        List<ExpenseInfo> expenseInfos = expenseRepo.findByYearMonth(member, firstDate, endDate);
-        
+
+        List<IncomeInfo> incomeInfos = incomeRepo.findByYearMonth(member, date);
+        List<ExpenseDetailDto> expenseInfos = expenseRepo.searchDate(date, memberId).stream().map(ExpenseDetailDto::new).toList();
+
         List<IncomeExpenseListDto> incomeExpenseList = new ArrayList<IncomeExpenseListDto>();
         List<IncomeListDetailDto> incomeList = new ArrayList<IncomeListDetailDto>();
-        List<ExpenseDetailDto> expenseList = new ArrayList<ExpenseDetailDto>();
 
         IncomeExpenseListDto incomeExpense = new IncomeExpenseListDto();
-
         for(IncomeInfo i : incomeInfos) {
             incomeExpense.setYearMonth(date);
             IncomeListDetailDto incomeListSet = new IncomeListDetailDto();
@@ -138,25 +134,7 @@ public class IncomeService {
             incomeList.add(incomeListSet);
             incomeExpense.setIncome(incomeList);
         }
-            
-        for(ExpenseInfo e : expenseInfos) {
-            ExpenseDetailDto expenseListSet = new ExpenseDetailDto();
-            expenseListSet.setId(e.getId());
-            expenseListSet.setCategory(e.getCategory());
-            expenseListSet.setBrand(e.getBrand());
-            expenseListSet.setPrice(e.getPrice());
-            expenseListSet.setMemo(e.getMemo());
-            expenseListSet.setTumbler(e.getTumbler());
-            expenseListSet.setTaste(e.getTaste());
-            expenseListSet.setMood(e.getMood());
-            expenseListSet.setBean(e.getBean());
-            expenseListSet.setLikeHate(e.getLikeHate());
-            expenseListSet.setPayment(e.getPayment());
-            expenseListSet.setDate(e.getDate());
-            expenseListSet.setImages(e.getExpenseImages().stream().map(ExpenseImageDto::new).toList());
-            expenseList.add(expenseListSet);
-        }
-        incomeExpense.setExpense(expenseList);
+        incomeExpense.setExpense(expenseInfos);
         incomeExpenseList.add(incomeExpense);
 
         return incomeExpenseList;

@@ -11,8 +11,8 @@ import lombok.Data;
 
 @Data
 public class IncomeExpenseListDto {
-    @Schema (description = "조회하려는 연월 [ex)2023-01]")
-    YearMonth YearMonth;
+    @Schema (description = "조회하려는 연월 [ex)2302]")
+    Integer YearMonth;
     @Schema (description = "수입 리스트")
     List<IncomeListDetailDto> income;
     @Schema (description = "지출 리스트")
