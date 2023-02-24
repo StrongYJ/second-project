@@ -4,6 +4,7 @@ import com.secondproject.monthlycoffee.dto.expense.*;
 import com.secondproject.monthlycoffee.entity.ExpenseImageInfo;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
+import com.secondproject.monthlycoffee.entity.PostInfo;
 import com.secondproject.monthlycoffee.entity.type.*;
 import com.secondproject.monthlycoffee.repository.ExpenseImageInfoRepository;
 import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
@@ -65,8 +66,9 @@ public class ExpenseService {
                 .body(r);
     }
 
-    public MessageExpenseDto delete(Long id) {
-        ExpenseInfo expense = eRepo.findById(id).orElseThrow();
+    public MessageExpenseDto deleteExpense(Long expenseId, Long memberId) {
+        ExpenseInfo expense = eRepo.findById(expenseId).orElseThrow();
+        checkExpenseMember(expense, memberId);
         eRepo.delete(expense);
         return new MessageExpenseDto(expense.getId(), "삭제되었습니다.");
     }
@@ -85,8 +87,9 @@ public class ExpenseService {
         return eRepo.searchTotalList(date, assessment, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
-    public MessageExpenseDto update(Long expenseNo, ExpenseCreateDto data) {
+    public MessageExpenseDto updateExpense(Long expenseNo, ExpenseCreateDto data, Long memberId) {
         ExpenseInfo entity = eRepo.findById(expenseNo).orElseThrow();
+        checkExpenseMember(entity, memberId);
 
         if(data.getCategory() != null) entity.setCategory(data.getCategory());
         if(data.getBrand() != null) entity.setBrand(data.getBrand());
@@ -135,8 +138,8 @@ public class ExpenseService {
 //        return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
 //    }
 
-    public MessageExpenseDto deleteImage(Long id) {
-        ExpenseImageInfo image = imageRepo.findById(id).orElseThrow();
+    public MessageExpenseDto deleteImage(String filename) {
+        ExpenseImageInfo image = imageRepo.findByFilename(filename);
         imageRepo.delete(image);
         return new MessageExpenseDto(image.getId(), "삭제되었습니다.");
     }
@@ -290,7 +293,7 @@ public class ExpenseService {
         return new MessageExpenseDto(memberId, nickname+"님은 "+likeMood+" 분위기의 카페에서 "+likeBean+"의 "+likeTaste+" 커피를 좋아하세요.");
     }
 
-    public MessageExpenseDto putExpense(ExpenseCreateDto data, Long memberId) {
+    public MessageExpenseDto postExpense(ExpenseCreateDto data, Long memberId) {
         ExpenseInfo entity1 = new ExpenseInfo(data.getCategory(), data.getBrand(), data.getPrice(), data.getMemo(), data.getTumbler(), data.getTaste(), data.getMood(), data.getBean(), data.getLikeHate(), data.getPayment(), data.getDate(), memberRepo.findById(memberId).orElseThrow());
         if(data.getCategory() == null || data.getBrand() == null || data.getPrice() == null || data.getDate() == null) {
             return new MessageExpenseDto(entity1.getId(), "필수 정보 누락입니다.");
@@ -299,7 +302,9 @@ public class ExpenseService {
         return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
     }
 
-    public MessageExpenseDto putExpenseImage(MultipartFile[] file, Long expenseId) {
+    public MessageExpenseDto postExpenseImage(MultipartFile[] file, Long expenseId, Long memberId) {
+        ExpenseInfo expense = eRepo.findById(expenseId).orElseThrow();
+        checkExpenseMember(expense, memberId);
         Path folderLocation = Paths.get(path);
         if(file != null) {
             for (int a = 0; a < file.length; a++) {
@@ -324,5 +329,62 @@ public class ExpenseService {
             }
         }
         return new MessageExpenseDto(expenseId, "등록되었습니다.");
+    }
+
+    public List<TumblerRank> rankTumbler() {
+        String seasonStart = null;
+        String seasonEnd = null;
+        if(LocalDate.now().getMonthValue() <= 3) {
+            seasonStart = "01";
+            seasonEnd = "03";
+        }
+        else if(LocalDate.now().getMonthValue() > 3 || LocalDate.now().getMonthValue() <= 6) {
+            seasonStart = "04";
+            seasonEnd = "06";
+        }
+        else if(LocalDate.now().getMonthValue() > 6 || LocalDate.now().getMonthValue() <= 9) {
+            seasonStart = "07";
+            seasonEnd = "09";
+        }
+        else {
+            seasonStart = "10";
+            seasonEnd = "12";
+        }
+        String start = Integer.toString(LocalDate.now().getYear()-2000)+seasonStart;
+        String end = Integer.toString(LocalDate.now().getYear()-2000)+seasonEnd;
+
+        List<TumblerRankCreate> create = eRepo.rankByTumbler(Integer.parseInt(start), Integer.parseInt(end)).stream().toList();
+        List<TumblerRank> rank = new ArrayList<>();
+        String grade = null;
+
+        for(int i=0; i<create.size(); i++) {
+            if(i == 0) {
+                grade = "GrandMaster";
+            }
+            else if(i < 4) {
+                grade = "Gold";
+            }
+            else if(i < 7) {
+                grade = "Silver";
+            }
+            else {
+                grade = "Bronze";
+            }
+            TumblerRank rankCreate = TumblerRank.builder()
+                    .id(create.get(i).getId())
+                    .nickname(create.get(i).getNickname())
+                    .useTumbler(create.get(i).getCountUse())
+                    .rank(i+1)
+                    .grade(grade)
+                    .build();
+            rank.add(rankCreate);
+        }
+
+        return rank;
+    }
+
+    private void checkExpenseMember(ExpenseInfo expense, Long memberId) {
+        if (expense.getMember().getId() != memberId)
+            throw new IllegalArgumentException("Match Error");
     }
 }
