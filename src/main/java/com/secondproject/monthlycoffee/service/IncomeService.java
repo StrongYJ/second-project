@@ -41,14 +41,11 @@ public class IncomeService {
 
     // 수입 등록
     public IncomeDto newIncome(IncomeNewDto data, Long memberId) {
-        if(memberRepo.findById(memberId).isEmpty()) {
-            throw new NoSuchElementException("존재하지 않는 회원입니다.");
-        }
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        IncomeInfo newIncome = new IncomeInfo(data.amount(), data.note(), data.date(), member);
         if(data.amount() <= 0){
             throw new NoSuchElementException("수입은 0원 이상의 금액이어야 합니다."); 
         }
+        IncomeInfo newIncome = new IncomeInfo(data.amount(), data.note(), data.date(), member);
         incomeRepo.save(newIncome);
         return new IncomeDto(newIncome);
     }
