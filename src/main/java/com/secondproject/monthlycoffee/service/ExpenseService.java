@@ -229,7 +229,7 @@ public class ExpenseService {
         return eRepo.searchBrand(date, keyword, memberId).stream().map(ExpenseDetailDto::new).toList();
     }
 
-    public MessageExpenseDto likeStyle(Long memberId) {
+    public MessageExpenseDto likeStyle(Long memberId)  {
         List<ExpenseInfo> entity = eRepo.findByMember(memberRepo.findById(memberId).orElseThrow()).stream().toList();
         String nickname = memberRepo.findById(memberId).orElseThrow().getNickname();
 
