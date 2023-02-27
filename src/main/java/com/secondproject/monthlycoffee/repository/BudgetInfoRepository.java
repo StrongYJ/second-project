@@ -27,10 +27,10 @@ public interface BudgetInfoRepository extends JpaRepository<BudgetInfo, Long> {
     @Query("select e from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year order by e.yearMonth")
     List<BudgetInfo> findByYear(@Param("member") MemberInfo member, @Param("year") String year);
     
-    @Query("select SUBSTRING(cast(e.yearMonth as text), 1,4) as year, sum(e.amount) as sum from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year order by e.yearMonth")
-    BudgetSumDto sumByYear(@Param("member") MemberInfo member, @Param("year") String year);
+    @Query("select SUBSTRING(cast(e.yearMonth as text), 1,4) as year, sum(e.amount) as sum from BudgetInfo e where e.member = :member group by year order by year desc")
+    List<BudgetSumDto> sumByYear(@Param("member") MemberInfo member);
 
-    @Query("select sum(e.amount)as sum, SUBSTRING(cast(e.yearMonth as text), 1,7) as yearMonth, rank() over(order by e.amount desc) as rank from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year group by yearMonth")
+    @Query("select sum(e.amount)as sum, SUBSTRING(cast(e.yearMonth as text), 1,7) as yearMonth, rank() over(order by sum(e.amount) desc) as rank from BudgetInfo e where e.member = :member and SUBSTRING(cast(e.yearMonth as text), 1,4) = :year group by yearMonth")
     List<BudgetRankDto> rankByYear(@Param("member") MemberInfo member, @Param("year") String year);
 
     @Modifying(clearAutomatically = true)

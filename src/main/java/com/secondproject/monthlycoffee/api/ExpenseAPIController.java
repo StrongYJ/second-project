@@ -13,6 +13,7 @@ import com.secondproject.monthlycoffee.entity.type.LikeHate;
 import com.secondproject.monthlycoffee.service.ExpenseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -91,6 +92,7 @@ public class ExpenseAPIController {
         return new ResponseEntity<>(eService.deleteExpense(id, authDto.id()), HttpStatus.OK);
     }
 
+    @SecurityRequirements
     @Operation(summary = "이미지 다운로드", description = "이미지를 다운로드할 수 있는 주소입니다.")
     @GetMapping("/image/{filename}")
     public ResponseEntity<Resource> getImage (
@@ -99,6 +101,7 @@ public class ExpenseAPIController {
         return eService.getImage(filename, request);
     }
 
+    @SecurityRequirements
     @Operation(summary = "이미지 삭제", description = "이미지 식별 번호를 통해 등록된 이미지를 삭제합니다.")
     @DeleteMapping("/image/{filename}")
     public ResponseEntity<MessageExpenseDto> deleteImage(
@@ -106,6 +109,7 @@ public class ExpenseAPIController {
         return new ResponseEntity<>(eService.deleteImage(filename), HttpStatus.OK);
     }
 
+    @SecurityRequirements
     @Operation(summary = "더미 제작", description = "원하는 회원의 더미를 size 개 생성합니다.")
     @PostMapping("/dummy")
     public ResponseEntity<MessageExpenseDto> postDummy(
@@ -138,6 +142,7 @@ public class ExpenseAPIController {
         return new ResponseEntity<>(eService.likeStyle(authDto.id()), HttpStatus.OK);
     }
 
+    @SecurityRequirements
     @Operation(summary = "텀블러 사용 횟수 랭킹", description = "텀블러 사용 횟수를 토대로 랭킹을 냅니다. 분기마다 초기화됩니다.")
     @GetMapping("/rank")
     public ResponseEntity<List<TumblerRank>> rankTumbler() {

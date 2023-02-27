@@ -112,7 +112,7 @@ public class TokenControllerTest {
                     .header(JwtProperties.REFRESH_HEADER_NAME, refresh)
                 .when()
                     .post(JwtProperties.REISSUE_TOKEN_URI)
-                .then()
+                .then().log().all()
                     .statusCode(HttpStatus.CREATED.value())
                     .assertThat().body("status", equalTo(true))
                     .extract();
