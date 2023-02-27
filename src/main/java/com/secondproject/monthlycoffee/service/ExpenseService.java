@@ -230,7 +230,7 @@ public class ExpenseService {
     }
 
     public MessageExpenseDto likeStyle(Long memberId) {
-        List<ExpenseInfo> entity = eRepo.findByMember(memberRepo.findById(memberId).orElseThrow()).stream().toList();
+        List<ExpenseInfo> entity = eRepo.findByMember(memberRepo.findById(memberId).orElseThrow());
         String nickname = memberRepo.findById(memberId).orElseThrow().getNickname();
 
         int likeCount = 0;
@@ -243,7 +243,7 @@ public class ExpenseService {
         int countSweet = 0; int countSavory = 0; int countBitter = 0; int countSour = 0; String likeTaste = "";
 
         for (int i=0; i<entity.size(); i++) {
-            if (entity.get(i).getLikeHate().equals(LikeHate.valueOf("LIKE"))) {
+            if (entity.get(i).getLikeHate() == LikeHate.LIKE) {
                 likeCount ++;
                 {
                     if (entity.get(i).getMood().equals(Mood.WORK)) countWork++;
