@@ -2,6 +2,7 @@ package com.secondproject.monthlycoffee.api;
 
 import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,7 @@ public class PostAPIController {
     
     private final PostService postService;
 
+    @SecurityRequirements
     @Operation(summary = "전체 게시글 조회")
     @GetMapping("")
     @PageableAsQueryParam
@@ -46,6 +48,7 @@ public class PostAPIController {
     }
 
 
+    @SecurityRequirements
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/{post-id}")
     public ResponseEntity<PostDetailDto> getPostDetail(

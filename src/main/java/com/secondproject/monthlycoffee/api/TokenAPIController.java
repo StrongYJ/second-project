@@ -1,7 +1,16 @@
-package com.secondproject.monthlycoffee.token;
+package com.secondproject.monthlycoffee.api;
 
 import com.secondproject.monthlycoffee.config.security.JwtProperties;
+import com.secondproject.monthlycoffee.error.ErrorResponse;
+import com.secondproject.monthlycoffee.token.TokenResponseDto;
+import com.secondproject.monthlycoffee.token.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +27,9 @@ public class TokenAPIController {
 
     private final TokenService tokenService;
 
-    @Operation(summary = "액세스 토큰을 재발급 받습니다.", description = "리프레시 토큰이 있어야합니다.")
+    @Operation(summary = "액세스 토큰을 재발급 받습니다.", description = "리프레시 토큰이 있어야합니다.", parameters = {
+            @Parameter(name = JwtProperties.REFRESH_HEADER_NAME, description = "리프레시 토큰", in = ParameterIn.HEADER, required = true)
+    })
     @PostMapping(JwtProperties.REISSUE_TOKEN_URI)
     public ResponseEntity<TokenResponseDto> postReissueAccessToken(HttpServletRequest request) {
         String refresh = request.getHeader(JwtProperties.REFRESH_HEADER_NAME);
