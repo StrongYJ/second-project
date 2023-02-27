@@ -126,7 +126,7 @@ public class IncomeAPIController {
     @Operation(summary = "수입 연월별 평균 조회", description = "등록된 수입 정보들 중 연월별 평균을 조회합니다.")
     @GetMapping("/stats/avg")
     public ResponseEntity<IncomeAvgDto> avgIncomeByYearMonth(
-        @Parameter(description = "조회하려는 연도와 달", example = "2023-03") @RequestParam YearMonth date,
+        @Parameter(description = "조회하려는 연도와 달", example = "2303") @RequestParam Integer date,
         @AuthMember AuthDto authDto
     ){
         return new ResponseEntity<IncomeAvgDto>(incomeService.avgIncomeByYearMonth(date, authDto.id()), HttpStatus.OK);

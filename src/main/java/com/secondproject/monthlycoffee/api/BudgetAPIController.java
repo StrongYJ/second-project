@@ -100,11 +100,10 @@ public class BudgetAPIController {
     // 예산 연도별 합계
     @Operation(summary = "예산 연도별 합산 통계 조회", description = "등록된 예산 정보들 중 연도별 합계를 조회합니다.")
     @GetMapping("/sum")
-    public ResponseEntity<BudgetSumDto> sumBudgetByYear(
-        @Parameter(description = "조회하려는 연도", example = "2023") @RequestParam String year,
+    public ResponseEntity<List<BudgetSumDto>> sumBudgetByYear(
         @AuthMember AuthDto authDto
     ){
-        return new ResponseEntity<BudgetSumDto>(budgetService.sumBudgetByYear(year, authDto.id()), HttpStatus.OK);
+        return new ResponseEntity<List<BudgetSumDto>>(budgetService.sumBudgetByYear(authDto.id()), HttpStatus.OK);
     }
 
 
