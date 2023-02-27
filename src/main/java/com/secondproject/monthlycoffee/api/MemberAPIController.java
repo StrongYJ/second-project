@@ -7,6 +7,8 @@ import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
 import com.secondproject.monthlycoffee.token.TokenDto;
 import com.secondproject.monthlycoffee.token.TokenResponseDto;
 import com.secondproject.monthlycoffee.token.TokenService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
@@ -47,6 +49,7 @@ public class MemberAPIController {
 
 
     // 회원 등록
+    @SecurityRequirements
     @Operation(
             summary = "회원 로그인",
             description = "미가입 회원은 자동으로 회원가입됩니다.<br>액세스토큰 헤더이름: " + HttpHeaders.AUTHORIZATION +

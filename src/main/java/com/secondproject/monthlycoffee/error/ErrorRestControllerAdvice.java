@@ -1,7 +1,6 @@
 package com.secondproject.monthlycoffee.error;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.secondproject.monthlycoffee.token.TokenResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,8 +32,8 @@ public class ErrorRestControllerAdvice {
 
     @ExceptionHandler(JWTVerificationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public TokenResponseDto handleJWTVerificationException(JWTVerificationException e) {
-        return new TokenResponseDto(e.toString(), e.getMessage(), false);
+    public ErrorResponse handleJWTVerificationException(JWTVerificationException e) {
+        return new ErrorResponse(e.toString(), e.getMessage());
 
     }
     @ExceptionHandler(MissingServletRequestPartException.class)
