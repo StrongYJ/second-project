@@ -139,11 +139,11 @@ public class IncomeService {
 
 
     // 수입 연월별 평균
-    public IncomeAvgDto avgIncomeByYearMonth(YearMonth date, Long memberId) {
+    public IncomeAvgDto avgIncomeByYearMonth(Integer date, Long memberId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        LocalDate firstDate = date.atDay(1); 
-        LocalDate endDate = date.atEndOfMonth();  
-        IncomeAvgDto income = incomeRepo.avgByYearMonth(member, firstDate, endDate);
+//        LocalDate firstDate = date.atDay(1);
+//        LocalDate endDate = date.atEndOfMonth();
+        IncomeAvgDto income = incomeRepo.avgByYearMonth(member, date);
         return income;
     }
 

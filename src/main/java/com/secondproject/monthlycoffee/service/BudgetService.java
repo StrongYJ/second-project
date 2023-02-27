@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.secondproject.monthlycoffee.dto.expense.ExpenseDetailDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -111,9 +112,9 @@ public class BudgetService {
 
 
     // 예산 연도별 합계 조회
-    public BudgetSumDto sumBudgetByYear(String year, Long memberId) {
+    public List<BudgetSumDto> sumBudgetByYear(Long memberId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
-        BudgetSumDto budget = budgetRepo.sumByYear(member, year);
+        List<BudgetSumDto> budget = budgetRepo.sumByYear(member);
         return budget;
     }
 
