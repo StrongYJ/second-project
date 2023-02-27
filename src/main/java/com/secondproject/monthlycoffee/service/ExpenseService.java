@@ -290,7 +290,7 @@ public class ExpenseService {
         else if(rankTaste == countBitter) likeTaste = "쓴맛이 나는";
         else likeTaste = "신맛이 나는";
 
-        return new MessageExpenseDto(memberId, nickname+"님은 "+likeMood+" 분위기의 카페에서 "+likeBean+"의 "+likeTaste+" 커피를 좋아하세요.");
+        return new MessageExpenseDto(memberId, nickname+"님은 "+likeMood+" 분위기의 카페에서 "+likeBean+"의 "+likeTaste+" 커피를 마시는 걸 좋아하세요.");
     }
 
     public MessageExpenseDto postExpense(ExpenseCreateDto data, Long memberId) {
