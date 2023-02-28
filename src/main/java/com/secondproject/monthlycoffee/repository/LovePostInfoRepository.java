@@ -25,4 +25,7 @@ public interface LovePostInfoRepository extends JpaRepository<LovePostInfo, Long
     long countByPost(PostInfo post);
 
     boolean existsByMember(MemberInfo member);
+
+    @Query("select count(*) > 0 from LovePostInfo l join l.post p join l.member m where p = :post and m.id = :memberId")
+    boolean existsByPostAndMemberId(@Param("post") PostInfo postInfo, @Param("memberId") Long memberId);
 }

@@ -105,7 +105,7 @@ public class PostReadTest {
     void 댓글_좋아요_이미지_없는_게시글_상세_조회() {
         List<PostInfo> posts = postRepo.findAll();
         PostInfo postInfo = posts.get(ThreadLocalRandom.current().nextInt(posts.size()));
-        PostDetailDto postDetail = postService.getPostDetail(postInfo.getId());
+        PostDetailDto postDetail = postService.getPostDetail(postInfo.getId(), null);
         Assertions.assertThat(postDetail).isEqualTo(new PostDetailDto(postInfo));
     }
 }

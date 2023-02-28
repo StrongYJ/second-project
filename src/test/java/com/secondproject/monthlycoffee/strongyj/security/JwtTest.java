@@ -3,6 +3,7 @@ package com.secondproject.monthlycoffee.strongyj.security;
 import java.time.Instant;
 import java.util.concurrent.ThreadLocalRandom;
 
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
@@ -13,6 +14,7 @@ import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 
+@Slf4j
 @ActiveProfiles("test")
 public class JwtTest {
     
@@ -92,5 +94,6 @@ public class JwtTest {
             Assertions.assertThat(check).isEqualTo(null);
         }).isInstanceOf(AlgorithmMismatchException.class);
     }
+
     
 }

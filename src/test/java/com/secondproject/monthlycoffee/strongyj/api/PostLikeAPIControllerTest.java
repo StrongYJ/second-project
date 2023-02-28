@@ -12,9 +12,7 @@ import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 import com.secondproject.monthlycoffee.repository.PostInfoRepository;
 import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +32,7 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PostLikeAPIControllerTest {
 
     @LocalServerPort
@@ -55,7 +54,7 @@ public class PostLikeAPIControllerTest {
     private List<PostInfo> dummyPosts = new ArrayList<>();
 
     private long memberId;
-    @BeforeEach
+    @BeforeAll
     void init() {
         RestAssured.port = port;
 
@@ -75,6 +74,11 @@ public class PostLikeAPIControllerTest {
             dummyExpense.add(expenseInfo);
             dummyPosts.add(postInfo);
         }
+    }
+
+    @AfterEach
+    void removeLikes() {
+        lovePostRepo.deleteAll();
     }
 
     @Test
@@ -106,6 +110,78 @@ public class PostLikeAPIControllerTest {
                 .body("isLiked", equalTo(false));
 
         Assertions.assertThat(lovePostRepo.findByPostAndMember(likePost, member).isPresent()).isFalse();
+    }
+
+    @Test
+    void 로그인회원_좋아요한_게시글_isLiked_true() {
+        MemberInfo member = memberRepo.findById(memberId).get();
+        PostInfo likePost = dummyPosts.get(ThreadLocalRandom.current().nextInt(dummyPosts.size()));
+
+        String access = jwtUtil.createAccess(memberId, JwtProperties.ACCESS_EXPIRATION_TIME);
+
+        Assertions.assertThat(lovePostRepo.findByPostAndMember(likePost, member).isPresent()).isFalse();
+        // 게시글 좋아요
+        given()
+                .header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .post("/api/postlikes/" + likePost.getId())
+                .then().log().all()
+                .statusCode(200)
+                .body("postId", equalTo(likePost.getId().intValue()))
+                .body("isLiked", equalTo(true));
+
+        Assertions.assertThat(lovePostRepo.findByPostAndMember(likePost, member).isPresent()).isTrue();
+        given()
+                .header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .get("/api/posts/" + likePost.getId())
+                .then().log().all()
+                .body("isLiked", equalTo(true));
+        // 게시글 좋아요 취소
+        given()
+                .header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .post("/api/postlikes/" + likePost.getId())
+                .then().log().all()
+                .statusCode(200)
+                .body("postId", equalTo(likePost.getId().intValue()))
+                .body("isLiked", equalTo(false));
+
+        given()
+                .header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .get("/api/posts/" + likePost.getId())
+                .then().log().all()
+                .body("isLiked", equalTo(false));
+
+    }
+
+    @Test
+    void 비회원_게시글_조회() {
+        // given
+        MemberInfo member = memberRepo.findById(memberId).get();
+        PostInfo likePost = dummyPosts.get(ThreadLocalRandom.current().nextInt(dummyPosts.size()));
+        String access = jwtUtil.createAccess(memberId, JwtProperties.ACCESS_EXPIRATION_TIME);
+        Assertions.assertThat(lovePostRepo.findByPostAndMember(likePost, member).isPresent()).isFalse();
+        // 게시글 좋아요
+        given()
+                .header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .post("/api/postlikes/" + likePost.getId())
+                .then().log().all()
+                .statusCode(200)
+                .body("postId", equalTo(likePost.getId().intValue()))
+                .body("isLiked", equalTo(true));
+        Assertions.assertThat(lovePostRepo.findByPostAndMember(likePost, member).isPresent()).isTrue();
+        // when
+        Assertions.assertThat(lovePostRepo.countByPost(likePost)).isGreaterThan(0L);
+        // then
+        given().log().all()
+                .when()
+                .get("/api/posts/" + likePost.getId())
+                .then().log().all()
+                .body("isLiked", equalTo(false));
+
     }
 
 }

@@ -31,7 +31,12 @@ public class PostDetailDto {
     private Mood mood;
     @Schema(description = "커피  원두")
     private CoffeeBean bean;
-    private List<ExpenseImageDto>images;
+    @Schema(description = "게시글 내용")
+    private String content;
+    @Schema(description = "게시글 좋아요 여부")
+    private Boolean isLiked = false;
+
+    private List<ExpenseImageDto> images;
     private List<CommentDto> comments;
     
     public PostDetailDto(PostInfo entity) {
@@ -45,6 +50,23 @@ public class PostDetailDto {
         this.taste = expense.getTaste();
         this.mood = expense.getMood();
         this.bean = expense.getBean();
+        this.content = entity.getContent();
+        this.images = expense.getExpenseImages().stream().map(ExpenseImageDto::new).toList();
+        this.comments = entity.getComments().stream().map(CommentDto::new).toList();
+    }
+    public PostDetailDto(PostInfo entity, Boolean isLiked) {
+        ExpenseInfo expense = entity.getExpense();
+        MemberInfo member = expense.getMember();
+
+        this.id = entity.getId();
+        this.nickname = ObjectUtils.isEmpty(member) ? null : member.getNickname();
+        this.category = expense.getCategory();
+        this.brand = expense.getBrand();
+        this.taste = expense.getTaste();
+        this.mood = expense.getMood();
+        this.bean = expense.getBean();
+        this.content = entity.getContent();
+        this.isLiked = isLiked;
         this.images = expense.getExpenseImages().stream().map(ExpenseImageDto::new).toList();
         this.comments = entity.getComments().stream().map(CommentDto::new).toList();
     }
