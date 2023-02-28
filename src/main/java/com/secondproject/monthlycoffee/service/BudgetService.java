@@ -61,14 +61,11 @@ public class BudgetService {
         if(budgetRepo.existsByYearMonth(YearMonth.now().toString())) {
             throw new IllegalArgumentException("해당 월에 이미 존재하는 예산 정보가 있습니다.");
         }
+        if(data.amount() <= 0){
+            throw new NoSuchElementException("예산은 0원 이상의 금액이어야 합니다.");
+        }
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
         BudgetInfo budget = new BudgetInfo(data.amount(), member);
-        if(member.getId() != budget.getMember().getId()) {
-            throw new IllegalArgumentException("본인만 등록이 가능합니다."); 
-        }
-        if(data.amount() <= 0){
-            throw new NoSuchElementException("예산은 0원 이상의 금액이어야 합니다."); 
-        }
         budgetRepo.save(budget);
         return new BudgetDto(budget);
     }

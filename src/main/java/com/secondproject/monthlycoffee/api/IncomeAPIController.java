@@ -115,7 +115,7 @@ public class IncomeAPIController {
     @Operation(summary = "수입+지출 연월별 리스트 조회", description = "등록된 수입과 지출 정보들 중 연월별 리스트를 조회합니다.")
     @GetMapping("/list")
     public ResponseEntity<List<IncomeExpenseListDto>> listIncomeByYearMonth(
-        @Parameter(description = "조회하려는 연도와 달", example = "2023") @RequestParam Integer date,
+        @Parameter(description = "조회하려는 연도와 달", example = "2303") @RequestParam Integer date,
         @AuthMember AuthDto authDto
     ) {
         return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeByYearMonth(date, authDto.id()), HttpStatus.OK);
