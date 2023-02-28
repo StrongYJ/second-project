@@ -47,7 +47,7 @@ public class CommentAPIController {
     @PutMapping("/{comment-id}")
     public ResponseEntity<CommentDto> putModifyComment(
         @Parameter(description = "수정할 댓글 식별 번호")
-        @PathVariable("comment-id") Long commentId,
+        @PathVariable("comment-id") long commentId,
         @RequestBody @Validated CommentModifyDto comment,
         @AuthMember AuthDto authDto
     ) {
@@ -59,7 +59,7 @@ public class CommentAPIController {
     @DeleteMapping("/{comment-id}")
     public ResponseEntity<CommentDeleteDto> deleteComment(
         @Parameter(description = "삭제할 댓글 식별 번호")
-        @PathVariable("comment-id") Long commentId,
+        @PathVariable("comment-id") long commentId,
         @AuthMember AuthDto authDto
     ) {
         CommentDeleteDto deletedComment = commentService.delete(commentId, authDto.id());
