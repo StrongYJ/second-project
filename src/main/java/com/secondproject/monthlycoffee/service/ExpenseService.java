@@ -354,17 +354,18 @@ public class ExpenseService {
         String end = Integer.toString(LocalDate.now().getYear()-2000)+seasonEnd;
 
         List<TumblerRankCreate> create = eRepo.rankByTumbler(Integer.parseInt(start), Integer.parseInt(end)).stream().toList();
-        List<TumblerRank> rank = new ArrayList<>();
+        List<TumblerRank> rankTumbler = new ArrayList<>();
         String grade = null;
 
         for(int i=0; i<create.size(); i++) {
-            if(i == 0) {
+            Integer rank = create.get(i).getRankTumbler();
+            if(rank == 1) {
                 grade = "GrandMaster";
             }
-            else if(i < 4) {
+            else if(rank < 5) {
                 grade = "Gold";
             }
-            else if(i < 7) {
+            else if(rank < 8) {
                 grade = "Silver";
             }
             else {
@@ -374,13 +375,13 @@ public class ExpenseService {
                     .id(create.get(i).getId())
                     .nickname(create.get(i).getNickname())
                     .useTumbler(create.get(i).getCountUse())
-                    .rank(i+1)
+                    .rank(rank)
                     .grade(grade)
                     .build();
-            rank.add(rankCreate);
+            rankTumbler.add(rankCreate);
         }
 
-        return rank;
+        return rankTumbler;
     }
 
     private void checkExpenseMember(ExpenseInfo expense, Long memberId) {

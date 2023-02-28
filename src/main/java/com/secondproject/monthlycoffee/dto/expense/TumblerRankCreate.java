@@ -8,4 +8,5 @@ public interface TumblerRankCreate {
     Long getId();
     String getNickname();
     Integer getCountUse();
+    Integer getRankTumbler();
 }

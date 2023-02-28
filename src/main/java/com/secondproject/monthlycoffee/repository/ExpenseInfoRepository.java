@@ -37,6 +37,6 @@ public interface ExpenseInfoRepository extends JpaRepository<ExpenseInfo, Long> 
     @Query("update ExpenseInfo e set e.member = null where e.member = :member")
     void updateMemberNullByMember(@Param("member") MemberInfo memberInfo);
     boolean existsByMember(MemberInfo member);
-    @Query(value = "select m.id as id, m.nickname as nickname, count(e.tumbler) as countUse from ExpenseInfo e join e.member m where e.tumbler = true and date_format(e.date, '%y%m') between :startDate and :endDate group by m.id order by countUse desc limit 10")
+    @Query(value = "select m.id as id, m.nickname as nickname, count(e.tumbler) as countUse, rank() over (order by count(e.tumbler) desc) as rankTumbler from ExpenseInfo e join e.member m where e.tumbler = true and date_format(e.date, '%y%m') between :startDate and :endDate group by m.id order by countUse desc limit 10")
     List<TumblerRankCreate> rankByTumbler(@Param("startDate") Integer startDate, @Param("endDate") Integer endDate);
 }
