@@ -3,6 +3,8 @@ package com.secondproject.monthlycoffee.service;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import com.secondproject.monthlycoffee.config.security.JwtProperties;
+import com.secondproject.monthlycoffee.config.security.JwtUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import com.secondproject.monthlycoffee.repository.MemberInfoRepository;
 import com.secondproject.monthlycoffee.repository.PostInfoRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class PostService {
     private final ExpenseInfoRepository expenseRepo;
     private final CommentInfoRepository commentRepo;
     private final LovePostInfoRepository lovePostRepo;
+    private final JwtUtil jwtUtil;
 
     @Transactional(readOnly = true)
     public Page<PostBasicDto> getAllPost(Pageable pageable) {
@@ -40,8 +44,13 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostDetailDto getPostDetail(Long id) {
+    public PostDetailDto getPostDetail(Long id, String bearerAccess) {
         PostInfo post = postRepo.findById(id).orElseThrow();
+        if(StringUtils.hasText(bearerAccess) && bearerAccess.startsWith(JwtProperties.ACCESS_TOKEN_PREFIX)) {
+            String access = jwtUtil.resolve(bearerAccess);
+            Long memberId = jwtUtil.verifyAccessAndExtractClaim(access);
+            return new PostDetailDto(post, lovePostRepo.existsByPostAndMemberId(post, memberId));
+        }
         return new PostDetailDto(post);
     }
 

@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.secondproject.monthlycoffee.error.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -29,20 +30,19 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             doFilter(request, response, filterChain);
         } catch (TokenExpiredException e) {
-            exceptionMessage(401, "The access token expired", response);
+            ErrorResponse error = new ErrorResponse("TokenExpiredException", e.getMessage());
+            exceptionMessage(401, error, response);
         } catch (JWTVerificationException e) {
-            exceptionMessage(401, "Invalid Token", response);
+            ErrorResponse error = new ErrorResponse("JWTVerificationException", JwtProperties.INVALID_TOKEN_MESSAGE);
+            exceptionMessage(401, error, response);
         }
     }
 
-    private void exceptionMessage(final int statusCode, final String message, HttpServletResponse response) throws IOException, JsonProcessingException {
+    private void exceptionMessage(final int statusCode, ErrorResponse errorResponse, HttpServletResponse response) throws IOException, JsonProcessingException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(statusCode);
-        Map<String, Object> errorJson = new LinkedHashMap<>();
-        errorJson.put("status", HttpStatus.valueOf(statusCode).toString());
-        errorJson.put("message", message);
         PrintWriter writer = response.getWriter();
-        writer.write(new ObjectMapper().writeValueAsString(errorJson));
+        writer.write(new ObjectMapper().writeValueAsString(errorResponse));
         writer.flush();
         writer.close();
     }
