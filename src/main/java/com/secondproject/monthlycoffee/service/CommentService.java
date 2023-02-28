@@ -47,7 +47,6 @@ public class CommentService {
                 new IllegalArgumentException("삭제할 댓글이 존재하지 않거나 본인이 작성한 댓글이 아닙니다."));
 
         commentRepo.delete(comment);
-
         return new CommentDeleteDto(commentId, "삭제되었습니다.");
     }
     

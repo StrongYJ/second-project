@@ -1,6 +1,7 @@
 package com.secondproject.monthlycoffee.strongyj.api;
 
 import com.secondproject.monthlycoffee.config.security.JwtProperties;
+import com.secondproject.monthlycoffee.dto.member.LoginResponseDto;
 import com.secondproject.monthlycoffee.dto.member.MemberDto;
 import com.secondproject.monthlycoffee.dto.member.MemberLoginDto;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
@@ -57,8 +58,9 @@ public class MemberAPIControllerTest {
                 .   extract();
         Assertions.assertThat(response.header(HttpHeaders.AUTHORIZATION)).isNotBlank();
         Assertions.assertThat(response.header(JwtProperties.REFRESH_HEADER_NAME)).isNotBlank();
-        MemberDto newMember = response.body().as(MemberDto.class);
+        LoginResponseDto newMember = response.body().as(LoginResponseDto.class);
         Assertions.assertThat(newMember.nickname()).isIn(Arrays.stream(nickname).toList());
+        Assertions.assertThat(newMember.accessExpirationTime()).isEqualTo(JwtProperties.ACCESS_EXPIRATION_TIME);
     }
 
     @Test
@@ -76,8 +78,9 @@ public class MemberAPIControllerTest {
                 .extract();
         Assertions.assertThat(response.header(HttpHeaders.AUTHORIZATION)).isNotBlank();
         Assertions.assertThat(response.header(JwtProperties.REFRESH_HEADER_NAME)).isNotBlank();
-        MemberDto newMember = response.body().as(MemberDto.class);
+        LoginResponseDto newMember = response.body().as(LoginResponseDto.class);
         Assertions.assertThat(newMember.nickname()).isEqualTo("커피테스트");
+        Assertions.assertThat(newMember.accessExpirationTime()).isEqualTo(JwtProperties.ACCESS_EXPIRATION_TIME);
     }
 
     @Test
@@ -94,11 +97,12 @@ public class MemberAPIControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
-        MemberDto member = response.body().as(MemberDto.class);
+        LoginResponseDto member = response.body().as(LoginResponseDto.class);
         Assertions.assertThat(member.id()).isEqualTo(memberInfo.getId());
         Assertions.assertThat(member.nickname()).isIn(Arrays.stream(nickname).toList());
         Assertions.assertThat(response.header(HttpHeaders.AUTHORIZATION)).isNotBlank();
         Assertions.assertThat(response.header(JwtProperties.REFRESH_HEADER_NAME)).isNotBlank();
+        Assertions.assertThat(member.accessExpirationTime()).isEqualTo(JwtProperties.ACCESS_EXPIRATION_TIME);
     }
 
     @Test
@@ -116,10 +120,11 @@ public class MemberAPIControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
-        MemberDto member = response.body().as(MemberDto.class);
+        LoginResponseDto member = response.body().as(LoginResponseDto.class);
         Assertions.assertThat(member.id()).isEqualTo(memberInfoNotnull.getId());
         Assertions.assertThat(member.nickname()).isEqualTo(memberInfoNotnull.getNickname());
         Assertions.assertThat(response.header(HttpHeaders.AUTHORIZATION)).isNotBlank();
         Assertions.assertThat(response.header(JwtProperties.REFRESH_HEADER_NAME)).isNotBlank();
+        Assertions.assertThat(member.accessExpirationTime()).isEqualTo(JwtProperties.ACCESS_EXPIRATION_TIME);
     }
 }

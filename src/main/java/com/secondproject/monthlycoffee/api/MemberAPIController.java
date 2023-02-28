@@ -4,6 +4,7 @@ import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.JwtProperties;
 import com.secondproject.monthlycoffee.config.security.JwtUtil;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
+import com.secondproject.monthlycoffee.dto.member.*;
 import com.secondproject.monthlycoffee.token.TokenDto;
 import com.secondproject.monthlycoffee.token.TokenResponseDto;
 import com.secondproject.monthlycoffee.token.TokenService;
@@ -27,10 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.monthlycoffee.dto.member.MemberDeleteDto;
-import com.secondproject.monthlycoffee.dto.member.MemberDto;
-import com.secondproject.monthlycoffee.dto.member.MemberEditDto;
-import com.secondproject.monthlycoffee.dto.member.MemberLoginDto;
 import com.secondproject.monthlycoffee.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,11 +49,14 @@ public class MemberAPIController {
     @SecurityRequirements
     @Operation(
             summary = "회원 로그인",
-            description = "미가입 회원은 자동으로 회원가입됩니다.<br>액세스토큰 헤더이름: " + HttpHeaders.AUTHORIZATION +
-                    " 리프레시토큰 헤더이름: " + JwtProperties.REFRESH_HEADER_NAME
+            description = "미가입 회원은 자동으로 회원가입됩니다.<br>" +
+                    "액세스토큰 헤더이름: " + HttpHeaders.AUTHORIZATION + 
+                    " 유효 시간: " + (JwtProperties.ACCESS_EXPIRATION_TIME / (1000 * 60)) + "분<br>" +
+                    " 리프레시토큰 헤더이름: " + JwtProperties.REFRESH_HEADER_NAME + 
+                    " 유효 시간: " + (JwtProperties.REFRESH_EXPIRATION_TIME / (1000 * 60 * 60)) + "시간"
     )
     @PostMapping("")
-    public ResponseEntity<MemberDto> postMember(
+    public ResponseEntity<LoginResponseDto> postMember(
         @Parameter(description = "로그인(등록)할 회원 정보") @RequestBody MemberLoginDto data
         ) {
         MemberDto memberDto = memberService.login(data);
@@ -66,7 +66,7 @@ public class MemberAPIController {
         headers.add(HttpHeaders.AUTHORIZATION, tokenDto.access());
         headers.add(JwtProperties.REFRESH_HEADER_NAME, tokenDto.refresh());
 
-        return new ResponseEntity<>(memberDto, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(new LoginResponseDto(memberDto), headers, HttpStatus.CREATED);
     }
 
     @Operation(summary = "회원 로그아웃", description = "토큰을 무효화합니다.")

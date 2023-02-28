@@ -32,10 +32,11 @@ public class TokenAPIController {
     })
     @PostMapping(JwtProperties.REISSUE_TOKEN_URI)
     public ResponseEntity<TokenResponseDto> postReissueAccessToken(HttpServletRequest request) {
+        String access = request.getHeader(HttpHeaders.AUTHORIZATION);
         String refresh = request.getHeader(JwtProperties.REFRESH_HEADER_NAME);
-        String access = tokenService.reissue(refresh);
+        String reissueAccess = tokenService.reissue(access, refresh);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, access);
+        headers.add(HttpHeaders.AUTHORIZATION, reissueAccess);
         headers.add(JwtProperties.REFRESH_HEADER_NAME, refresh);
         return new ResponseEntity<>(new TokenResponseDto("액세스 토큰이 재발급되었습니다", true), headers, HttpStatus.CREATED);
     }

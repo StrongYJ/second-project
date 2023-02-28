@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 
 import java.util.Date;
 
+import com.secondproject.monthlycoffee.error.ErrorResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,6 +68,7 @@ class JwtReissueTest {
         
         String response = given().log().all()
             .header(new Header(HttpHeaders.AUTHORIZATION, token))
+                .body(new ErrorResponse("werwre", "rwerwer"))
         .when()
             .post("/test")
         .then().log().all()

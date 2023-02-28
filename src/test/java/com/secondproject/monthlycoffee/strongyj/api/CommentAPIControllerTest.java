@@ -26,6 +26,6 @@ public class CommentAPIControllerTest extends ApiTest {
         .when()
                 .delete("/api/comments/1")
         .then().log().all()
-                .statusCode(200);
+                .statusCode(400);
     }
 }
