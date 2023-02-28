@@ -184,4 +184,12 @@ public class PostLikeAPIControllerTest {
 
     }
 
+    @Test
+    void 전체_게시글_조회() {
+        given().log().all()
+                .when()
+                .get("/api/posts")
+                .then().log().all();
+    }
+
 }

@@ -16,6 +16,8 @@ import com.secondproject.monthlycoffee.repository.PostInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -41,7 +43,11 @@ public class CommentService {
     }
 
     public CommentDeleteDto delete(Long commentId, Long memberId) {
-        commentRepo.deleteByIdAndMemberId(commentId, memberId);
+        CommentInfo comment = commentRepo.findByIdAndMemberId(commentId, memberId).orElseThrow(() ->
+                new IllegalArgumentException("삭제할 댓글이 존재하지 않거나 본인이 작성한 댓글이 아닙니다."));
+
+        commentRepo.delete(comment);
+
         return new CommentDeleteDto(commentId, "삭제되었습니다.");
     }
     

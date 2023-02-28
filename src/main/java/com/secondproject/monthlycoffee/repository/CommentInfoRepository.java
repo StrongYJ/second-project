@@ -20,11 +20,13 @@ public interface CommentInfoRepository extends JpaRepository<CommentInfo, Long> 
     @Query("delete from CommentInfo c where c.member = :member")
     void deleteByMember(@Param("member") MemberInfo member);
 
+    @Override
+    @Modifying(clearAutomatically = true)
+    void delete(CommentInfo entity);
+
     @Query("select c from CommentInfo c join c.member m where c.id = :id and m.id = :memberId")
     Optional<CommentInfo> findByIdAndMemberId(@Param("id") Long id, @Param("memberId") Long memberId);
 
-    @Query("delete from CommentInfo c where c in (select c from CommentInfo c join c.member m where c.id = :id and m.id = :memberId)")
-    void deleteByIdAndMemberId(@Param("id") Long id, @Param("memberId") Long memberId);
 
     long countByPost(PostInfo post);
 
