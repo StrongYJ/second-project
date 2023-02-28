@@ -24,7 +24,6 @@ public interface IncomeInfoRepository extends JpaRepository<IncomeInfo, Long> {
     @Query("select SUBSTRING(cast(i.date as text), 1,7) as yearMonth, sum(i.amount) as sum from IncomeInfo i where i.member = :member and i.date between :start and :end group by yearMonth order by yearMonth desc")
     IncomeSumDto sumByYearMonth(@Param("member") MemberInfo member, @Param("start") LocalDate start, @Param("end") LocalDate end);
 
-//    @Query("select SUBSTRING(cast(i.date as text), 1,7) as yearMonth, avg(i.amount) as avg from IncomeInfo i where i.member = :member and i.date between :start and :end group by yearMonth order by yearMonth desc")
     @Query("select SUBSTRING(cast(i.date as text), 1,7) as yearMonth, avg(i.amount) as avg from IncomeInfo i where i.member = :member and date_format(date, '%y%m') = :date group by yearMonth order by yearMonth desc")
     IncomeAvgDto avgByYearMonth(@Param("member") MemberInfo member, @Param("date") Integer date);
     

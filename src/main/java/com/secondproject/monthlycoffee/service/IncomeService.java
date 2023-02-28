@@ -78,8 +78,10 @@ public class IncomeService {
         if(member.getId() != income.getMember().getId()) {
             throw new IllegalArgumentException("본인이 아니면 수정이 불가능합니다."); 
         }
-        if(edit.amount() <= 0){
-            throw new NoSuchElementException("수입은 0원 이상의 금액이어야 합니다."); 
+        if(edit.amount() != null){
+            if(edit.amount() <= 0) {
+                throw new NoSuchElementException("수입은 0원 이상의 금액이어야 합니다.");
+            }
         }
         income.modifyBudgetDetail(edit.amount(), edit.note(), edit.date());
         return new IncomeDto(income);

@@ -10,13 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.secondproject.monthlycoffee.config.security.AuthMember;
 import com.secondproject.monthlycoffee.config.security.dto.AuthDto;
@@ -31,7 +26,6 @@ import com.secondproject.monthlycoffee.service.BudgetService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -67,7 +61,7 @@ public class BudgetAPIController {
     @Operation(summary = "예산 등록", description = "해당 회원의 예산을 등록합니다.")
     @PostMapping("")
     public ResponseEntity<BudgetDto> postBudget(
-        @Parameter(description = "등록 할 예산 정보") @RequestBody BudgetNewDto data,
+        @Parameter(description = "등록 할 예산 정보") @RequestBody @Validated BudgetNewDto data,
         @AuthMember AuthDto authDto
         ) {
             return new ResponseEntity<>(budgetService.newBudget(data, authDto.id()), HttpStatus.CREATED);
@@ -78,9 +72,9 @@ public class BudgetAPIController {
     @Operation(summary = "예산 수정", description = "등록된 예산 정보들 중 특정 예산을 수정합니다.")
     @PatchMapping("/{budget-id}")
     public ResponseEntity<BudgetDto> patchBudget(
-        @Parameter(description = "예산 수정 내용") @RequestBody BudgetEditDto edit,
-        @Parameter(description = "예산 식별 번호", example = "1") @PathVariable("budget-id") Long budgetId,
-        @AuthMember AuthDto authDto
+            @Parameter(description = "예산 수정 내용") @RequestBody BudgetEditDto edit,
+            @Parameter(description = "예산 식별 번호", example = "1") @PathVariable("budget-id") Long budgetId,
+            @AuthMember AuthDto authDto
         ) {
             return new ResponseEntity<>(budgetService.modifyBudget(edit, budgetId, authDto.id()), HttpStatus.OK);
     }
