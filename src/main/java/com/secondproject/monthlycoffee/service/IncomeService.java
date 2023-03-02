@@ -111,7 +111,7 @@ public class IncomeService {
 
 
     // 수입+지출 연월별 리스트
-    public List<IncomeExpenseListDto> searchIncomeByYearMonth(Integer date, Long memberId) {
+    public List<IncomeExpenseListDto> searchIncomeExpenseByYearMonth(Integer date, Long memberId) {
         MemberInfo member = memberRepo.findById(memberId).orElseThrow();
 
         List<IncomeInfo> incomeInfos = incomeRepo.findByYearMonth(member, date);
@@ -121,8 +121,8 @@ public class IncomeService {
         List<IncomeListDetailDto> incomeList = new ArrayList<IncomeListDetailDto>();
 
         IncomeExpenseListDto incomeExpense = new IncomeExpenseListDto();
+        incomeExpense.setYearMonth(date);
         for(IncomeInfo i : incomeInfos) {
-            incomeExpense.setYearMonth(date);
             IncomeListDetailDto incomeListSet = new IncomeListDetailDto();
 
             incomeListSet.setId(i.getId());
@@ -131,11 +131,12 @@ public class IncomeService {
             incomeListSet.setDate(i.getDate());
 
             incomeList.add(incomeListSet);
-            incomeExpense.setIncome(incomeList);
+//            incomeExpense.setIncome(incomeList);
         }
         incomeExpense.setExpense(expenseInfos);
         incomeExpenseList.add(incomeExpense);
 
+        incomeExpense.setIncome(incomeList);
         return incomeExpenseList;
     }
 

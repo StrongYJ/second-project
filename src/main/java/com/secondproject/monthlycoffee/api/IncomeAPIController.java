@@ -118,7 +118,7 @@ public class IncomeAPIController {
         @Parameter(description = "조회하려는 연도와 달", example = "2303") @RequestParam Integer date,
         @AuthMember AuthDto authDto
     ) {
-        return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeByYearMonth(date, authDto.id()), HttpStatus.OK);
+        return new ResponseEntity<List<IncomeExpenseListDto>>(incomeService.searchIncomeExpenseByYearMonth(date, authDto.id()), HttpStatus.OK);
     }
 
 
