@@ -1,6 +1,10 @@
 package com.secondproject.monthlycoffee.strongyj.service;
 
 import com.secondproject.monthlycoffee.dto.comment.CommentCreateDto;
+import com.secondproject.monthlycoffee.dto.comment.CommentDeleteDto;
+import com.secondproject.monthlycoffee.dto.comment.CommentDto;
+import com.secondproject.monthlycoffee.dto.comment.CommentModifyDto;
+import com.secondproject.monthlycoffee.entity.CommentInfo;
 import com.secondproject.monthlycoffee.entity.ExpenseInfo;
 import com.secondproject.monthlycoffee.entity.MemberInfo;
 import com.secondproject.monthlycoffee.entity.PostInfo;
@@ -8,12 +12,15 @@ import com.secondproject.monthlycoffee.entity.type.*;
 import com.secondproject.monthlycoffee.repository.*;
 import com.secondproject.monthlycoffee.service.CommentService;
 import com.secondproject.monthlycoffee.service.PostService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,18 +28,25 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-@SpringBootTest(classes = {CommentInfoRepository.class, MemberInfoRepository.class, PostInfoRepository.class})
+import static org.assertj.core.api.Assertions.*;
+
+@Transactional
 @ActiveProfiles("test")
+@AutoConfigureTestDatabase
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CommentServiceTest {
+@SpringBootTest
+class CommentServiceTest {
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private MemberInfoRepository memberRepo;
+    @Autowired
+    private ExpenseInfoRepository expenseRepo;
+    @Autowired
+    private PostInfoRepository postRepo;
+    @Autowired
+    private CommentInfoRepository commentRepo;
 
-    @Autowired private MemberInfoRepository memberRepo;
-    @Autowired private ExpenseInfoRepository expenseRepo;
-    @Autowired private ExpenseImageInfoRepository expenseImageInfoRepo;
-    @Autowired private PostInfoRepository postRepo;
-    @Autowired private PostService postService;
     private long postNumber = 0;
 
     // 더미 데이터 만들기
@@ -84,14 +98,67 @@ public class CommentServiceTest {
     void 댓글_등록() {
         // given
         ThreadLocalRandom random = ThreadLocalRandom.current();
+        // 댓글 달 게시글
         PostInfo post = postRepo.findById(random.nextLong(postNumber)).get();
-        String memberUid = UUID.randomUUID().toString();
-        MemberInfo member = memberRepo.save(new MemberInfo(AuthDomain.KAKAO, memberUid, null, null, null));
-        CommentCreateDto createComment = new CommentCreateDto("test", post.getId());
+        // 댓글 다는 회원
+        final String memberUid = UUID.randomUUID().toString();
+        final String memberNickname = UUID.randomUUID().toString();
+        MemberInfo member = memberRepo.save(new MemberInfo(AuthDomain.KAKAO, memberUid, memberNickname, null, null));
+        // 댓글 내용
+        final String commentContent = UUID.randomUUID().toString();
+        CommentCreateDto createComment = new CommentCreateDto(commentContent, post.getId());
 
         // when
+        CommentDto commentDto = commentService.create(createComment, member.getId());
 
+        // then
+        assertThat(commentDto.content()).isEqualTo(commentContent);
+        assertThat(commentDto.nickname()).isEqualTo(memberNickname);
+    }
 
+    @Test
+    void 댓글_수정() {
+        // given
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        PostInfo post = postRepo.findById(random.nextLong(postNumber)).get();
+        final String memberUid = UUID.randomUUID().toString();
+        final String memberNickname = UUID.randomUUID().toString();
+        MemberInfo member = memberRepo.save(new MemberInfo(AuthDomain.KAKAO, memberUid, memberNickname, null, null));
+        final String commentContent = UUID.randomUUID().toString();
+        CommentInfo comment = commentRepo.save(new CommentInfo(commentContent, member, post));
+        final String modifiedContent = UUID.randomUUID().toString();
+        CommentModifyDto commentModifyDto = new CommentModifyDto(modifiedContent);
+
+        // when
+        CommentDto modifiedComment = commentService.modify(comment.getId(), commentModifyDto, member.getId());
+
+        // then
+        assertThat(modifiedComment.id()).isEqualTo(comment.getId());
+        assertThat(modifiedComment.content()).isEqualTo(modifiedContent);
+        assertThat(modifiedComment.nickname()).isEqualTo(memberNickname);
+    }
+
+    @Test
+    void 댓글_삭제() {
+        // given
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        // 댓글 달 게시글
+        PostInfo post = postRepo.findById(random.nextLong(postNumber)).get();
+        // 댓글 다는 회원
+        final String memberUid = UUID.randomUUID().toString();
+        final String memberNickname = UUID.randomUUID().toString();
+        MemberInfo member = memberRepo.save(new MemberInfo(AuthDomain.KAKAO, memberUid, memberNickname, null, null));
+        // 댓글 내용
+        final String commentContent = UUID.randomUUID().toString();
+        CommentInfo comment = commentRepo.save(new CommentInfo(commentContent, member, post));
+
+        // when
+        CommentDeleteDto deleteDto = commentService.delete(comment.getId(), member.getId());
+
+        // then
+        assertThat(deleteDto.id()).isEqualTo(comment.getId());
+        assertThat(deleteDto.message()).isEqualTo("삭제되었습니다.");
+        assertThat(commentRepo.existsById(deleteDto.id())).isFalse();
 
     }
 }

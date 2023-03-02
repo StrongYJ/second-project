@@ -2,7 +2,7 @@ package com.secondproject.monthlycoffee.config.security;
 
 public interface JwtProperties {
     // acesss
-    long ACCESS_EXPIRATION_TIME = 1000 * 60 * 60;
+    long ACCESS_EXPIRATION_TIME = 1000 * 60 * 5;
     String ACCESS_TOKEN_PREFIX = "Bearer ";
     
     // refresh
