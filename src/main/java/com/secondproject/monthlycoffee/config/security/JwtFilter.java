@@ -3,6 +3,7 @@ package com.secondproject.monthlycoffee.config.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.secondproject.monthlycoffee.error.ErrorResponse;
 import com.secondproject.monthlycoffee.token.AccessTokenBlackListRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -49,11 +50,9 @@ public class JwtFilter extends OncePerRequestFilter {
             if(accessTokenBlackListRepository.existsById(token)) {
                 response.setStatus(403);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                Map<String, Object> errorJson = new LinkedHashMap<>();
-                errorJson.put("status", HttpStatus.valueOf(403).toString());
-                errorJson.put("message", "This token is blacked");
+                ErrorResponse errorResponse = new ErrorResponse("BlackedTokenException", "This token is blacked");
                 PrintWriter writer = response.getWriter();
-                writer.write(new ObjectMapper().writeValueAsString(errorJson));
+                writer.write(new ObjectMapper().writeValueAsString(errorResponse));
                 writer.flush();
                 writer.close();
                 return;

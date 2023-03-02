@@ -18,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.NoSuchElementException;
 
-@Service
 @RequiredArgsConstructor
 @Transactional
+@Service
 public class CommentService {
 
     private final CommentInfoRepository commentRepo;

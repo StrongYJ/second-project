@@ -94,18 +94,19 @@ public class TokenControllerTest {
         .then()
                 .statusCode(403)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .assertThat().body("status", equalTo(HttpStatus.valueOf(403).toString()))
+                .assertThat().body("error", equalTo("BlackedTokenException"))
                 .assertThat().body("message", equalTo("This token is blacked"));
     }
 
     @Test
     @Order(3)
-    void reissueToken() {
+    void 만료된_reissueToken() {
         // given
         String access = jwtUtil.createAccess(1L, 0L);
         String refresh = jwtUtil.createRefresh(10000000L);
         refreshTokenRepo.save(new RefreshToken(refresh, 1L, 10000000L));
 
+        // 토큰 재발급
         ExtractableResponse<Response> response =
                 given()
                     .header(HttpHeaders.AUTHORIZATION, access)
@@ -131,5 +132,56 @@ public class TokenControllerTest {
             jwtUtil.verifyRefresh(refresh2);
         });
 
+        // 기존의 액세스 토큰 사용불가
+        given().header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .post("/test")
+                .then()
+                .statusCode(401)
+                .body("error", equalTo("TokenExpiredException"));
+    }
+
+    @Test
+    @Order(4)
+    void 만료되지않은_reissueToken() {
+        // given
+        String access = jwtUtil.createAccess(1L, 10000000L);
+        String refresh = jwtUtil.createRefresh(1000000000L);
+        refreshTokenRepo.save(new RefreshToken(refresh, 1L, 10000000L));
+
+        // 토큰 재발급
+        ExtractableResponse<Response> response =
+                given()
+                        .header(HttpHeaders.AUTHORIZATION, access)
+                        .header(JwtProperties.REFRESH_HEADER_NAME, refresh)
+                        .when()
+                        .post(JwtProperties.REISSUE_TOKEN_URI)
+                        .then().log().all()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .assertThat().body("status", equalTo(true))
+                        .extract();
+
+        String reAccess = response.header(HttpHeaders.AUTHORIZATION);
+        String refresh2 = response.header(JwtProperties.REFRESH_HEADER_NAME);
+
+        Assertions.assertNotEquals(access, reAccess);
+
+        Assertions.assertDoesNotThrow(() -> {
+            jwtUtil.verifyAccessAndExtractClaim(jwtUtil.resolve(reAccess));
+        });
+
+
+        Assertions.assertDoesNotThrow(() -> {
+            jwtUtil.verifyRefresh(refresh2);
+        });
+
+        // 기존의 액세스 토큰 사용불가
+        given().header(HttpHeaders.AUTHORIZATION, access)
+                .when()
+                .post("/test")
+                .then()
+                .statusCode(403)
+                .body("error", equalTo("BlackedTokenException"))
+                .body("message", equalTo("This token is blacked"));
     }
 }

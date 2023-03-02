@@ -18,7 +18,7 @@ public record LoginResponseDto(
         LocalDate birth,
         @Schema(description = "성별")
         Gender gender,
-        @Schema(description = "액세스 토큰 유효시간")
+        @Schema(description = "액세스 토큰 유효시간 (밀리초)")
         Long accessExpirationTime
 ) {
     public LoginResponseDto(MemberDto memberDto) {

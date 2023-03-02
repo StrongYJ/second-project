@@ -1,4 +1,4 @@
-package com.secondproject.monthlycoffee.strongyj;
+package com.secondproject.monthlycoffee.strongyj.api;
 
 import java.time.Instant;
 import java.time.LocalDate;
