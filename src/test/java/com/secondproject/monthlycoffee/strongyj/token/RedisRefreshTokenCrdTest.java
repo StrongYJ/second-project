@@ -26,7 +26,9 @@ public class RedisRefreshTokenCrdTest {
 
     @Test
     void create() {
-        refreshRepo.save(new RefreshToken(initId, 1L, REFRESH_EXPIRATION_TIME));
+        RefreshToken refreshToken = refreshRepo.save(new RefreshToken(initId, 1L, REFRESH_EXPIRATION_TIME));
+
+        refreshRepo.delete(refreshToken);
     }
 
     @Test
@@ -39,6 +41,8 @@ public class RedisRefreshTokenCrdTest {
 
         assertThat(refreshToken.getToken()).isEqualTo(refreshToken2.getToken());
         assertThat(refreshToken.getMemberId()).isEqualTo(refreshToken2.getMemberId());
+
+        refreshRepo.delete(refreshToken);
     }
 
     private final CountDownLatch waiter = new CountDownLatch(1);
@@ -51,11 +55,13 @@ public class RedisRefreshTokenCrdTest {
         waiter.await(REFRESH_EXPIRATION_TIME + 1l, TimeUnit.MILLISECONDS);
     
         assertThat(refreshRepo.findById(refreshToken.getToken()).isPresent()).isFalse();
+
+        refreshRepo.delete(refreshToken);
     }
 
     @Test
     void deleteByMemberId() {
-        refreshRepo.save(new RefreshToken(initId, 1L, 100000000L));
+        RefreshToken refreshToken = refreshRepo.save(new RefreshToken(initId, 1L, 100000000L));
 
         assertThat(refreshRepo.existsById(initId)).isTrue();
 
@@ -63,6 +69,7 @@ public class RedisRefreshTokenCrdTest {
 
         assertThat(refreshRepo.existsById(initId)).isFalse();
 
+        refreshRepo.delete(refreshToken);
     }
     
 }

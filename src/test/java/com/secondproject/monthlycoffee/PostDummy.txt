@@ -1,0 +1,36 @@
+package com.secondproject.monthlycoffee;
+
+import com.secondproject.monthlycoffee.entity.ExpenseInfo;
+import com.secondproject.monthlycoffee.entity.PostInfo;
+import com.secondproject.monthlycoffee.repository.ExpenseInfoRepository;
+import com.secondproject.monthlycoffee.repository.PostInfoRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+@SpringBootTest
+@ActiveProfiles("prod")
+class PostDummy {
+
+    @Autowired
+    private ExpenseInfoRepository expenseInfoRepository;
+    @Autowired
+    private PostInfoRepository postInfoRepository;
+
+    @Test
+    void 게시글더미데이터생성() {
+        List<ExpenseInfo> expenses = expenseInfoRepository.findAll();
+        for(int i = 0; i < 9; i++) {
+            ExpenseInfo expenseInfo = expenses.get(ThreadLocalRandom.current().nextInt(expenses.size()));
+            if(postInfoRepository.existsByExpense(expenseInfo)) {
+                i--;
+                continue;
+            }
+            postInfoRepository.save(new PostInfo("test: " + System.currentTimeMillis(), expenseInfo));
+        }
+    }
+}

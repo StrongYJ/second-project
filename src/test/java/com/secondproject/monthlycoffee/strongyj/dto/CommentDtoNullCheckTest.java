@@ -1,4 +1,4 @@
-package com.secondproject.monthlycoffee.strongyj;
+package com.secondproject.monthlycoffee.strongyj.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

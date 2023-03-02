@@ -21,6 +21,9 @@ public class RedisAccessTokenCrdTest {
     void create() {
         AccessTokenBlackList token = new AccessTokenBlackList("fwnfjwenfkwnfwknefkjnj", 1000L);
         access.save(token);
+
+
+        access.deleteById(token.getToken());
     }
 
     @Test
@@ -30,6 +33,8 @@ public class RedisAccessTokenCrdTest {
 
         AccessTokenBlackList accessTokenBlackList2 = access.findById(accessTokenBlackList.getToken()).get();
         Assertions.assertThat(accessTokenBlackList.getToken()).isEqualTo(accessTokenBlackList2.getToken());
+
+        access.deleteById(accessTokenBlackList.getToken());
     }
 
     @Test
@@ -38,6 +43,8 @@ public class RedisAccessTokenCrdTest {
         access.save(accessTokenBlackList);
 
         access.deleteById(accessTokenBlackList.getToken());
+
+        access.delete(accessTokenBlackList);
     }
 
     @Test
@@ -48,6 +55,7 @@ public class RedisAccessTokenCrdTest {
         Thread.sleep(1000L);
         
         Assertions.assertThat(access.findById(accessTokenBlackList.getToken()).isPresent()).isEqualTo(false);
-        
+
+        access.delete(accessTokenBlackList);
     }
 }

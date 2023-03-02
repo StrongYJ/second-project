@@ -5,9 +5,12 @@ import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 import java.util.Date;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.secondproject.monthlycoffee.error.ErrorResponse;
+import com.secondproject.monthlycoffee.token.AccessTokenBlackListRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ class JwtReissueTest {
 
     @Autowired 
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AccessTokenBlackListRepository accessTokenBlackListRepository;
 
     @LocalServerPort
     private int port;
@@ -62,17 +68,16 @@ class JwtReissueTest {
 
     @Test
     void 만료되지않은_액세스_토큰() throws InterruptedException {
-        final long memberId = 1L;
+        final long memberId = ThreadLocalRandom.current().nextLong();
 
-        var token = jwtUtil.createAccess(memberId, 10000000L);
+        var token = jwtUtil.createAccess(memberId, 15189481526L);
         
         String response = given().log().all()
             .header(new Header(HttpHeaders.AUTHORIZATION, token))
-                .body(new ErrorResponse("werwre", "rwerwer"))
         .when()
             .post("/test")
         .then().log().all()
-        .extract().asString();
+            .extract().asString();
 
         Assertions.assertThat(response).isEqualTo("test" + memberId);
     }

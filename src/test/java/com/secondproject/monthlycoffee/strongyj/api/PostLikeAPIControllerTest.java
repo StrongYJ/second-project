@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
+@Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PostLikeAPIControllerTest {
 
@@ -74,11 +76,6 @@ public class PostLikeAPIControllerTest {
             dummyExpense.add(expenseInfo);
             dummyPosts.add(postInfo);
         }
-    }
-
-    @AfterEach
-    void removeLikes() {
-        lovePostRepo.deleteAll();
     }
 
     @Test
@@ -183,13 +180,4 @@ public class PostLikeAPIControllerTest {
                 .body("isLiked", equalTo(false));
 
     }
-
-    @Test
-    void 전체_게시글_조회() {
-        given().log().all()
-                .when()
-                .get("/api/posts")
-                .then().log().all();
-    }
-
 }
