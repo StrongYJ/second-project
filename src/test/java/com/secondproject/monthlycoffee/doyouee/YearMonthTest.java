@@ -7,10 +7,7 @@ import java.util.List;
 
 import com.secondproject.monthlycoffee.entity.type.AuthDomain;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -38,9 +35,10 @@ public class YearMonthTest {
     @Autowired private IncomeInfoRepository incomeRepo;
     private Long memberId;
     @Autowired private EntityManager em;
-    
+
+    @DisplayName("더미데이터만들기")
     @BeforeAll
-    void 더미데이터만들기() {
+    void makeDummyData() {
         MemberInfo member = new MemberInfo(AuthDomain.KAKAO, "test", "testnick", LocalDate.of(1990, 1, 1), Gender.FEMALE);
         memberRepo.save(member);
         memberId = member.getId();
@@ -68,8 +66,9 @@ public class YearMonthTest {
         log.info("year Month = {}", YearMonth.now());
     }
 
+    @DisplayName("연월별로수입합통계")
     @Test
-    void 연월별로수입합통계() {
+    void incomeSumByYearMonth() {
         List<IncomeInfo> resultList = em.createQuery("select i from IncomeInfo i order by i.date", IncomeInfo.class).getResultList();
 
         YearMonth standard = YearMonth.from(resultList.get(0).getDate());
