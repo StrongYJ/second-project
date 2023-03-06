@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -138,9 +139,14 @@ public class ExpenseService {
 //        return new MessageExpenseDto(entity1.getId(), "등록되었습니다.");
 //    }
 
-    public MessageExpenseDto deleteImage(String filename) {
+    public MessageExpenseDto deleteImage(String filename) throws IOException {
         ExpenseImageInfo image = imageRepo.findByFilename(filename);
         imageRepo.delete(image);
+
+        Path folderLocation = Paths.get(path);
+        Path targetFile = folderLocation.resolve(filename);
+        Files.delete(targetFile);
+
         return new MessageExpenseDto(image.getId(), "삭제되었습니다.");
     }
 

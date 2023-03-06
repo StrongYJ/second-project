@@ -1,5 +1,6 @@
 package com.secondproject.monthlycoffee.api;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.secondproject.monthlycoffee.config.security.AuthMember;
@@ -102,10 +103,10 @@ public class ExpenseAPIController {
     }
 
     @SecurityRequirements
-    @Operation(summary = "이미지 삭제", description = "이미지 식별 번호를 통해 등록된 이미지를 삭제합니다.")
+    @Operation(summary = "이미지 삭제", description = "이미지 이름을 통해 등록된 이미지를 삭제합니다.")
     @DeleteMapping("/image/{filename}")
     public ResponseEntity<MessageExpenseDto> deleteImage(
-            @Parameter(description = "이미지 식별 번호", example = "1") @PathVariable("filename") String filename) {
+            @Parameter(description = "이미지 식별 번호", example = "1") @PathVariable("filename") String filename) throws IOException {
         return new ResponseEntity<>(eService.deleteImage(filename), HttpStatus.OK);
     }
 
